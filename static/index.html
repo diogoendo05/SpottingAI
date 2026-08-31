@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0A0C11">
+<title>SentinelAI · Plataforma de Videoanalítica</title>
+<link rel="preload" href="/static/css/style.css?v=4" as="style">
+<link rel="stylesheet" href="/static/css/style.css?v=4">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%235B7CFA' d='M12 2 4 5v7c0 5 3.5 8.2 8 10 4.5-1.8 8-5 8-10V5z'/%3E%3C/svg%3E">
+</head>
+<body>
+
+<!-- ==========================================================================
+     Sprite de icones. Inline: a aplicacao roda 100% offline na apresentacao.
+     ========================================================================== -->
+<svg class="sprite" aria-hidden="true" focusable="false">
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M20 12.5c0 5-3.6 7.8-7.7 9.3a1 1 0 0 1-.6 0C7.6 20.3 4 17.5 4 12.5V5.8a1 1 0 0 1 1-1c2 0 4.6-1.2 6.3-2.6a1.1 1.1 0 0 1 1.4 0C14.4 3.6 17 4.8 19 4.8a1 1 0 0 1 1 1z"/></symbol>
+  <symbol id="i-video" viewBox="0 0 24 24"><path d="M16 10.5 20.6 8a1 1 0 0 1 1.4.9v6.2a1 1 0 0 1-1.4.9L16 13.5"/><rect x="2" y="6" width="14" height="12" rx="2.5"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20.5 20.5-4.2-4.2"/></symbol>
+  <symbol id="i-scale" viewBox="0 0 24 24"><path d="M12 3.5v17M7.5 20.5h9M3.5 7h17"/><path d="m6.2 7.3-2.7 6.4a3 3 0 0 0 5.4 0zM17.8 7.3l-2.7 6.4a3 3 0 0 0 5.4 0z"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 7.5v13.2"/><path d="M3 18.2a1 1 0 0 1-1-1V4.5a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v12.7a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.8a.8.8 0 0 1 1.2-.7l10.4 6.4a.9.9 0 0 1 0 1.5L8.2 19.4A.8.8 0 0 1 7 18.7z"/></symbol>
+  <symbol id="i-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2.5"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M3.5 12a8.5 8.5 0 0 1 14.3-6.2L21 8.5M21 3.5v5h-5"/><path d="M20.5 12a8.5 8.5 0 0 1-14.3 6.2L3 15.5M3 20.5v-5h5"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3.5v11.8M7.5 11l4.5 4.5 4.5-4.5"/><path d="M4 19.5h16"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3.5 6h17M8.5 6V4.4a1.4 1.4 0 0 1 1.4-1.4h4.2a1.4 1.4 0 0 1 1.4 1.4V6"/><path d="M18.6 6 17.7 20a2 2 0 0 1-2 1.9H8.3a2 2 0 0 1-2-1.9L5.4 6"/><path d="M10 11v6M14 11v6"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 20v-8.5M8.5 14.5 12 11l3.5 3.5"/><path d="M5 16.5A4.5 4.5 0 0 1 6.3 7.7a6 6 0 0 1 11.3 1.5A4 4 0 0 1 19.2 17"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3.5" width="18" height="17" rx="2.5"/><circle cx="8.8" cy="9.3" r="1.8"/><path d="m3.6 18.4 5.2-5a1.5 1.5 0 0 1 2.1 0l4.4 4.3a1.5 1.5 0 0 0 2.1 0l3-2.9"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3.5 3.5v17h17"/><path d="M8 17v-5.5M13 17V7M18 17v-3.5"/></symbol>
+  <symbol id="i-clipboard" viewBox="0 0 24 24"><path d="M9 4.5H7.2a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h9.6a2 2 0 0 0 2-2v-13a2 2 0 0 0-2-2H15"/><rect x="9" y="2.5" width="6" height="4" rx="1.4"/><path d="M8.8 12h6.4M8.8 16h4.2"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M14.5 3.5H20.5v6"/><path d="m10.5 13.5 10-10"/><path d="M18 13.5v5.6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h5.6"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24"><path d="M14.6 4.5H9.4L7.2 7.3H4.2a2 2 0 0 0-2 2v8.2a2 2 0 0 0 2 2h15.6a2 2 0 0 0 2-2V9.3a2 2 0 0 0-2-2h-3z"/><circle cx="12" cy="13.2" r="3.6"/></symbol>
+  <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="4.5" y="4.5" width="15" height="15" rx="2.5"/><rect x="9.2" y="9.2" width="5.6" height="5.6" rx="1.2"/><path d="M9 2.2v2.3M15 2.2v2.3M9 19.5v2.3M15 19.5v2.3M2.2 9h2.3M2.2 15h2.3M19.5 9h2.3M19.5 15h2.3"/></symbol>
+  <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M5 21v-6.5M5 10.5V3M12 21v-8.5M12 8.5V3M19 21v-4.5M19 12.5V3"/><path d="M2.5 14.5h5M9.5 8.5h5M16.5 12.5h5"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M10.2 20.3a2 2 0 0 0 3.6 0"/><path d="M18.5 8.5a6.5 6.5 0 0 0-13 0c0 6.5-2.5 8.3-2.5 8.3h18s-2.5-1.8-2.5-8.3"/></symbol>
+  <symbol id="i-warning" viewBox="0 0 24 24"><path d="M10.3 4 2.4 17.6A2 2 0 0 0 4.1 20.6h15.8a2 2 0 0 0 1.7-3L13.7 4a2 2 0 0 0-3.4 0z"/><path d="M12 9.5v4M12 17h.01"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8.4 12.2 2.5 2.5 4.7-4.9"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 16.5v-5M12 8h.01"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12.8 2.7 8.1 4a.9.9 0 0 1 0 1.6l-8.1 4a1.8 1.8 0 0 1-1.6 0l-8.1-4a.9.9 0 0 1 0-1.6l8.1-4a1.8 1.8 0 0 1 1.6 0z"/><path d="m3.1 12.6 8.1 4a1.8 1.8 0 0 0 1.6 0l8.1-4M3.1 17.1l8.1 4a1.8 1.8 0 0 0 1.6 0l8.1-4"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5.3l3.2 1.9"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 20.5v-1.8a4 4 0 0 0-4-4H6.5a4 4 0 0 0-4 4v1.8"/><circle cx="9.2" cy="7.6" r="3.9"/><path d="M21.5 20.5v-1.8a4 4 0 0 0-3-3.9M16.4 3.9a3.9 3.9 0 0 1 0 7.5"/></symbol>
+  <symbol id="i-activity" viewBox="0 0 24 24"><path d="M21.5 12h-4l-3 8.5L9.5 3.5l-3 8.5h-4"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M3.5 6.5h17M3.5 12h17M3.5 17.5h17"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3.2"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="10.5" width="16" height="10.5" rx="2.5"/><path d="M8 10.5V7.4a4 4 0 0 1 8 0v3.1"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M14.5 2.5H7a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7z"/><path d="M14.5 2.5V7H19M8.5 13h7M8.5 17h4.5"/></symbol>
+  <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M4.5 12h15M13.5 6l6 6-6 6"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m7 10 5 5 5-5"/></symbol>
+  <symbol id="i-flask" viewBox="0 0 24 24"><path d="M9 3v6.8L4.5 17a2 2 0 0 0 1.7 3h11.6a2 2 0 0 0 1.7-3L15 9.8V3"/><path d="M8 3h8M7.6 15.5h8.8"/></symbol>
+</svg>
+
+<!-- ==========================================================================
+     Abertura
+     ========================================================================== -->
+<div class="boot" id="boot" aria-hidden="true">
+  <div class="boot-inner">
+    <div class="boot-mark"><svg viewBox="0 0 24 24"><use href="#i-shield"/></svg></div>
+    <div class="boot-name">SentinelAI</div>
+    <div class="boot-bar"><i></i></div>
+    <p class="boot-status">Carregando motor de inferência</p>
+    <p class="boot-build">interface r3</p>
+  </div>
+</div>
+
+<div class="layout">
+
+  <!-- ==================== Navegação ==================== -->
+  <nav class="rail" id="rail">
+    <div class="rail-brand">
+      <span class="rail-mark"><svg viewBox="0 0 24 24"><use href="#i-shield"/></svg></span>
+      <span class="rail-name">SentinelAI<em>Videoanalítica de perímetro</em></span>
+      <button class="icon-btn rail-close" id="rail-close" aria-label="Fechar navegação">
+        <svg class="ic"><use href="#i-close"/></svg>
+      </button>
+    </div>
+
+    <p class="rail-group">Operação</p>
+    <div class="tabs" role="tablist">
+      <span class="tab-ink" id="tab-ink" aria-hidden="true"></span>
+      <button class="tab active" data-tab="live" role="tab"
+              data-title="Monitoramento em tempo real"
+              data-sub="Detecção contínua, contagem de ocupação e alarme por regra.">
+        <svg class="ic"><use href="#i-video"/></svg><span>Monitoramento</span>
+      </button>
+      <button class="tab" data-tab="forensic" role="tab"
+              data-title="Perícia de mídia"
+              data-sub="Análise quadro a quadro de imagens e vídeos, com relatório exportável.">
+        <svg class="ic"><use href="#i-search"/></svg><span>Perícia</span>
+      </button>
+
+      <p class="rail-group">Referência</p>
+      <button class="tab" data-tab="lab" role="tab"
+              data-title="Classificação vs. detecção"
+              data-sub="Por que reconhecer o conteúdo de uma imagem não é o mesmo que localizar objetos nela.">
+        <svg class="ic"><use href="#i-scale"/></svg><span>Comparativo</span>
+      </button>
+      <button class="tab" data-tab="history" role="tab"
+              data-title="Contexto e responsabilidade"
+              data-sub="De Bletchley Park ao YOLOv8 — e os limites éticos e técnicos da videoanalítica.">
+        <svg class="ic"><use href="#i-book"/></svg><span>Contexto</span>
+      </button>
+    </div>
+
+    <div class="rail-foot">
+      <p class="rail-group">Estado do sistema</p>
+      <span class="pill" id="model-pill"><span class="dot"></span><span id="model-pill-text">Carregando modelo…</span></span>
+      <span class="pill" id="incident-pill"><span class="dot"></span><span id="incident-pill-text">0 incidentes</span></span>
+      <p class="rail-legal"><svg class="ic"><use href="#i-lock"/></svg>Inferência local. Nenhuma imagem sai desta máquina.</p>
+      <p class="rail-build">interface <b>r3</b> · console</p>
+    </div>
+  </nav>
+  <div class="rail-scrim" id="rail-scrim"></div>
+
+  <!-- ==================== Cabeçalho ==================== -->
+  <header class="topbar">
+    <button class="icon-btn rail-toggle" id="rail-toggle" aria-label="Abrir navegação">
+      <svg class="ic"><use href="#i-menu"/></svg>
+    </button>
+    <div class="page-id">
+      <h1 id="page-title">Monitoramento em tempo real</h1>
+      <p id="page-sub">Detecção contínua, contagem de ocupação e alarme por regra.</p>
+    </div>
+    <button class="btn btn-ghost" id="settings-toggle" aria-expanded="false" aria-controls="settings">
+      <svg class="ic"><use href="#i-sliders"/></svg><span>Configurações</span>
+    </button>
+  </header>
+
+  <!-- ==================== Conteúdo ==================== -->
+  <main class="main" id="main">
+
+    <!-- ---------- Monitoramento ---------- -->
+    <section class="tab-panel active" id="tab-live">
+
+      <div class="console-bar">
+        <div class="mode-switch" id="capture-mode">
+          <span class="mode-ink" aria-hidden="true"></span>
+          <button data-mode="server" class="active"><svg class="ic"><use href="#i-video"/></svg>Ao vivo</button>
+          <button data-mode="browser"><svg class="ic"><use href="#i-camera"/></svg>Snapshot</button>
+        </div>
+
+        <span class="cbar-sep" aria-hidden="true"></span>
+
+        <div class="cbar-field">
+          <label for="camera-select">Câmera</label>
+          <div class="select-wrap"><select id="camera-select"><option>Detectando…</option></select></div>
+        </div>
+        <div class="cbar-field is-narrow">
+          <label for="camera-resolution">Resolução</label>
+          <div class="select-wrap"><select id="camera-resolution"></select></div>
+        </div>
+        <button class="icon-btn" id="camera-refresh" title="Procurar câmeras novamente" aria-label="Procurar câmeras">
+          <svg class="ic"><use href="#i-refresh"/></svg>
+        </button>
+
+        <span class="cbar-spacer"></span>
+
+        <div id="server-controls" style="display:flex">
+          <button class="btn btn-primary" id="cam-start"><svg class="ic"><use href="#i-play"/></svg>Iniciar</button>
+          <button class="btn" id="cam-stop" disabled><svg class="ic"><use href="#i-stop"/></svg>Parar</button>
+        </div>
+        <div id="browser-controls" style="display:none">
+          <button class="btn btn-primary" id="snap-enable"><svg class="ic"><use href="#i-play"/></svg>Ativar câmera</button>
+          <button class="btn" id="snap-capture" disabled><svg class="ic"><use href="#i-camera"/></svg>Capturar</button>
+        </div>
+      </div>
+      <p class="camera-note" id="camera-note"></p>
+
+      <div id="live-notice"></div>
+
+      <div class="stage">
+        <div class="video-shell" id="video-shell">
+          <span class="hud-corner tl"></span><span class="hud-corner tr"></span>
+          <span class="hud-corner bl"></span><span class="hud-corner br"></span>
+          <span class="scanline" aria-hidden="true"></span>
+
+          <div class="video-placeholder" id="video-placeholder">
+            <div class="icon"><svg viewBox="0 0 24 24"><use href="#i-video"/></svg><span class="radar"></span></div>
+            <h4>Nenhum feed ativo</h4>
+            <p>Selecione uma câmera e inicie o monitoramento. Sem câmera disponível,
+               use o modo <strong>Snapshot</strong> ou a seção <strong>Perícia</strong>.</p>
+          </div>
+          <img id="video-feed" style="display:none" alt="Feed anotado da webcam">
+          <video id="browser-video" autoplay playsinline muted style="display:none"></video>
+          <div class="video-badge" id="live-badge" style="display:none"><span class="dot"></span>AO VIVO</div>
+        </div>
+
+        <aside class="stage-side">
+          <div id="live-banner"></div>
+          <div class="kpi-grid" id="live-kpis"></div>
+          <div class="legend" id="legend-live"></div>
+        </aside>
+      </div>
+
+      <section class="block">
+        <header class="block-head">
+          <h2><svg class="ic"><use href="#i-clipboard"/></svg>Incidentes recentes</h2>
+          <p>Registro contínuo das detecções que cruzaram uma regra de alarme.</p>
+        </header>
+        <div class="table-wrap" id="live-incidents"></div>
+      </section>
+    </section>
+
+    <!-- ---------- Perícia ---------- -->
+    <section class="tab-panel" id="tab-forensic">
+
+      <div class="console-bar">
+        <button class="btn btn-primary" id="use-sample"><svg class="ic"><use href="#i-image"/></svg>Analisar imagem de exemplo</button>
+        <span class="cbar-sep" aria-hidden="true"></span>
+        <div class="cbar-field is-narrow">
+          <label for="frame-step">Amostragem de vídeo</label>
+          <div class="input-suffix">
+            <input type="number" id="frame-step" min="1" max="60" value="10"
+                   title="Em vídeos, analisa 1 quadro a cada N. Aumente para percorrer vídeos longos mais rápido.">
+            <span>1 : N</span>
+          </div>
+        </div>
+        <span class="cbar-spacer"></span>
+      </div>
+
+      <div class="dropzone" id="dropzone">
+        <div class="dz-icon"><svg viewBox="0 0 24 24"><use href="#i-upload"/></svg></div>
+        <p><strong>Clique para escolher</strong> ou arraste um arquivo</p>
+        <span class="dz-formats"><code>JPG</code><code>PNG</code><code>MP4</code></span>
+        <input type="file" id="file-input" accept=".jpg,.jpeg,.png,.mp4" style="display:none">
+      </div>
+
+      <div id="forensic-progress" style="display:none">
+        <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+        <p class="progress-text" id="progress-text"></p>
+      </div>
+
+      <div id="forensic-notice"></div>
+
+      <div id="forensic-result" style="display:none">
+        <div id="forensic-banner"></div>
+        <div class="kpi-grid is-wide" id="forensic-kpis"></div>
+
+        <div class="compare-panes">
+          <figure class="pane">
+            <figcaption>Mídia original</figcaption>
+            <div class="frame"><img id="img-original" alt="Mídia original"></div>
+          </figure>
+          <figure class="pane is-evidence">
+            <figcaption><span id="evidence-title">Mídia periciada por IA</span></figcaption>
+            <div class="frame"><img id="img-annotated" alt="Mídia periciada"></div>
+          </figure>
+        </div>
+
+        <div class="legend" id="legend-forensic"></div>
+
+        <div class="split-2">
+          <section class="block">
+            <header class="block-head">
+              <h2><svg class="ic"><use href="#i-chart"/></svg>Objetos encontrados</h2>
+            </header>
+            <div class="bar-chart" id="forensic-chart"></div>
+          </section>
+
+          <section class="block">
+            <header class="block-head">
+              <h2><svg class="ic"><use href="#i-clipboard"/></svg>Registro de incidentes</h2>
+            </header>
+            <div class="table-wrap" id="forensic-incidents"></div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- Comparativo ---------- -->
+    <section class="tab-panel" id="tab-lab">
+      <div class="prose">
+
+        <div class="versus">
+          <article class="vs-card">
+            <span class="vs-tag">Classificação</span>
+            <h2>Uma resposta por imagem</h2>
+            <p>O modelo olha a imagem inteira e devolve um rótulo com uma probabilidade.
+               Sim ou não.</p>
+            <div class="vs-io">
+              <code>foto</code><svg class="ic"><use href="#i-arrow-right"/></svg><code>"pessoa" · 94%</code>
+            </div>
+            <p class="vs-foot">É o que o Teachable Machine treina em 3 minutos, no navegador.</p>
+          </article>
+
+          <span class="vs-mid" aria-hidden="true">vs</span>
+
+          <article class="vs-card is-primary">
+            <span class="vs-tag">Detecção</span>
+            <h2>Uma resposta por objeto</h2>
+            <p>O modelo prevê caixas e classes de uma só vez e devolve coordenadas
+               para cada objeto encontrado.</p>
+            <div class="vs-io">
+              <code>foto</code><svg class="ic"><use href="#i-arrow-right"/></svg><code>4× person + 1× backpack + coords</code>
+            </div>
+            <p class="vs-foot">É o que permite contar, localizar e disparar alarme por regra.</p>
+          </article>
+        </div>
+
+        <section class="block">
+          <header class="block-head">
+            <h2><svg class="ic"><use href="#i-scale"/></svg>Quadro comparativo</h2>
+            <p>Oito critérios que separam as duas abordagens na prática.</p>
+          </header>
+          <div class="table-wrap is-static">
+            <table class="compare-table">
+              <thead>
+                <tr>
+                  <th>Critério</th>
+                  <th>Teachable Machine</th>
+                  <th class="is-primary">YOLOv8 · SentinelAI</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Pergunta que responde</td>
+                  <td>O que esta imagem inteira é? Um rótulo para a foto toda.</td>
+                  <td>Quais objetos existem, quantos são e onde estão? Coordenadas de cada um.</td>
+                </tr>
+                <tr>
+                  <td>Tarefa de IA</td>
+                  <td>Classificação de imagem</td>
+                  <td>Detecção e localização de objetos</td>
+                </tr>
+                <tr>
+                  <td>Saída do modelo</td>
+                  <td><code>Crachá 92% | Sem crachá 8%</code></td>
+                  <td><code>person 0.91 (x1,y1,x2,y2)</code>, uma por objeto</td>
+                </tr>
+                <tr>
+                  <td>Onde executa</td>
+                  <td>No navegador, via TensorFlow.js, sobre infraestrutura do Google</td>
+                  <td>Localmente, em CPU ou GPU, sem enviar imagem à internet</td>
+                </tr>
+                <tr>
+                  <td>Dados de treino</td>
+                  <td>Dezenas de fotos capturadas na hora (<em>transfer learning</em>)</td>
+                  <td>COCO: 330 mil imagens, 80 classes</td>
+                </tr>
+                <tr>
+                  <td>Tempo de preparo</td>
+                  <td>≈ 3 minutos, sem código</td>
+                  <td>Horas ou dias de treino; o modelo pronto responde em segundos</td>
+                </tr>
+                <tr>
+                  <td>Limitação principal</td>
+                  <td>Não sabe <em>onde</em> o objeto está, nem quantos existem</td>
+                  <td>Só as 80 classes do COCO sem <em>fine-tuning</em></td>
+                </tr>
+                <tr>
+                  <td>Uso no mundo real</td>
+                  <td>Protótipos, provas de conceito, ensino, triagem rápida</td>
+                  <td>CFTV inteligente, veículos autônomos, contagem de fluxo, inspeção industrial</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="block">
+          <header class="block-head">
+            <h2><svg class="ic"><use href="#i-clock"/></svg>Demonstração ao vivo</h2>
+            <p>Roteiro de 3 minutos com um voluntário da plateia.</p>
+          </header>
+
+          <p class="block-action">
+            <a class="btn btn-ghost" href="https://teachablemachine.withgoogle.com/" target="_blank" rel="noopener noreferrer">
+              <svg class="ic"><use href="#i-link"/></svg>Abrir o Teachable Machine
+            </a>
+          </p>
+
+          <ol class="agenda">
+            <li><span class="ag-time">0:00</span><div><b>Chamar um voluntário.</b> Criar um projeto <em>Image Project → Standard image model</em>.</div></li>
+            <li><span class="ag-time">0:30</span><div><b>Classe “Acesso autorizado”.</b> ~30 amostras pela webcam com o voluntário segurando um crachá.</div></li>
+            <li><span class="ag-time">1:15</span><div><b>Classe “Acesso negado”.</b> ~30 amostras sem o crachá. A IA aprende só com esses exemplos.</div></li>
+            <li><span class="ag-time">2:00</span><div><b>Treinar.</b> Explicar que a rede não parte do zero — reaproveita um modelo já treinado (<em>transfer learning</em>).</div></li>
+            <li><span class="ag-time">2:30</span><div><b>Testar ao vivo.</b> Provocar: ele acerta o rótulo, mas sabe <em>onde</em> está o crachá? Consegue contar duas pessoas?</div></li>
+            <li class="is-final"><span class="ag-time">3:00</span><div><b>Virar a chave.</b> Voltar ao Monitoramento e mostrar o YOLO desenhando caixas em cada pessoa da plateia.</div></li>
+          </ol>
+
+          <div class="notice notice-info">
+            <svg class="ic notice-ic"><use href="#i-info"/></svg>
+            <div><strong>Dica de palco</strong>
+              Deixe o Teachable Machine em uma janela e o SentinelAI em outra. O contraste entre
+              um rótulo único e várias caixas com coordenadas é o momento mais forte da apresentação.</div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <!-- ---------- Contexto ---------- -->
+    <section class="tab-panel" id="tab-history">
+      <div class="prose">
+
+        <section class="block">
+          <header class="block-head">
+            <h2><svg class="ic"><use href="#i-clock"/></svg>Oitenta anos da mesma ideia</h2>
+            <p>Usar máquinas para varrer, em segundos, um espaço de possibilidades grande
+               demais para o ser humano.</p>
+          </header>
+
+          <ol class="timeline">
+            <li class="tl-item">
+              <span class="tl-year">1936</span>
+              <div class="tl-body">
+                <h3>A máquina universal</h3>
+                <p>Turing descreve a <b>Máquina de Turing</b>: uma única máquina que, seguindo
+                   instruções em uma fita, calcula qualquer coisa computável.</p>
+              </div>
+            </li>
+            <li class="tl-item">
+              <span class="tl-year">1939–45</span>
+              <div class="tl-body">
+                <h3>Bletchley Park e a Bombe</h3>
+                <p>A <b>Bombe</b> testava milhares de configurações do <em>Enigma</em> por hora,
+                   eliminando combinações impossíveis por contradição lógica. Estima-se que
+                   antecipou o fim da guerra em cerca de dois anos.</p>
+                <p class="tl-note">É o mesmo padrão do SentinelAI: varrer um espaço enorme de
+                   possibilidades rápido demais para um humano. Antes eram códigos; hoje, pixels.</p>
+              </div>
+            </li>
+            <li class="tl-item">
+              <span class="tl-year">1950</span>
+              <div class="tl-body">
+                <h3>“Can machines think?”</h3>
+                <p>Turing troca a pergunta filosófica por uma prática: a máquina consegue se
+                   comportar de forma indistinguível de um humano? É a certidão de nascimento da IA.</p>
+              </div>
+            </li>
+            <li class="tl-item is-now">
+              <span class="tl-year">2012 →</span>
+              <div class="tl-body">
+                <h3>Da AlexNet ao YOLOv8</h3>
+                <p>Com a <b>AlexNet</b> as redes convolucionais dominam a visão computacional.
+                   Em 2015 o <b>YOLO</b> faz detecção em uma única passada pela rede — por isso
+                   roda em tempo real nesta sala.</p>
+              </div>
+            </li>
+          </ol>
+        </section>
+
+        <section class="block">
+          <header class="block-head">
+            <h2><svg class="ic"><use href="#i-warning"/></svg>Limites e riscos</h2>
+            <p>Três riscos que uma implantação real precisa endereçar antes de ir para produção.</p>
+          </header>
+
+          <div class="risk-grid">
+            <article class="risk">
+              <span class="risk-tag">Viés</span>
+              <h3><svg class="ic"><use href="#i-users"/></svg>Erro não é distribuído por igual</h3>
+              <p>Um modelo só é tão justo quanto os dados que viu. Sistemas de reconhecimento
+                 apresentaram taxas de erro muito maiores para mulheres e pessoas negras, e no
+                 Brasil há prisões equivocadas documentadas.</p>
+              <details>
+                <summary>O trade-off que não tem ajuste neutro</summary>
+                <ul>
+                  <li><b>Falso positivo:</b> acusar um inocente.</li>
+                  <li><b>Falso negativo:</b> deixar passar a ameaça real.</li>
+                  <li>Baixar o limiar de confiança aumenta um e reduz o outro. Não existe ajuste
+                      neutro — existe escolha sobre qual erro é aceitável.</li>
+                </ul>
+              </details>
+            </article>
+
+            <article class="risk">
+              <span class="risk-tag">Regulação</span>
+              <h3><svg class="ic"><use href="#i-lock"/></svg>Privacidade e LGPD</h3>
+              <p>Imagem de rosto é dado pessoal; usada para identificar alguém, torna-se dado
+                 biométrico sensível (LGPD, art. 5º, II).</p>
+              <details>
+                <summary>Exigências e mitigações práticas</summary>
+                <ul>
+                  <li>Base legal, finalidade específica e aviso claro de monitoramento.</li>
+                  <li>O <em>AI Act</em> europeu classifica vigilância biométrica em tempo real
+                      como risco alto ou inaceitável, conforme o uso.</li>
+                  <li>Mitigar: processar localmente, detectar <em>pessoas</em> em vez de
+                      <em>identidades</em>, borrar rostos, definir prazo de descarte.</li>
+                </ul>
+              </details>
+            </article>
+
+            <article class="risk">
+              <span class="risk-tag">Ataque</span>
+              <h3><svg class="ic"><use href="#i-eye"/></svg>Ataques adversariais</h3>
+              <p>A rede não “vê” a cena: calcula correlações entre pixels. Padrões que o olho
+                 humano ignora conseguem enganá-la.</p>
+              <details>
+                <summary>Quatro vetores conhecidos</summary>
+                <ul>
+                  <li><b>Adversarial patch:</b> um cartaz no peito faz a pessoa sumir do detector.</li>
+                  <li><b>Camuflagem vestível:</b> estampas que quebram a detecção de pedestres.</li>
+                  <li><b>Perturbação imperceptível:</b> ruído invisível muda a classe predita.</li>
+                  <li><b>Placas adulteradas:</b> adesivos fazem um “PARE” virar limite de velocidade.</li>
+                </ul>
+              </details>
+            </article>
+          </div>
+
+          <div class="notice notice-info">
+            <svg class="ic notice-ic"><use href="#i-target"/></svg>
+            <div><strong>A conclusão operacional</strong>
+              A IA é um sensor a mais, não um juiz. Ela reduz o esforço humano de vigilância —
+              não substitui a decisão humana.</div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <span><b>SentinelAI</b> v1.0.0</span>
+      <span>Inferência local</span>
+      <span>YOLOv8 · OpenCV · FastAPI</span>
+      <span>Tópicos Especiais em Inteligência Artificial</span>
+    </footer>
+  </main>
+
+  <!-- ==================== Painel de configurações ==================== -->
+  <aside class="settings" id="settings" aria-label="Configurações">
+    <div class="settings-inner">
+      <header class="settings-head">
+        <h2><svg class="ic"><use href="#i-sliders"/></svg>Configurações</h2>
+        <button class="icon-btn" id="settings-close" aria-label="Fechar configurações">
+          <svg class="ic"><use href="#i-close"/></svg>
+        </button>
+      </header>
+
+      <div class="settings-body">
+
+        <section class="set-group">
+          <h3><svg class="ic"><use href="#i-cpu"/></svg>Motor de inferência</h3>
+
+          <div class="field">
+            <label for="model-select">Rede neural</label>
+            <div class="select-wrap"><select id="model-select"></select></div>
+            <span class="hint" id="model-hint"></span>
+          </div>
+
+          <div class="field">
+            <label for="confidence">Confiança mínima<span class="field-value" id="confidence-value">25%</span></label>
+            <input type="range" id="confidence" min="10" max="95" step="5" value="25">
+            <details class="hint-more">
+              <summary>Por que 25%?</summary>
+              Abaixo deste nível a detecção é descartada. Subir para 40% fazia o sistema perder
+              cerca de 1 objeto em cada 8, sem ganhar precisão em troca.
+            </details>
+          </div>
+
+          <div class="field">
+            <label for="imgsz">Resolução de inferência</label>
+            <div class="select-wrap">
+              <select id="imgsz">
+                <option value="320" selected>320 px — tempo real</option>
+                <option value="416">416 px — equilibrado</option>
+                <option value="512">512 px</option>
+                <option value="640">640 px — máxima precisão</option>
+              </select>
+            </div>
+            <details class="hint-more">
+              <summary>Impacto no desempenho</summary>
+              É o parâmetro que mais afeta o FPS: a inferência consome ~85% do tempo de cada quadro.
+              Use 320 px ao vivo e 640 px na perícia, onde a latência não importa.
+            </details>
+          </div>
+        </section>
+
+        <section class="set-group">
+          <h3><svg class="ic"><use href="#i-layers"/></svg>Classes monitoradas
+            <span class="set-actions">
+              <button class="link-btn" id="classes-all">Todas</button>
+              <button class="link-btn" id="classes-none">Nenhuma</button>
+            </span>
+          </h3>
+          <div class="class-list-wrap"><div class="class-list" id="class-list"></div></div>
+        </section>
+
+        <section class="set-group">
+          <h3><svg class="ic"><use href="#i-bell"/></svg>Regras de alarme</h3>
+
+          <div class="field">
+            <label for="max-people">Limite de pessoas no perímetro</label>
+            <input type="number" id="max-people" min="0" max="50" value="3">
+            <span class="hint">Acima deste número dispara alarme de aglomeração.</span>
+          </div>
+
+          <label class="toggle-row">
+            <input type="checkbox" class="toggle" id="alert-dangerous" checked>
+            <span>Objetos cortantes<em>faca, tesoura</em></span>
+          </label>
+          <label class="toggle-row">
+            <input type="checkbox" class="toggle" id="alert-devices">
+            <span>Dispositivos em área restrita<em>celular, notebook</em></span>
+          </label>
+          <label class="toggle-row">
+            <input type="checkbox" class="toggle" id="alert-baggage">
+            <span>Bagagem suspeita<em>mochila, bolsa, mala</em></span>
+          </label>
+        </section>
+
+        <section class="set-group">
+          <h3><svg class="ic"><use href="#i-file"/></svg>Sessão</h3>
+          <button class="btn btn-block" id="download-report">
+            <svg class="ic"><use href="#i-download"/></svg>Baixar relatório (CSV)
+          </button>
+          <button class="btn btn-block btn-danger" id="clear-incidents">
+            <svg class="ic"><use href="#i-trash"/></svg>Limpar incidentes
+          </button>
+        </section>
+      </div>
+    </div>
+  </aside>
+  <div class="settings-scrim" id="settings-scrim"></div>
+</div>
+
+<div class="toast-host" id="toast-host"></div>
+<canvas id="snap-canvas" style="display:none"></canvas>
+
+<script src="/static/js/app.js?v=4"></script>
+<script src="/static/js/ui.js?v=4"></script>
+</body>
+</html>

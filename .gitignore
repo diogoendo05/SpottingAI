@@ -1,0 +1,26 @@
+# Ambiente virtual
+venv/
+.venv/
+
+# Pesos YOLO baixados em tempo de execucao (nao versionar: ~6 MB a ~22 MB)
+*.pt
+
+# Relatorios forenses gerados pela aplicacao
+sentinelai_report_*.csv
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Cache do Python de arquivos estaticos servidos
+static/**/*.map
+
+# Sistema operacional / editores
+Thumbs.db
+desktop.ini
+.DS_Store
+.vscode/
+.idea/
+.claude/
+*.errors.txt

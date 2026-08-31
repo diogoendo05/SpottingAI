@@ -1,0 +1,11 @@
+fastapi>=0.110.0
+uvicorn>=0.27.0
+python-multipart>=0.0.9
+# Nomes reais dos dispositivos de video ("Camo", "720p HD Camera") no seletor de
+# camera. Opcional: sem ela o painel exibe "Camera 0", "Camera 1"...
+pygrabber>=0.2; sys_platform == "win32"
+ultralytics>=8.1.0
+opencv-python>=4.8.0
+pillow>=10.0.0
+pandas>=2.0.0
+numpy>=1.24.0

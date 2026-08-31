@@ -1,0 +1,21 @@
+# Tema nativo do SentinelAI (Dark Security Mode).
+#
+# O CSS injetado em src/ui_components.py estiliza os componentes proprios da
+# aplicacao, mas nao alcanca o interior dos widgets do Streamlit (botoes,
+# sliders, toggles, chips do multiselect). Sem este bloco, o Streamlit usa a
+# cor primaria padrao (#FF4B4B, vermelho) em todos os controles - o que colide
+# com a semantica do app, onde vermelho significa ALARME.
+
+[theme]
+base = "dark"
+primaryColor = "#00E5FF"           # ciano: acao/foco (nunca alarme)
+backgroundColor = "#0B0F14"
+secondaryBackgroundColor = "#111820"
+textColor = "#E6EDF3"              # alto contraste para projecao em telao
+font = "sans serif"
+
+[server]
+headless = true                    # nao pergunta e-mail nem abre o navegador sozinho
+
+[browser]
+gatherUsageStats = false
