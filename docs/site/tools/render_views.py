@@ -30,6 +30,12 @@ bpy.ops.import_scene.gltf(filepath=src)
 scene = bpy.context.scene
 
 if fold > 0:
+    bpy.context.view_layer.update()
+    for obj in bpy.data.objects:
+        if obj.name.startswith("prop_") and "fold_spin" in obj:
+            # spin_axis local = +Y glTF = +Z Blender
+            obj.matrix_basis = obj.matrix_basis @ Matrix.Rotation(float(obj["fold_spin"]) * fold, 4, "Z")
+    bpy.context.view_layer.update()
     for obj in bpy.data.objects:
         if obj.name.startswith("arm_") and "fold_axis" in obj:
             axis = Vector(obj["fold_axis"]).normalized()

@@ -22,6 +22,10 @@ drone-app/
 tools/
 tests/
 
+# Site de apresentacao: e publicado num projeto Vercel separado (raiz em site/).
+site/
+docs/
+
 # Documentacao e material de trabalho.
 *.md
 sample_media/*.mp4

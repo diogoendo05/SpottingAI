@@ -1,0 +1,8 @@
+node_modules/
+dist/
+
+# Modelo 3D: versionamos só o original do autor (dji-air-2s.zip) e o arquivo
+# servido (drone.glb). O resto é regenerado por docs/site/tools/build_model.ps1.
+assets/models/source/
+assets/models/drone-rigged.glb
+assets/models/textures/
