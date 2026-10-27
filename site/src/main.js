@@ -13,6 +13,7 @@ import { startFull } from "./modes/full.js";
 import { startSimple } from "./modes/simple.js";
 import { debugState, state } from "./timeline/state.js";
 import { initDebug } from "./ui/debug.js";
+import { initMotionToggle } from "./ui/motionToggle.js";
 import { initNav } from "./ui/nav.js";
 import { initReveal } from "./ui/reveal.js";
 import { initTabs } from "./ui/tabs.js";
@@ -22,6 +23,7 @@ watchMode();
 const lenis = initScroll(mode === "full");
 startTicker(lenis);
 initNav();
+initMotionToggle();
 initTabs(document.querySelector("#aplicacoes .tabs"));
 
 const debug = initDebug();

@@ -172,6 +172,39 @@
   letter-spacing: -0.01em;
 }
 
+.hero__aside {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--s-4);
+}
+
+.motion-toggle {
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: var(--fs-small);
+  letter-spacing: 0.01em;
+  background: rgb(238 241 244 / 0.6);
+}
+
+.motion-toggle[hidden] {
+  display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .motion-toggle {
+    transition:
+      background-color var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out);
+  }
+  .motion-toggle:hover {
+    background-color: var(--ink);
+    color: var(--bg);
+  }
+}
+
 .hero__hint {
   flex: none;
   font-size: var(--fs-hint);
@@ -423,6 +456,83 @@
   width: 100%;
   height: auto;
   background: var(--panel);
+}
+
+.app-media__item {
+  position: relative;
+}
+
+/* Etiqueta e cartão sobre as imagens de Aplicações, na linguagem do site (cantos retos, --bg). */
+.media-chip {
+  position: absolute;
+  left: var(--s-4);
+  top: var(--s-4);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  margin: 0;
+  padding: 6px 12px;
+  background: rgb(238 241 244 / 0.92);
+  color: var(--ink);
+  font-size: var(--fs-small);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.media-chip__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--alert);
+}
+
+.media-card {
+  position: absolute;
+  right: var(--s-4);
+  bottom: var(--s-4);
+  width: min(280px, 62%);
+  padding: var(--s-4) var(--s-5);
+  background: rgb(238 241 244 / 0.95);
+  box-shadow: 0 24px 48px -24px rgb(17 19 22 / 0.5);
+  font-size: var(--fs-small);
+  line-height: 1.45;
+}
+
+.media-card__title {
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.media-card dl {
+  display: grid;
+  gap: var(--s-2);
+  margin-top: var(--s-3);
+}
+
+.media-card dl > div {
+  display: grid;
+  grid-template-columns: 7ch 1fr;
+  gap: var(--s-3);
+}
+
+.media-card dt {
+  color: var(--muted);
+}
+
+.media-card dd {
+  color: var(--ink);
+}
+
+.media-card .is-alert {
+  color: var(--alert);
+  font-weight: 500;
+}
+
+.media-card__foot {
+  margin-top: var(--s-3);
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--line);
+  color: var(--muted);
 }
 
 /* Placeholder para uma imagem que ainda não existe (§8). */
@@ -690,31 +800,72 @@
   }
 }
 
-/* Painel */
+/* Painel: telas do app em molduras sobre o fundo --panel (nada de print cru sangrando na página). */
 .painel__grid {
-  container-type: inline-size;
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   column-gap: var(--col-gap);
   row-gap: var(--s-6);
+  align-items: end;
   margin-top: var(--s-7);
 }
 
 .shot--main {
-  grid-column: 1 / 9;
+  grid-column: 1 / 10;
 }
 
-.painel__side {
-  grid-column: 9 / 13;
-  display: grid;
-  gap: var(--s-6);
-  align-content: start;
+.shot--small {
+  grid-column: 10 / 13;
 }
 
-/* Celular com a mesma altura da captura grande (16:10 sobre 8 de 12 colunas). */
-.shot--phone .media-img {
-  height: calc(((100cqw + var(--col-gap)) * 8 / 12 - var(--col-gap)) * 10 / 16);
-  width: auto;
+.shot__stage {
+  position: relative;
+  aspect-ratio: 16 / 11;
+  background: var(--panel);
+  overflow: hidden;
+}
+
+.shot__stage--single {
+  aspect-ratio: auto;
+  padding: 10% 9%;
+}
+
+.shot__window {
+  position: absolute;
+  left: 6%;
+  top: 8%;
+  width: 76%;
+  height: auto;
+  box-shadow:
+    0 0 0 1px rgb(17 19 22 / 0.08),
+    0 32px 64px -32px rgb(17 19 22 / 0.5);
+}
+
+.shot__stage--single .shot__window {
+  position: static;
+  display: block;
+  width: 100%;
+}
+
+/* Celular sobreposto ao canto da janela, com moldura de aparelho. */
+.shot__phone {
+  position: absolute;
+  right: 6%;
+  bottom: 7%;
+  width: 19%;
+  aspect-ratio: 800 / 1734;
+  padding: clamp(3px, 0.45vw, 7px);
+  background: #0b0c0e;
+  border-radius: clamp(12px, 1.9vw, 30px);
+  box-shadow: 0 32px 64px -24px rgb(17 19 22 / 0.55);
+}
+
+.shot__phone img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: clamp(9px, 1.5vw, 24px);
 }
 
 .shot figcaption {
@@ -806,14 +957,10 @@
   .aplicacoes__text,
   .aplicacoes__media,
   .shot--main,
-  .painel__side,
+  .shot--small,
   .footer__brand,
   .footer__credits {
     grid-column: 1 / -1;
-  }
-  .shot--phone .media-img {
-    height: auto;
-    width: 60%;
   }
   .tech {
     grid-template-columns: minmax(0, 1fr);

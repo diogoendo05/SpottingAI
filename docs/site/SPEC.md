@@ -1132,6 +1132,17 @@ Capturas: com `npm run dev`, abra `?capture=hero|og|cap1|cap2|cap3` (só em dese
 - **Aba “Vista aérea”:** sem gravação aérea disponível, ela usa por enquanto a ilustração `cap-detectar.webp` (o drone com o cone). Troque por `apps-aerea.webp` quando houver um quadro dos voos reais.
 - **Autoria (§5.7.4), decidida pelo autor:** só o link do repositório público, `github.com/diogoendo05/SpottingAI`, sem nomes.
 
+### 12.2 Ajustes depois da revisão do autor (27/10/2026)
+
+- **“As animações sumiram”:** o notebook do autor está com as animações do Windows desligadas, e o Chrome repassa isso como `prefers-reduced-motion: reduce`. Pela §7.4, o site ia para o modo simples. Agora, quando o reduced-motion é o único motivo (tela ≥ 768 × 600, sem “Ver sem 3D”), o hero mostra **“Ver versão animada”**:
+  - a escolha fica no `localStorage` (`spottingai:motion`) e o script inline a respeita antes do primeiro paint;
+  - na versão animada, o mesmo botão vira “Reduzir movimento”;
+  - quem não pede continua com a versão estática.
+- **“Prints cruas”:** as telas do painel deixaram de ser coladas na página de ponta a ponta.
+  - Aplicações usa os quadros anotados pela própria IA (`/video/stream` e `/api/analyze/image`), sem a interface em volta, com uma etiqueta “Ao vivo” e, na Perícia, um cartão de relatório no estilo do site.
+  - “O painel” mostra a janela do app e o celular (em moldura de aparelho) numa composição sobre `--panel`, e a perícia numa moldura menor.
+- Token novo `--alert: #B42318` (6,4 : 1 sobre `--bg`), só para alarmes nessas imagens.
+
 Ainda com o autor:
 - o quadro aéreo dos voos reais;
 - o deploy no projeto Vercel (o autor publica; `site/vercel.json` já existe);

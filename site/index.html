@@ -24,15 +24,19 @@
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <script>
-      // Escolhe o layout antes do primeiro paint. Mesma regra de src/core/mode.js
-      // (consulta de mídia + "Ver sem 3D" guardado na sessão).
+      // Escolhe o layout antes do primeiro paint. Mesma regra de src/core/mode.js: tela pequena,
+      // "Ver sem 3D" (sessão) ou reduced-motion sem a escolha "Ver versão animada" (localStorage).
       (function () {
         var forced = false;
+        var motionOn = false;
         try {
           forced = sessionStorage.getItem("spottingai:sem3d") === "1";
+          motionOn = localStorage.getItem("spottingai:motion") === "on";
         } catch (e) {}
         var simple =
-          forced || matchMedia("(max-width: 767px), (max-height: 599px), (prefers-reduced-motion: reduce)").matches;
+          forced ||
+          matchMedia("(max-width: 767px), (max-height: 599px)").matches ||
+          (matchMedia("(prefers-reduced-motion: reduce)").matches && !motionOn);
         document.documentElement.classList.add("js", simple ? "mode-simple" : "mode-full");
         if (simple) return;
         document.documentElement.classList.add("is-loading");
@@ -128,7 +132,11 @@
               Visão computacional para segurança perimetral.<br />
               Em tempo real, 100% local.
             </h1>
-            <p class="hero__hint" aria-hidden="true">Role para explorar</p>
+            <div class="hero__aside">
+              <!-- Só aparece com prefers-reduced-motion numa tela grande (core/motion.js). -->
+              <button class="motion-toggle" type="button" hidden></button>
+              <p class="hero__hint" aria-hidden="true">Role para explorar</p>
+            </div>
           </div>
         </section>
 
@@ -236,18 +244,29 @@
               </div>
             </div>
             <div class="aplicacoes__media">
-              <!-- Capturas do próprio painel (docs/site/tools/captures.py), rostos desfocados. A aba "Vista aérea" usa a
-                   ilustração do drone até haver um quadro dos voos reais (apps-aerea.webp, §8 e §11). -->
+              <!-- Quadros anotados pelo próprio SpottingAI (/video/stream e /api/analyze/image), rostos desfocados.
+                   A aba "Vista aérea" usa a ilustração do drone até haver um quadro dos voos reais (apps-aerea.webp, §11). -->
               <div class="media-reveal">
                 <div class="app-media">
                   <div class="app-media__item is-active" data-tab="tab-perimetro">
-                    <img class="media-img" src="/assets/images/apps-perimetro.webp" alt="Painel do SpottingAI ao vivo: quatro pessoas numa calçada marcadas com caixas e IDs, com alarme de lotação. Rostos desfocados." width="1600" height="1200" loading="lazy" decoding="async" />
+                    <img class="media-img" src="/assets/images/apps-perimetro.webp" alt="Quadro ao vivo analisado pelo SpottingAI: quatro pessoas numa calçada, cada uma com caixa e ID. Rostos desfocados." width="1024" height="768" loading="lazy" decoding="async" />
+                    <p class="media-chip" aria-hidden="true"><span class="media-chip__dot"></span>Ao vivo · 15 FPS · 4 pessoas</p>
                   </div>
                   <div class="app-media__item" data-tab="tab-aerea">
                     <img class="media-img" src="/assets/images/cap-detectar.webp" alt="Ilustração: o DJI Air 2S com o cone de varredura saindo da câmera." width="1600" height="1200" loading="lazy" decoding="async" />
+                    <p class="media-chip" aria-hidden="true">Ilustração</p>
                   </div>
                   <div class="app-media__item" data-tab="tab-pericia">
-                    <img class="media-img" src="/assets/images/apps-pericia.webp" alt="Aba de perícia: a foto original e a analisada lado a lado, com as pessoas marcadas e o alarme de lotação. Rostos desfocados." width="1600" height="1200" loading="lazy" decoding="async" />
+                    <img class="media-img" src="/assets/images/apps-pericia.webp" alt="Foto periciada pelo SpottingAI: quatro pessoas marcadas, com alarme de lotação excedida. Rostos desfocados." width="1024" height="768" loading="lazy" decoding="async" />
+                    <div class="media-card" aria-hidden="true">
+                      <p class="media-card__title">Relatório da perícia</p>
+                      <dl>
+                        <div><dt>Objetos</dt><dd>4 pessoas</dd></div>
+                        <div><dt>Regra</dt><dd>Lotação excedida (limite 2)</dd></div>
+                        <div><dt>Status</dt><dd class="is-alert">Alerta</dd></div>
+                      </dl>
+                      <p class="media-card__foot">Exportável em CSV</p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -431,19 +450,24 @@
         <!-- Capturas do próprio painel em localhost (docs/site/tools/captures.py), rostos desfocados. -->
         <div class="painel__grid">
           <figure class="shot shot--main">
-            <div class="media-reveal"><img class="media-img" src="/assets/images/painel-ao-vivo.webp" alt="Painel de monitoramento com o vídeo ao vivo, caixas com IDs, alarme disparado, indicadores e a lista de incidentes." width="1600" height="1000" loading="lazy" decoding="async" /></div>
-            <figcaption>Monitoramento ao vivo, com caixas, IDs e alertas.</figcaption>
+            <div class="media-reveal">
+              <div class="shot__stage">
+                <img class="shot__window" src="/assets/images/painel-ao-vivo.webp" alt="Painel de monitoramento com o vídeo ao vivo, caixas com IDs, alarme disparado, indicadores e a lista de incidentes." width="1600" height="1000" loading="lazy" decoding="async" />
+                <div class="shot__phone">
+                  <img src="/assets/images/painel-celular.webp" alt="O mesmo painel aberto no celular, com o vídeo ao vivo, o alarme e os indicadores." width="800" height="1734" loading="lazy" decoding="async" />
+                </div>
+              </div>
+            </div>
+            <figcaption>Monitoramento ao vivo, com caixas, IDs e alertas. No celular, o mesmo painel pela rede local.</figcaption>
           </figure>
-          <div class="painel__side">
-            <figure class="shot shot--phone">
-              <div class="media-reveal"><img class="media-img" src="/assets/images/painel-celular.webp" alt="O painel aberto no celular, com o vídeo ao vivo, o alarme e os indicadores." width="800" height="1734" loading="lazy" decoding="async" /></div>
-              <figcaption>O mesmo painel no celular, pela rede local.</figcaption>
-            </figure>
-            <figure class="shot shot--small">
-              <div class="media-reveal"><img class="media-img" src="/assets/images/painel-pericia.webp" alt="Aba de perícia com a foto original e a analisada lado a lado." width="1600" height="1000" loading="lazy" decoding="async" /></div>
-              <figcaption>Perícia de fotos e vídeos gravados.</figcaption>
-            </figure>
-          </div>
+          <figure class="shot shot--small">
+            <div class="media-reveal">
+              <div class="shot__stage shot__stage--single">
+                <img class="shot__window" src="/assets/images/painel-pericia.webp" alt="Aba de perícia com a foto original e a analisada lado a lado." width="1600" height="1000" loading="lazy" decoding="async" />
+              </div>
+            </div>
+            <figcaption>Perícia de fotos e vídeos gravados.</figcaption>
+          </figure>
         </div>
       </section>
 
