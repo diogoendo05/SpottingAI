@@ -1,5 +1,6 @@
 // ?debug: mostra t (em vh), a seção da história em que t está e, a partir da etapa 2, o DroneState.
 import { currentT } from "../core/scroll.js";
+import { DEFAULT_STATE } from "../timeline/state.js";
 
 export function initDebug() {
   if (!new URLSearchParams(location.search).has("debug")) return null;
@@ -35,7 +36,11 @@ export function initDebug() {
         tops.map((s) => `${s.id} ${s.t.toFixed(0)}`).join(" · "),
       ];
       if (state) {
-        for (const [k, v] of Object.entries(state)) lines.push(`${k} ${typeof v === "number" ? v.toFixed(3) : v}`);
+        // Só os campos do DroneState (o GSAP acrescenta _gsap ao objeto animado).
+        for (const k of Object.keys(DEFAULT_STATE)) {
+          const v = state[k];
+          lines.push(`${k} ${typeof v === "number" ? v.toFixed(3) : v}`);
+        }
       }
       const text = lines.join("\n");
       if (text !== last) el.textContent = last = text;

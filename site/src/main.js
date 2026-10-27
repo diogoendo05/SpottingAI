@@ -6,11 +6,13 @@ import "./styles/layers.css";
 import "./styles/sections.css";
 
 import droneUrl from "../assets/models/drone.glb?url";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { mode, watchMode } from "./core/mode.js";
 import { initScroll } from "./core/scroll.js";
 import { onFrame, startTicker } from "./core/ticker.js";
 import { createStage } from "./three/stage.js";
 import { loadDrone } from "./three/drone.js";
+import { createMaster } from "./timeline/master.js";
 import { consumeDirty, debugState, markDirty, state } from "./timeline/state.js";
 import { createLoader } from "./ui/loader.js";
 import { initNav } from "./ui/nav.js";
@@ -34,6 +36,7 @@ if (mode === "full") startFull();
 
 async function startFull() {
   lenis.stop();
+  createMaster();
   const loader = createLoader();
 
   try {
@@ -66,6 +69,7 @@ async function startFull() {
 
     await loader.hide();
     lenis.start();
+    ScrollTrigger.refresh();
   } catch (error) {
     console.error("[SpottingAI] o drone 3D não carregou:", error);
     loader.showFallback();

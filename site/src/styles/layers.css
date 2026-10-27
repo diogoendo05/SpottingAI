@@ -33,11 +33,14 @@ main,
 }
 
 /* Elementos do backdrop. A timeline (etapa 3+) dirige transform/opacity; aqui ficam no estado de t = 0. */
+/* Centrada sem `translate`: o GSAP anima o transform deste elemento e converteria o -50% em px fixos. */
 .watermark {
   position: absolute;
-  left: 50%;
+  left: 0;
+  right: 0;
   top: 46%;
-  translate: -50% -50%;
+  margin-top: -0.4em; /* metade da altura de linha (0,8) */
+  text-align: center;
   font-size: var(--fs-watermark);
   font-weight: 600;
   line-height: 0.8;
