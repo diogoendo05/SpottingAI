@@ -152,17 +152,17 @@
             <dl class="stats">
               <div class="stat stat--1">
                 <dt class="stat__caption">ao vivo no drone, em Full HD, com a rede INT8 na GPU Intel Iris Xe</dt>
-                <dd class="stat__value">16 FPS</dd>
+                <dd class="stat__value"><span class="sr-only">16 FPS</span><span class="stat__num" aria-hidden="true"><span class="stat__layer stat__layer--muted"><span class="v">16</span> FPS</span><span class="stat__layer stat__layer--ink"><span class="v">16</span> FPS</span></span></dd>
               </div>
               <div class="stat stat--2">
                 <dt class="stat__caption">
                   das pessoas encontradas em imagens aéreas do VisDrone. O modelo anterior achava 21%.
                 </dt>
-                <dd class="stat__value">66,8%*</dd>
+                <dd class="stat__value"><span class="sr-only">66,8%*</span><span class="stat__num" aria-hidden="true"><span class="stat__layer stat__layer--muted"><span class="v">66,8</span>%*</span><span class="stat__layer stat__layer--ink"><span class="v">66,8</span>%*</span></span></dd>
               </div>
               <div class="stat stat--3">
                 <dt class="stat__caption">para abrir o modelo com o cache do OpenVINO. Sem o cache, ~20 s.</dt>
-                <dd class="stat__value">&lt;1 s</dd>
+                <dd class="stat__value"><span class="sr-only">menos de 1 s</span><span class="stat__num" aria-hidden="true"><span class="stat__layer stat__layer--muted"><span class="lt">&lt;</span><span class="v">1</span> s</span><span class="stat__layer stat__layer--ink"><span class="lt">&lt;</span><span class="v">1</span> s</span></span></dd>
               </div>
             </dl>
             <p class="numeros__note">
@@ -220,7 +220,17 @@
             <div class="aplicacoes__media">
               <!-- apps-perimetro.webp, apps-aerea.webp, apps-pericia.webp: pendentes (§8). -->
               <div class="media-reveal">
-                <div class="placeholder placeholder--4x3"><span>Imagem pendente</span></div>
+                <div class="app-media">
+                  <div class="app-media__item is-active" data-tab="tab-perimetro">
+                    <div class="placeholder placeholder--4x3"><span>Imagem pendente</span></div>
+                  </div>
+                  <div class="app-media__item" data-tab="tab-aerea">
+                    <div class="placeholder placeholder--4x3"><span>Imagem pendente</span></div>
+                  </div>
+                  <div class="app-media__item" data-tab="tab-pericia">
+                    <div class="placeholder placeholder--4x3"><span>Imagem pendente</span></div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

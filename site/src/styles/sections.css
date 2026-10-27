@@ -221,6 +221,37 @@
   white-space: nowrap;
 }
 
+/* Duas camadas sobrepostas: esmaecer = a de cima (--ink) some e revela --muted-large (§5.4). */
+.stat__num {
+  display: grid;
+}
+
+.stat__layer {
+  grid-area: 1 / 1;
+}
+
+.stat__layer--muted {
+  color: var(--muted-large);
+}
+
+/* Largura do valor final, para a contagem não empurrar nada. */
+.stat .v {
+  display: inline-block;
+  text-align: right;
+}
+
+.stat--1 .v {
+  min-width: 2ch;
+}
+
+.stat--2 .v {
+  min-width: 3.4ch;
+}
+
+.stat--3 .v {
+  min-width: 1ch;
+}
+
 .stat__caption {
   max-width: 28ch;
   margin-top: var(--s-3);
@@ -301,9 +332,45 @@
   max-width: 34ch;
 }
 
-/* Sem JS os três painéis ficam visíveis; com JS só o primeiro até ui/tabs.js (etapa 4) assumir. */
-.js .tabpanel + .tabpanel {
+/* Sem JS os três painéis ficam visíveis; ui/tabs.js esconde os inativos com [hidden]. */
+.tabpanel[hidden] {
   display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .tab {
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+  .tab:hover {
+    color: var(--ink);
+  }
+}
+
+/* Uma imagem por aba, sobrepostas; a troca é um crossfade. */
+.app-media {
+  display: grid;
+}
+
+.app-media__item {
+  grid-area: 1 / 1;
+}
+
+.js .app-media__item {
+  opacity: 0;
+  transition: opacity var(--dur-ui) var(--ease-out);
+}
+
+.js .app-media__item.is-active {
+  opacity: 1;
+}
+
+/* Sem JS só a primeira imagem aparece (as outras ficam por baixo). */
+.app-media__item + .app-media__item {
+  visibility: hidden;
+}
+
+.js .app-media__item + .app-media__item {
+  visibility: visible;
 }
 
 /* ---------- Placeholders de imagem (§8: imagens pendentes) ---------- */
@@ -653,10 +720,13 @@
   bottom: 14vh;
 }
 
+/* Centrado sem `translate`: o GSAP anima o transform (ver .watermark). */
 .mode-full .stat--2 {
-  left: 50%;
+  left: 0;
+  right: 0;
+  width: max-content;
+  margin-inline: auto;
   bottom: 7vh;
-  translate: -50% 0;
   align-items: center;
   text-align: center;
 }
@@ -670,9 +740,10 @@
 
 .mode-full .reticle {
   position: absolute;
-  left: 50%;
-  top: calc(50% + 17vh);
-  translate: -50% -50%;
+  left: 0;
+  right: 0;
+  margin-inline: auto;
+  top: calc(50% + 17vh - 16px);
 }
 
 .mode-full .reticle__state--box {

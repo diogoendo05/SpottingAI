@@ -1,18 +1,18 @@
 // Timeline mestre (SPEC §4.1): uma unidade = 1 vh de rolagem, de t 0 a 1160.
 // Anima o DroneState e o HTML da história; o render lê o estado a cada quadro.
 import gsap from "gsap";
-import { CustomEase } from "gsap/CustomEase";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
+import "../core/eases.js";
 import { KEYFRAMES } from "./keyframes.js";
 import { DEFAULT_STATE, markDirty, state } from "./state.js";
 import { initHero } from "../sections/hero.js";
 import { initManifesto } from "../sections/manifesto.js";
 import { initPerimetro } from "../sections/perimetro.js";
+import { initNumeros } from "../sections/numeros.js";
+import { initAplicacoes } from "../sections/aplicacoes.js";
 
-gsap.registerPlugin(ScrollTrigger, CustomEase, SplitText);
-CustomEase.create("outStrong", "M0,0 C0.23,1 0.32,1 1,1");
-CustomEase.create("inOutStrong", "M0,0 C0.77,0 0.175,1 1,1");
+gsap.registerPlugin(ScrollTrigger, SplitText);
 
 export const STORY_LENGTH = 1160;
 
@@ -36,7 +36,7 @@ export function createMaster() {
   });
 
   addDroneKeyframes(tl);
-  sections.push(initHero(tl), initManifesto(tl), initPerimetro(tl));
+  sections.push(initHero(tl), initManifesto(tl), initPerimetro(tl), initNumeros(tl), initAplicacoes(tl));
   tl.set({}, {}, STORY_LENGTH); // fixa a duração
 
   return tl;

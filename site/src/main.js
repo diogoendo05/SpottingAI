@@ -10,12 +10,11 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { mode, watchMode } from "./core/mode.js";
 import { initScroll } from "./core/scroll.js";
 import { onFrame, startTicker } from "./core/ticker.js";
-import { createStage } from "./three/stage.js";
-import { loadDrone } from "./three/drone.js";
 import { createMaster } from "./timeline/master.js";
 import { consumeDirty, debugState, markDirty, state } from "./timeline/state.js";
 import { createLoader } from "./ui/loader.js";
 import { initNav } from "./ui/nav.js";
+import { initTabs } from "./ui/tabs.js";
 import { initDebug } from "./ui/debug.js";
 
 watchMode();
@@ -23,6 +22,7 @@ watchMode();
 const lenis = initScroll(mode === "full");
 startTicker(lenis);
 initNav();
+initTabs(document.querySelector("#aplicacoes .tabs"));
 
 const debug = initDebug();
 if (debug) {
@@ -40,6 +40,8 @@ async function startFull() {
   const loader = createLoader();
 
   try {
+    // O three.js vem num chunk separado, baixado em paralelo com o GLB (orçamento de JS inicial, §7.1).
+    const [{ createStage }, { loadDrone }] = await Promise.all([import("./three/stage.js"), import("./three/drone.js")]);
     const stage = createStage(document.getElementById("gl"));
     const drone = await loadDrone(droneUrl, {
       onProgress: loader.progress,
