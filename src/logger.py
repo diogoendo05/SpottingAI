@@ -1,4 +1,4 @@
-"""Gerenciador de logs de incidentes do SentinelAI.
+"""Gerenciador de logs de incidentes do SpottingAI.
 
 Registra os eventos criticos da sessao (timestamp, classe, confianca, status e
 regra violada) e exporta o historico como relatorio forense em CSV.
@@ -10,11 +10,14 @@ derrubaria o FPS.
 
 from __future__ import annotations
 
+import csv
+import io
 import time
 from datetime import datetime
-from typing import Any, Sequence
+from typing import TYPE_CHECKING, Any, Sequence
 
-import pandas as pd
+if TYPE_CHECKING:  # pragma: no cover - apenas para checagem de tipos
+    import pandas as pd
 
 #: Ordem das colunas do relatorio forense.
 COLUMNS: tuple[str, ...] = (
@@ -183,8 +186,14 @@ class IncidentLogger:
         """``True`` quando nenhum evento foi registrado."""
         return not self._events
 
-    def get_dataframe(self) -> pd.DataFrame:
-        """Historico completo como ``DataFrame`` (sempre com as colunas padrao)."""
+    def get_dataframe(self) -> "pd.DataFrame":
+        """Historico completo como ``DataFrame`` (sempre com as colunas padrao).
+
+        O pandas e importado sob demanda: o build serverless (ver ``api/index.py``)
+        nao o instala, e nada no caminho da API depende deste metodo.
+        """
+        import pandas as pd
+
         if not self._events:
             return pd.DataFrame(columns=list(COLUMNS))
         return pd.DataFrame(self._events, columns=list(COLUMNS))
@@ -201,8 +210,10 @@ class IncidentLogger:
             return []
         return list(reversed(self._events[-n:]))
 
-    def get_recent(self, n: int = 10) -> pd.DataFrame:
+    def get_recent(self, n: int = 10) -> "pd.DataFrame":
         """Ultimos ``n`` eventos como ``DataFrame``, do mais recente ao mais antigo."""
+        import pandas as pd
+
         recent = self.get_recent_records(n)
         if not recent:
             return pd.DataFrame(columns=list(COLUMNS))
@@ -220,10 +231,18 @@ class IncidentLogger:
 
         Usa ``utf-8-sig`` para que os acentos apareçam corretamente ao abrir o
         arquivo no Microsoft Excel.
+
+        Escrito com o ``csv`` da biblioteca padrao em vez de pandas: o relatorio
+        e uma tabela plana de seis colunas, e assim a rota funciona igual no
+        servidor local e no build serverless, que nao instala pandas.
         """
-        return self.get_dataframe().to_csv(index=False).encode("utf-8-sig")
+        buffer = io.StringIO(newline="")
+        writer = csv.DictWriter(buffer, fieldnames=list(COLUMNS), lineterminator="\r\n")
+        writer.writeheader()
+        writer.writerows(self._events)
+        return buffer.getvalue().encode("utf-8-sig")
 
     @staticmethod
-    def suggested_filename(prefix: str = "sentinelai_report") -> str:
-        """Nome de arquivo com timestamp, ex.: ``sentinelai_report_20260817_143012.csv``."""
+    def suggested_filename(prefix: str = "spottingai_report") -> str:
+        """Nome de arquivo com timestamp, ex.: ``spottingai_report_20260817_143012.csv``."""
         return f"{prefix}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"

@@ -1,0 +1,1008 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    HUD de voo no estilo do DJI Fly, em paisagem sobre o video do drone:
+    barra superior de status, botoes de voo a esquerda, camera e gimbal a
+    direita, radar e valores de voo embaixo a esquerda, painel de exposicao
+    e painel de configuracoes (⚙) com abas Seguranca / Camera / Transmissao / PC.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000">
+
+    <!-- Preview do video do drone (decodificado pelo DJICodecManager); tamanho 16:9 ajustado no codigo -->
+    <TextureView
+        android:id="@+id/video_preview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center" />
+
+    <TextView
+        android:id="@+id/preview_hint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/preview_waiting"
+        android:textColor="#8B949E" />
+
+    <!-- Resolucao/FPS de gravacao (canto superior direito, abaixo da barra) -->
+    <TextView
+        android:id="@+id/hud_resolution"
+        style="@style/HudBarText"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="52dp"
+        android:layout_marginEnd="12dp" />
+
+    <!-- Botoes de voo (esquerda) -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|center_vertical"
+        android:layout_marginStart="12dp"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btn_takeoff_land"
+            style="@style/HudButton"
+            android:layout_width="120dp"
+            android:layout_height="48dp"
+            android:text="⤒ Decolar" />
+
+        <Button
+            android:id="@+id/btn_rth"
+            style="@style/HudButton"
+            android:layout_width="120dp"
+            android:layout_height="48dp"
+            android:text="⌂ RTH" />
+
+        <Button
+            android:id="@+id/btn_confirm_landing"
+            style="@style/HudButton"
+            android:layout_width="120dp"
+            android:layout_height="48dp"
+            android:text="✓ Confirmar pouso"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <!-- Gimbal + camera (direita) -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|center_vertical"
+        android:layout_marginEnd="12dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <br.edu.spottingai.drone.GimbalSlider
+                android:id="@+id/gimbal_slider"
+                android:layout_width="44dp"
+                android:layout_height="170dp" />
+
+            <Button
+                android:id="@+id/btn_gimbal_center"
+                style="@style/HudButton"
+                android:layout_width="56dp"
+                android:minWidth="56dp"
+                android:text="0°" />
+
+            <Button
+                android:id="@+id/btn_gimbal_down"
+                style="@style/HudButton"
+                android:layout_width="56dp"
+                android:minWidth="56dp"
+                android:text="↓90°" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/btn_photo_video"
+                style="@style/HudButton"
+                android:text="📷 Foto" />
+
+            <Button
+                android:id="@+id/btn_capture_mode"
+                style="@style/HudButton"
+                android:text="Simples" />
+
+            <Button
+                android:id="@+id/btn_shutter"
+                android:layout_width="68dp"
+                android:layout_height="68dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/shutter_photo"
+                android:contentDescription="Obturador" />
+
+            <TextView
+                android:id="@+id/hud_rec_time"
+                style="@style/HudBarText"
+                android:layout_marginEnd="0dp"
+                android:textColor="#FF6B6B"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/btn_exposure"
+                style="@style/HudButton"
+                android:text="AUTO" />
+
+            <Button
+                android:id="@+id/btn_zoom"
+                style="@style/HudButton"
+                android:text="1x" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Radar + valores de voo (embaixo, a esquerda) -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|start"
+        android:layout_margin="10dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <br.edu.spottingai.drone.RadarView
+            android:id="@+id/hud_radar"
+            android:layout_width="100dp"
+            android:layout_height="100dp" />
+
+        <TextView
+            android:id="@+id/hud_values"
+            style="@style/HudBarText"
+            android:layout_marginStart="10dp"
+            android:background="#66000000"
+            android:padding="6dp"
+            android:text="H  --   D  --" />
+    </LinearLayout>
+
+    <!-- Alertas de seguranca -->
+    <TextView
+        android:id="@+id/telemetry_warnings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="12dp"
+        android:background="#CCB00020"
+        android:gravity="center"
+        android:padding="8dp"
+        android:textColor="#FFFFFF"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
+    <!-- Painel de exposicao (abre no botao AUTO/PRO) -->
+    <LinearLayout
+        android:id="@+id/exposure_panel"
+        android:layout_width="260dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|center_vertical"
+        android:layout_marginEnd="190dp"
+        android:background="#E60D1117"
+        android:orientation="vertical"
+        android:padding="12dp"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Exposição"
+                android:textColor="#00F0FF"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btn_exp_close"
+                style="@style/StepButton"
+                android:text="✕"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_exp_mode"
+            style="@style/ValueButton"
+            android:text="Automático" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_iso_minus"
+                    style="@style/StepButton"
+                    android:text="−" />
+
+                <TextView
+                    android:id="@+id/iso_value"
+                    style="@style/StepValue"
+                    android:text="ISO --" />
+
+                <Button
+                    android:id="@+id/btn_iso_plus"
+                    style="@style/StepButton"
+                    android:text="+" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_shutter_minus"
+                    style="@style/StepButton"
+                    android:text="−" />
+
+                <TextView
+                    android:id="@+id/shutter_value"
+                    style="@style/StepValue"
+                    android:text="--" />
+
+                <Button
+                    android:id="@+id/btn_shutter_plus"
+                    style="@style/StepButton"
+                    android:text="+" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_ev_minus"
+                    style="@style/StepButton"
+                    android:text="−" />
+
+                <TextView
+                    android:id="@+id/ev_value"
+                    style="@style/StepValue"
+                    android:text="EV --" />
+
+                <Button
+                    android:id="@+id/btn_ev_plus"
+                    style="@style/StepButton"
+                    android:text="+" />
+            </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_wb"
+            style="@style/ValueButton"
+            android:text="--" />
+
+        <Button
+            android:id="@+id/btn_ae_lock"
+            style="@style/ValueButton"
+            android:text="AE" />
+    </LinearLayout>
+
+    <!-- Painel de configuracoes (⚙) com abas -->
+    <ScrollView
+        android:id="@+id/settings_panel"
+        android:layout_width="400dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:background="#FF0D1117"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="64dp"
+            android:paddingBottom="16dp">
+
+            <Button
+                android:id="@+id/btn_close_settings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:text="@string/btn_close" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/tab_safety"
+                    style="@style/Tab"
+                    android:text="Segurança" />
+
+                <Button
+                    android:id="@+id/tab_camera"
+                    style="@style/Tab"
+                    android:text="Câmera" />
+
+                <Button
+                    android:id="@+id/tab_transmission"
+                    style="@style/Tab"
+                    android:text="Transmissão" />
+
+                <Button
+                    android:id="@+id/tab_pc"
+                    style="@style/Tab"
+                    android:layout_marginEnd="0dp"
+                    android:text="PC" />
+            </LinearLayout>
+
+            <!-- Aba Seguranca -->
+            <LinearLayout
+                android:id="@+id/section_safety"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/Label"
+                    android:text="Altitude de retorno (RTH)" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btn_rth_minus"
+                        style="@style/StepButton"
+                        android:text="−" />
+
+                    <TextView
+                        android:id="@+id/rth_height_value"
+                        style="@style/StepValue"
+                        android:text="--" />
+
+                    <Button
+                        android:id="@+id/btn_rth_plus"
+                        style="@style/StepButton"
+                        android:text="+" />
+                </LinearLayout>
+
+                <TextView
+                    style="@style/Label"
+                    android:text="Altitude máxima" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btn_max_height_minus"
+                        style="@style/StepButton"
+                        android:text="−" />
+
+                    <TextView
+                        android:id="@+id/max_height_value"
+                        style="@style/StepValue"
+                        android:text="--" />
+
+                    <Button
+                        android:id="@+id/btn_max_height_plus"
+                        style="@style/StepButton"
+                        android:text="+" />
+                </LinearLayout>
+
+                <TextView
+                    style="@style/StatusText"
+                    android:text="No Brasil o limite sem autorização é 120 m acima do solo."
+                    android:textColor="#8B949E"
+                    android:textSize="12sp" />
+
+                <TextView
+                    style="@style/Label"
+                    android:text="Distância máxima" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btn_max_distance_minus"
+                        style="@style/StepButton"
+                        android:text="−" />
+
+                    <TextView
+                        android:id="@+id/max_distance_value"
+                        style="@style/StepValue"
+                        android:text="--" />
+
+                    <Button
+                        android:id="@+id/btn_max_distance_plus"
+                        style="@style/StepButton"
+                        android:text="+" />
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/btn_distance_limit"
+                    style="@style/ValueButton"
+                    android:text="--" />
+
+                <TextView
+                    style="@style/Label"
+                    android:text="Ao detectar obstáculo" />
+
+                <Button
+                    android:id="@+id/btn_obstacle_mode"
+                    style="@style/ValueButton"
+                    android:text="--" />
+
+                <TextView
+                    style="@style/Label"
+                    android:text="Desviar de obstáculos durante o RTH" />
+
+                <Button
+                    android:id="@+id/btn_rth_obstacle"
+                    style="@style/ValueButton"
+                    android:text="--" />
+
+                <TextView
+                    style="@style/Label"
+                    android:text="Ao perder o sinal do controle" />
+
+                <Button
+                    android:id="@+id/btn_signal_loss"
+                    style="@style/ValueButton"
+                    android:text="--" />
+
+                <Button
+                    android:id="@+id/btn_update_home"
+                    style="@style/ValueButton"
+                    android:layout_marginTop="16dp"
+                    android:text="⌂ Atualizar ponto de casa para a posição atual" />
+            </LinearLayout>
+
+            <!-- Aba Camera -->
+            <LinearLayout
+                android:id="@+id/section_camera"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    style="@style/Label"
+                    android:text="Resolução e FPS do vídeo" />
+
+                <Button
+                    android:id="@+id/btn_video_resolution"
+                    style="@style/ValueButton"
+                    android:text="--" />
+
+                <TextView
+                    style="@style/StatusText"
+                    android:text="Para vídeo ao vivo em 1080p (HD) grave em 1080p ou 2.7K; em 4K o vídeo ao vivo cai para 720p."
+                    android:textColor="#8B949E"
+                    android:textSize="12sp" />
+
+                <TextView
+                    style="@style/Label"
+                    android:text="Proporção da foto" />
+
+                <Button
+                    android:id="@+id/btn_photo_ratio"
+                    style="@style/ValueButton"
+                    android:text="--" />
+
+                <TextView
+                    style="@style/Label"
+                    android:text="Formato do vídeo" />
+
+                <Button
+                    android:id="@+id/btn_video_format"
+                    style="@style/ValueButton"
+                    android:text="--" />
+
+                <Button
+                    android:id="@+id/btn_format_sd"
+                    style="@style/ValueButton"
+                    android:layout_marginTop="16dp"
+                    android:text="Formatar cartão SD do drone"
+                    android:textColor="#FF6B6B" />
+            </LinearLayout>
+
+            <!-- Aba Transmissao -->
+            <LinearLayout
+                android:id="@+id/section_transmission"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <!-- Transmissao do drone (equivalente a aba Transmissao do DJI Fly) -->
+                <TextView
+                    style="@style/Label"
+                    android:layout_marginTop="24dp"
+                    android:text="@string/label_transmission"
+                    android:textSize="15sp" />
+
+                <!-- Configuracao fixa do usuario, aplicada com um toque (e ao conectar, se marcado) -->
+                <Button
+                    android:id="@+id/btn_fixed_preset"
+                    style="@style/ValueButton"
+                    android:layout_height="52dp"
+                    android:layout_marginTop="8dp"
+                    android:text="★ Aplicar: Manual · 1080p · 2,4 GHz · 20 MHz"
+                    android:textColor="#00F0FF" />
+
+                <CheckBox
+                    android:id="@+id/chk_fixed_preset_auto"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Aplicar automaticamente ao conectar (drone no chão)"
+                    android:textColor="#E6EDF3" />
+
+                <TextView
+                    android:id="@+id/fixed_preset_status"
+                    style="@style/StatusText"
+                    android:textColor="#8B949E"
+                    android:textSize="12sp"
+                    android:visibility="gone" />
+
+                <TextView
+                    style="@style/Label"
+                    android:text="@string/label_definition" />
+
+                <RadioGroup
+                    android:id="@+id/definition_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/def_sd"
+                        style="@style/Option"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:checked="true"
+                        android:text="@string/def_sd" />
+
+                    <RadioButton
+                        android:id="@+id/def_hd"
+                        style="@style/Option"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:text="@string/def_hd" />
+                </RadioGroup>
+
+                <TextView
+                    style="@style/StatusText"
+                    android:text="@string/hd_live_view_note"
+                    android:textColor="#8B949E"
+                    android:textSize="12sp" />
+
+                <TextView
+                    style="@style/Label"
+                    android:text="@string/label_frequency" />
+
+                <RadioGroup
+                    android:id="@+id/band_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/band_24"
+                        style="@style/Option"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:enabled="false"
+                        android:text="@string/band_24" />
+
+                    <RadioButton
+                        android:id="@+id/band_58"
+                        style="@style/Option"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:enabled="false"
+                        android:text="@string/band_58" />
+
+                    <RadioButton
+                        android:id="@+id/band_dual"
+                        style="@style/Option"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:enabled="false"
+                        android:text="@string/band_dual" />
+                </RadioGroup>
+
+                <TextView
+                    android:id="@+id/band_note"
+                    style="@style/StatusText"
+                    android:text="@string/band_waiting"
+                    android:textColor="#8B949E"
+                    android:textSize="12sp" />
+
+                <TextView
+                    style="@style/Label"
+                    android:text="@string/label_channel_mode" />
+
+                <RadioGroup
+                    android:id="@+id/mode_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/mode_auto"
+                        style="@style/Option"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:enabled="false"
+                        android:text="@string/mode_auto" />
+
+                    <RadioButton
+                        android:id="@+id/mode_manual"
+                        style="@style/Option"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:enabled="false"
+                        android:text="@string/mode_manual" />
+                </RadioGroup>
+
+                <TextView
+                    android:id="@+id/mode_note"
+                    style="@style/StatusText"
+                    android:textColor="#8B949E"
+                    android:textSize="12sp"
+                    android:visibility="gone" />
+
+                <!-- Predefinicoes de canal manual (envio sem confirmacao; usado quando o drone nao responde as leituras) -->
+                <LinearLayout
+                    android:id="@+id/preset_box"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <TextView
+                        style="@style/Label"
+                        android:text="Predefinições de canal manual (experimental)" />
+
+                    <Button
+                        android:id="@+id/btn_preset_range"
+                        style="@style/ValueButton"
+                        android:text="Alcance máximo · 10 MHz" />
+
+                    <Button
+                        android:id="@+id/btn_preset_balanced"
+                        style="@style/ValueButton"
+                        android:text="Equilibrado · 20 MHz" />
+
+                    <Button
+                        android:id="@+id/btn_preset_quality"
+                        style="@style/ValueButton"
+                        android:text="Qualidade máxima · 40 MHz" />
+
+                    <Button
+                        android:id="@+id/btn_preset_auto"
+                        style="@style/ValueButton"
+                        android:text="Voltar ao canal automático" />
+
+                    <TextView
+                        android:id="@+id/preset_note"
+                        style="@style/StatusText"
+                        android:layout_marginTop="4dp"
+                        android:text="Cada predefinição liga o modo manual, define a largura de banda e escolhe o canal mais limpo do gráfico de interferência. O drone executa, mas não confirma: observe o vídeo e o sinal por ~15 s. Só com o drone no chão."
+                        android:textColor="#8B949E"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <!-- So no modo manual: canal e largura de banda -->
+                <LinearLayout
+                    android:id="@+id/manual_box"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <Button
+                            android:id="@+id/btn_channel_minus"
+                            android:layout_width="56dp"
+                            android:layout_height="wrap_content"
+                            android:text="−" />
+
+                        <TextView
+                            android:id="@+id/channel_value"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="Canal ?"
+                            android:textColor="#E6EDF3"
+                            android:textSize="16sp" />
+
+                        <Button
+                            android:id="@+id/btn_channel_plus"
+                            android:layout_width="56dp"
+                            android:layout_height="wrap_content"
+                            android:text="+" />
+                    </LinearLayout>
+
+                    <TextView
+                        style="@style/Label"
+                        android:text="@string/label_bandwidth" />
+
+                    <RadioGroup
+                        android:id="@+id/bw_group"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <RadioButton
+                            android:id="@+id/bw_10"
+                            style="@style/Option"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:text="@string/bw_10" />
+
+                        <RadioButton
+                            android:id="@+id/bw_20"
+                            style="@style/Option"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:text="@string/bw_20" />
+
+                        <RadioButton
+                            android:id="@+id/bw_40"
+                            style="@style/Option"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:text="@string/bw_40" />
+                    </RadioGroup>
+
+                    <TextView
+                        style="@style/StatusText"
+                        android:text="@string/manual_note"
+                        android:textColor="#8B949E"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <TextView
+                    style="@style/Label"
+                    android:text="@string/label_interference" />
+
+                <br.edu.spottingai.drone.InterferenceView
+                    android:id="@+id/interference_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp"
+                    android:layout_marginTop="6dp" />
+
+                <TextView
+                    android:id="@+id/link_status"
+                    style="@style/StatusText"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="monospace"
+                    android:textSize="12sp" />
+
+                <Button
+                    android:id="@+id/btn_link_reset"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:text="@string/btn_link_reset" />
+
+            </LinearLayout>
+
+            <!-- Aba PC (envio do video ao SpottingAI) -->
+            <LinearLayout
+                android:id="@+id/section_pc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/status_sdk"
+                    style="@style/StatusText"
+                    android:text="@string/status_sdk_initial" />
+
+                <TextView
+                    android:id="@+id/status_product"
+                    style="@style/StatusText"
+                    android:text="@string/status_product_none" />
+
+                <TextView
+                    android:id="@+id/status_socket"
+                    style="@style/StatusText"
+                    android:text="@string/status_socket_stopped" />
+
+                <TextView
+                    android:id="@+id/status_stats"
+                    style="@style/StatusText"
+                    android:textColor="#8B949E" />
+
+                <TextView
+                    style="@style/Label"
+                    android:text="@string/label_pc" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/input_ip"
+                        style="@style/Input"
+                        android:layout_width="0dp"
+                        android:layout_weight="3"
+                        android:hint="@string/hint_ip"
+                        android:imeOptions="flagNoExtractUi"
+                        android:inputType="text|textNoSuggestions" />
+
+                    <EditText
+                        android:id="@+id/input_port"
+                        style="@style/Input"
+                        android:layout_width="0dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:hint="@string/hint_port"
+                        android:imeOptions="flagNoExtractUi"
+                        android:inputType="number" />
+                </LinearLayout>
+
+                <TextView
+                    style="@style/Label"
+                    android:text="@string/label_feed" />
+
+                <RadioGroup
+                    android:id="@+id/feed_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <RadioButton
+                        android:id="@+id/feed_transcoded"
+                        style="@style/Option"
+                        android:checked="true"
+                        android:text="@string/feed_transcoded" />
+
+                    <RadioButton
+                        android:id="@+id/feed_primary"
+                        style="@style/Option"
+                        android:text="@string/feed_primary" />
+                </RadioGroup>
+
+                <TextView
+                    style="@style/Label"
+                    android:text="@string/label_bitrate" />
+
+                <EditText
+                    android:id="@+id/input_bitrate"
+                    style="@style/Input"
+                    android:layout_width="match_parent"
+                    android:hint="@string/hint_bitrate"
+                    android:imeOptions="flagNoExtractUi"
+                    android:inputType="numberDecimal" />
+
+                <Button
+                    android:id="@+id/btn_toggle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/btn_start" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Barra superior de status (por ultimo: fica por cima do painel) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:layout_gravity="top"
+        android:background="#88000000"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="10dp"
+        android:paddingEnd="6dp">
+
+        <TextView
+            android:id="@+id/hud_status"
+            style="@style/HudBarText"
+            android:background="#CCB00020"
+            android:fontFamily="sans-serif-medium"
+            android:paddingStart="8dp"
+            android:paddingTop="3dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="3dp"
+            android:text="SEM DRONE" />
+
+        <TextView
+            android:id="@+id/hud_mode"
+            style="@style/HudBarText"
+            android:text="--" />
+
+        <TextView
+            android:id="@+id/hud_gps"
+            style="@style/HudBarText"
+            android:text="GPS --" />
+
+        <TextView
+            android:id="@+id/hud_video"
+            style="@style/HudBarText"
+            android:text="VÍDEO --" />
+
+        <TextView
+            android:id="@+id/hud_rc"
+            style="@style/HudBarText"
+            android:text="RC --" />
+
+        <TextView
+            android:id="@+id/hud_battery"
+            style="@style/HudBarText"
+            android:text="BAT --" />
+
+        <TextView
+            android:id="@+id/hud_sd"
+            style="@style/HudBarText"
+            android:text="SD --" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/status_chip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#99000000"
+            android:padding="6dp"
+            android:text="@string/chip_stopped"
+            android:textColor="#FFFFFF"
+            android:textSize="13sp" />
+
+        <Button
+            android:id="@+id/btn_settings"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="8dp"
+            android:background="#00000000"
+            android:text="⚙"
+            android:textColor="#FFFFFF"
+            android:textSize="22sp" />
+    </LinearLayout>
+
+</FrameLayout>

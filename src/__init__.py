@@ -1,4 +1,4 @@
-"""SentinelAI - Modulos core do sistema de visao computacional para seguranca.
+"""SpottingAI - Modulos core do sistema de visao computacional para seguranca.
 
 Nenhum modulo deste pacote conhece a camada de apresentacao: todos podem ser
 usados e testados fora do servidor web (scripts, notebooks, testes).

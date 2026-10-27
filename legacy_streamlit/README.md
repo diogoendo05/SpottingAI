@@ -1,6 +1,6 @@
 # Arquivo morto — versão Streamlit
 
-Esta pasta guarda o que sobrou da **primeira implementação do SentinelAI**, feita em
+Esta pasta guarda o que sobrou da **primeira implementação do SpottingAI**, feita em
 Streamlit e substituída pela interface HTML servida por FastAPI.
 
 ## Por que a troca

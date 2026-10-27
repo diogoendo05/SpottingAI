@@ -1,40 +1,39 @@
 @echo off
-TITLE SentinelAI - Sistema de Visao Computacional para Seguranca
+TITLE SpottingAI - Sistema de Monitoramento Continuo
+cd /d "%~dp0"
+
 echo =======================================================================
-echo               SentinelAI - Inicializador Automatico
+echo         SpottingAI - Sistema de Monitoramento Continuo
 echo =======================================================================
 echo.
 
-if not exist venv (
-    echo [1/3] Criando ambiente virtual Python (venv)...
+if not exist "venv\Scripts\python.exe" (
+    echo [1/2] Criando ambiente virtual Python...
     python -m venv venv
     if errorlevel 1 (
-        echo [ERRO] Falha ao criar o ambiente virtual. Verifique se o Python esta instalado e no PATH.
+        echo [ERRO] Falha ao criar o ambiente virtual. Verifique se o Python esta instalado.
         pause
         exit /b 1
     )
-) else (
-    echo [1/3] Ambiente virtual 'venv' ja existe.
+    echo Instalando dependencias iniciais...
+    .\venv\Scripts\pip.exe install -r requirements.txt
 )
 
-echo [2/3] Ativando ambiente virtual e verificando dependencias...
-call .\venv\Scripts\activate.bat
-
-echo Instalando/Atualizando dependencias do requirements.txt...
-pip install -r requirements.txt
+rem Ambientes criados antes do suporte ao drone nao tem o PyAV (decodificador H.264).
+.\venv\Scripts\python.exe -c "import av" 2>nul
 if errorlevel 1 (
-    echo [AVISO] Houve um problema na instalacao de dependencias. Tentando iniciar assim mesmo...
+    echo Instalando PyAV para receber o video do drone...
+    .\venv\Scripts\pip.exe install "av>=14.0.0"
 )
 
-echo.
-echo [3/3] Iniciando o servidor SentinelAI...
-echo O painel abrira automaticamente em http://localhost:8000
-echo Pressione Ctrl+C nesta janela para encerrar o sistema.
+echo [2/2] Iniciando SpottingAI - Acelerado GPU Intel Iris Xe...
+echo Feche a janela do aplicativo para encerrar.
 echo.
 
-rem Abre o navegador assim que o servidor terminar de subir.
-start "" cmd /c "timeout /t 5 /nobreak >nul & start http://localhost:8000"
+.\venv\Scripts\python.exe desktop.py
 
-python app.py
-
-pause
+if errorlevel 1 (
+    echo.
+    echo [ERRO] Ocorreu uma falha na execucao do SpottingAI.
+    pause
+)

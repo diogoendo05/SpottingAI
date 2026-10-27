@@ -1,0 +1,63 @@
+# Fonte de video do SpottingAI
+#
+# Este arquivo e lido ao iniciar o programa (reinicie apos editar).
+# Se ele nao existir, o SpottingAI usa a webcam de indice 0 (comportamento antigo).
+#
+# Na versao empacotada (.exe), coloque-o em: <pasta do SpottingAI.exe>\config\video_source.toml
+
+[source]
+# Fonte usada por padrao (pre-selecionada no painel e no botao Iniciar):
+#   "webcam"   -> camera local pelo indice abaixo
+#   "url"      -> stream de rede (RTSP / RTMP / HTTP) definido em `url`  (fallback)
+#   "tcp_h264" -> video original do drone DJI enviado pelo app drone-app/
+#   "rtmp_dji" -> live RTMP do proprio DJI Fly, recebida pelo MediaMTX local
+#                 (tools/mediamtx, configurado em config/mediamtx.yml). No DJI Fly:
+#                 rtmp://<IP do PC>:1935/live/drone
+type = "tcp_h264"
+
+# Abre a fonte acima assim que o SpottingAI inicia, sem clicar em "Iniciar" no
+# painel. Com o drone: o PC ja fica esperando o celular na porta TCP.
+autostart = true
+
+# Indice da webcam local (0 = primeira camera).
+webcam_index = 0
+
+# Stream de rede para type = "url". Exemplos:
+#   rtsp://192.168.0.10:8554/live
+#   rtmp://127.0.0.1/live/drone      (requer um servidor RTMP no PC, ex.: MediaMTX)
+#   http://192.168.0.20:8080/video
+url = ""
+
+[tcp_h264]
+# Interface de escuta: "0.0.0.0" aceita o celular pela rede local.
+host = "0.0.0.0"
+# Porta TCP que o app Android usa (libere no Firewall do Windows).
+port = 9000
+# Espera maxima (s) por um quadro novo antes de exibir a tela "aguardando".
+read_timeout_s = 1.0
+# Segundos sem receber bytes ate considerar a conexao do celular perdida.
+idle_timeout_s = 5.0
+# Grava o video recebido do drone (H.264 original, sem perda) para reanalisar depois:
+# um arquivo por conexao em <pasta>/drone_<data>_<hora>.h264 (~1 GB a cada 17 min a 8 Mbps).
+# Converta para MP4 com: venv\Scripts\python.exe tools\h264_to_mp4.py <arquivo>
+# "" = nao grava.
+record_dir = "recordings"
+
+[detector]
+# Rede das cameras de chao (webcam, IP...), trocavel no painel em "Rede neural".
+# Medido no COCO val2017 (5000 fotos; tools/eval_drone.py --dataset coco):
+#   "yolo26s_openvino" -> a mais precisa: pessoas AP50 0,81, objetos 0,48, ~37 FPS (padrao)
+#   "yolo11s_openvino" -> quase igual (0,80 / 0,45) e mais rapida, ~52 FPS
+#   "yolov8n_openvino" -> a mais leve, mas erra bem mais objetos (0,74 / 0,31), ~90 FPS
+model = "yolo26s_openvino"
+
+# Rede neural usada automaticamente quando a fonte e o drone ("drone" ou "drone_rtmp").
+# Os modelos "visdrone_*" foram treinados com imagens aereas: no VisDrone val acham
+# ~2,5x mais pessoas que os modelos comuns (veja tools/eval_drone.py), mas so
+# conhecem pessoas e veiculos. "" = usar a mesma rede de "model".
+# Padrao: 1920x1088 (resolucao nativa do drone) em INT8 - a mais precisa e ~16 FPS.
+# Mais fluido (~22 FPS), um pouco menos preciso: "visdrone_yolo26s_hd_openvino".
+drone_model = "visdrone_yolo26s_fhd_int8_openvino"
+
+# Fatiamento para objetos muito pequenos: "off", "2x2" ou "3x2" (5 a 7x mais lento).
+tiling = "off"

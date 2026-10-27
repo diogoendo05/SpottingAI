@@ -1,5 +1,5 @@
 /* ==========================================================================
-   SentinelAI — camada de interface
+   SpottingAI — camada de interface
    Navegacao, painel de configuracoes, movimento e estados visuais.
    Nao conhece a API: le o DOM que o app.js produz e reage a ele.
    ========================================================================== */
@@ -33,8 +33,12 @@
   const ink = $("tab-ink");
   const pageId = document.querySelector(".page-id");
 
-  function syncNav() {
-    const active = document.querySelector(".tab.active");
+  // O listener daqui e registrado antes do bindTabs() do app.js, que roda dentro
+  // de um init() assincrono. No clique este handler dispara primeiro, quando a
+  // classe .active ainda esta na aba anterior — por isso a aba alvo pode ser
+  // passada explicitamente, em vez de lida do DOM.
+  function syncNav(target) {
+    const active = target || document.querySelector(".tab.active");
     if (!active) return;
 
     if (ink) {
@@ -57,7 +61,7 @@
 
   tabs.forEach((tab) => tab.addEventListener("click", () => {
     history.replaceState(null, "", "#" + tab.dataset.tab);
-    syncNav();
+    syncNav(tab);
     $("main").scrollTo({ top: 0, behavior: REDUCED ? "auto" : "smooth" });
     if (isCompact()) setRail(false);
   }));
@@ -70,8 +74,9 @@
     else syncNav();
   });
 
-  addEventListener("resize", syncNav);
-  requestAnimationFrame(syncNav);
+  // Sem argumento: estes callbacks recebem Event/timestamp, que nao sao abas.
+  addEventListener("resize", () => syncNav());
+  requestAnimationFrame(() => syncNav());
 
   /* ------------------------------------------- painel de configuracoes */
 
@@ -103,21 +108,127 @@
     if (el) el.addEventListener("click", () => setRail(false));
   });
 
+  /* -------------------------------------------------------- tela cheia da câmera */
+
+  function isFullscreen() {
+    return Boolean(
+      document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      document.mozFullScreenElement ||
+      document.msFullscreenElement ||
+      body.classList.contains("is-camera-fullscreen")
+    );
+  }
+
+  function toggleFullscreen() {
+    const target = $("video-shell");
+    if (!target) return;
+
+    if (!isFullscreen()) {
+      if (target.requestFullscreen) {
+        target.requestFullscreen().catch(() => {
+          body.classList.add("is-camera-fullscreen");
+          updateFullscreenUI();
+        });
+      } else if (target.webkitRequestFullscreen) {
+        target.webkitRequestFullscreen();
+      } else if (target.mozRequestFullScreen) {
+        target.mozRequestFullScreen();
+      } else if (target.msRequestFullscreen) {
+        target.msRequestFullscreen();
+      } else {
+        body.classList.add("is-camera-fullscreen");
+        updateFullscreenUI();
+      }
+    } else {
+      if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement) {
+        if (document.exitFullscreen) {
+          document.exitFullscreen().catch(() => {});
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+          document.mozCancelFullScreen();
+        } else if (document.msExitFullscreen) {
+          document.msExitFullscreen();
+        }
+      }
+      body.classList.remove("is-camera-fullscreen");
+      updateFullscreenUI();
+    }
+  }
+
+  function updateFullscreenUI() {
+    const active = isFullscreen();
+    body.classList.toggle("is-camera-fullscreen", active);
+
+    const updateBtn = (btn) => {
+      if (!btn) return;
+      btn.setAttribute("title", active ? "Sair da Tela Cheia (F / Esc)" : "Tela Cheia da Câmera (F)");
+      btn.setAttribute("aria-label", active ? "Sair da Tela Cheia" : "Tela Cheia da Câmera");
+      const use = btn.querySelector("use");
+      if (use) {
+        use.setAttribute("href", active ? "#i-minimize" : "#i-maximize");
+      }
+    };
+
+    updateBtn($("fullscreen-toggle"));
+    updateBtn($("video-fs-btn"));
+  }
+
+  const fsBtn = $("fullscreen-toggle");
+  if (fsBtn) {
+    fsBtn.addEventListener("click", toggleFullscreen);
+  }
+
+  const videoFsBtn = $("video-fs-btn");
+  if (videoFsBtn) {
+    videoFsBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleFullscreen();
+    });
+  }
+
+  const videoShell = $("video-shell");
+  if (videoShell) {
+    videoShell.addEventListener("dblclick", (e) => {
+      if (e.target.closest("button")) return;
+      toggleFullscreen();
+    });
+  }
+
+  ["fullscreenchange", "webkitfullscreenchange", "mozfullscreenchange", "MSFullscreenChange"].forEach((evt) => {
+    document.addEventListener(evt, updateFullscreenUI);
+  });
+
   /* ------------------------------------------------------------ teclado */
 
   addEventListener("keydown", (event) => {
     if (event.ctrlKey || event.altKey || event.metaKey) return;
 
-    if (event.key === "Escape") { setRail(false); setSettings(false); return; }
+    if (event.key === "Escape") {
+      setRail(false);
+      setSettings(false);
+      if (body.classList.contains("is-camera-fullscreen")) {
+        body.classList.remove("is-camera-fullscreen");
+        updateFullscreenUI();
+      }
+      return;
+    }
 
     const tag = document.activeElement.tagName;
     if (/^(INPUT|SELECT|TEXTAREA)$/.test(tag)) return;
 
-    const index = "1234".indexOf(event.key);
+    const index = "12".indexOf(event.key);
     if (index >= 0 && tabs[index]) { tabs[index].click(); tabs[index].focus(); return; }
     if (event.key.toLowerCase() === "s") {
       event.preventDefault();
       setSettings(!body.classList.contains("settings-open"));
+      return;
+    }
+    if (event.key.toLowerCase() === "f") {
+      event.preventDefault();
+      toggleFullscreen();
+      return;
     }
   });
 

@@ -1,371 +1,307 @@
-# 🛡️ SentinelAI
+# 🛡️ SpottingAI
 
-**Sistema Interativo de Visão Computacional Aplicada à Segurança Física e Patrimonial**
+**Sistema Profissional de Visão Computacional para Monitoramento Contínuo e Segurança Perimetral**
 
-> *"Do Enigma de Alan Turing à Visão Computacional em Tempo Real: Como a IA Transforma a Segurança"*
-
-Painel de operação web com inferência **YOLOv8** local, motor de regras de alarme, perícia
-forense de mídia e dois módulos didáticos — construído para uma palestra interativa de 40 minutos.
+> Sistema autônomo e de alta performance para detecção contínua de objetos, controle de perímetro, triagem de incidentes e perícia forense em tempo real com **YOLO (v8/11/26) acelerado por OpenVINO**, rastreamento de objetos e redes treinadas para imagens de drone, operando como **Aplicativo Nativo Windows (.exe)** e servidor web integrado.
 
 ---
 
 ## 📑 Sumário
 
-1. [O que o sistema faz](#-o-que-o-sistema-faz)
-2. [Requisitos](#-requisitos)
-3. [Instalação e execução](#-instalação-e-execução)
-4. [Guia das 4 abas](#-guia-das-4-abas)
-5. [Painel de controle](#️-painel-de-controle)
-6. [Roteiro da palestra (40 min)](#-roteiro-da-palestra-40-minutos)
-7. [Arquitetura](#-arquitetura)
-8. [Qualidade de detecção](#-qualidade-de-detecção)
-9. [Desempenho](#-desempenho)
-10. [Solução de problemas](#-solução-de-problemas)
-11. [Nota sobre privacidade](#-nota-sobre-privacidade)
+1. [Visão Geral](#-visão-geral)
+2. [Recursos Principais](#-recursos-principais)
+3. [Instalação e Execução](#-instalação-e-execução)
+4. [Compilação do Executável (.exe)](#-compilação-do-executável-exe)
+5. [Módulos Operacionais](#-módulos-operacionais)
+6. [Visualização em Tela Cheia Exclusiva](#-visualização-em-tela-cheia-exclusiva)
+7. [Painel de Controle e Regras](#️-painel-de-controle-e-regras)
+8. [Arquitetura do Sistema](#-arquitetura-do-sistema)
+9. [Qualidade e Parâmetros de Detecção](#-qualidade-e-parâmetros-de-detecção)
+10. [Solução de Problemas](#-solução-de-problemas)
 
 ---
 
-## 🎯 O que o sistema faz
+## 🎯 Visão Geral
 
-- **Detecta objetos em tempo real** pela webcam, com vídeo fluido via streaming MJPEG e caixas
-  coloridas por *categoria de segurança* (pessoa, ameaça, bagagem, dispositivo, veículo).
-- **Dispara alarmes por regra configurável:** lotação excedida, objeto cortante, dispositivo
-  eletrônico em área restrita e bagagem suspeita.
-- **Pericia imagens e vídeos**, com contagem agregada, gráfico de distribuição e destaque do
-  quadro mais crítico encontrado.
-- **Registra incidentes** com timestamp, classe, confiança, status e regra violada — exportáveis em **CSV**.
-- **Explica a diferença** entre Classificação de Imagem (Teachable Machine) e Detecção de Objetos (YOLO).
-- **Contextualiza a história e a ética:** Turing, a máquina Bombe, LGPD, vieses e ataques adversariais.
+O **SpottingAI** foi projetado para operações contínuas de segurança física e monitoramento perimetral. Diferente de protótipos em nuvem, todo o processamento de inferência, avaliação de regras de alarme e registro de incidentes é executado **localmente** no dispositivo do operador, garantindo privacidade estrita (conformidade LGPD) e baixa latência sem depender de largura de banda externa.
 
-Todo o processamento é **local**. Nenhuma imagem sai do computador.
+### 🌟 Destaques de Produção
+- **Executável Desktop Windows Nativo (`SpottingAI.exe`)**: Interface independente, sem necessidade de navegador web, rodando sobre Microsoft Edge WebView2 acelerado por hardware.
+- **Visualização Exclusiva de Câmera em Tela Cheia**: Modo imersivo dedicado exclusivamente ao feed de vídeo, ocultando controles e painéis periféricos para vigilância contínua (`F`, duplo clique ou botão flutuante).
+- **Resiliência 24/7**: Reconexão contínua com backoff exponencial via WebSocket e recuperação automática de dispositivos de captura de vídeo.
+- **Suporte Multi-Dispositivo e Câmeras IP**: Suporte integrado para Webcams físicas (Media Foundation / DirectShow), captura de janelas/telas do PC e feeds RTSP/HTTP de smartphones e câmeras IP.
 
 ---
 
-## 💻 Requisitos
+## 💻 Requisitos do Sistema
 
-| Item | Mínimo |
+| Item | Especificação |
 | :--- | :--- |
-| Sistema operacional | Windows 10/11 (também roda em Linux/macOS) |
-| Python | 3.9 ou superior (testado em **3.13**) |
-| Memória RAM | 8 GB |
-| Espaço em disco | ~4 GB (PyTorch + dependências) |
-| Webcam | Opcional — há dois modos alternativos sem câmera do servidor |
-| Internet | **Somente na primeira execução**, para baixar os pesos do modelo |
-
-> ⚠️ **Primeira execução:** a Ultralytics baixa automaticamente `yolov8n.pt` (~6 MB) ou
-> `yolov8s.pt` (~22 MB) na primeira vez que o modelo é usado. Depois disso o sistema roda
-> **100% offline**. Se for apresentar em um local sem internet confiável, **rode o app uma vez antes**.
+| **Sistema Operacional** | Windows 10 ou Windows 11 (64-bit) |
+| **Runtime WebView2** | Microsoft Edge WebView2 (nativo no Windows 10/11) |
+| **Python (se rodar via código)** | Python 3.9 a 3.13 |
+| **Memória RAM** | Mínimo 8 GB (Recomendado 16 GB) |
+| **Aceleração de Vídeo** | CPU compatível com AVX2 ou GPU com suporte CUDA |
 
 ---
 
-## 🚀 Instalação e execução
+## 🚀 Instalação e Execução
 
-### Opção A — Windows, 1 clique (recomendada)
+### Opção 1 — Execução com 1 Clique (`run.bat`)
+Dê **duplo clique no arquivo `run.bat`**:
+- Se o executável `dist\SpottingAI\SpottingAI.exe` já foi compilado, ele será iniciado instantaneamente como aplicativo de desktop.
+- Caso contrário, o script prepara o ambiente virtual Python, instala dependências e inicia o aplicativo desktop (`desktop.py`) em janela nativa.
 
-Dê **duplo clique em `run.bat`**. O script cria o ambiente virtual, instala as dependências,
-sobe o servidor e abre o navegador automaticamente.
-
-### Opção B — Manual (PowerShell)
-
+### Opção 2 — Execução Manual via Terminal
 ```powershell
-# 1. Criar e ativar o ambiente virtual
-python -m venv venv
+# 1. Ativar o ambiente virtual
 .\venv\Scripts\Activate.ps1
 
-# 2. Instalar as dependências
-pip install -r requirements.txt
+# 2. Iniciar como Aplicativo Desktop Nativo
+python desktop.py
 
-# 3. Executar
-python app.py
+# (Opcional) Executar apenas o servidor web sem interface desktop:
+python desktop.py --server-only
 ```
 
-O painel abre em **http://localhost:8000**. Para encerrar: `Ctrl + C` no terminal.
-
-> A documentação interativa da API fica em **http://localhost:8000/docs** (gerada pelo FastAPI).
+O painel fica acessível localmente em `http://localhost:8000` e para dispositivos móveis na mesma rede Wi-Fi via `http://<IP_LOCAL>:8000/remote`.
 
 ---
 
-## 🖥️ Guia das 4 abas
+## 📦 Compilação do Executável (.exe)
 
-### 📹 Aba 1 — Monitoramento em Tempo Real
+Para gerar uma versão independente para distribuição em estações de trabalho:
 
-Dois modos de captura:
+### Pelo Script de Compilação Rápida
+Dê duplo clique em **`build.bat`**.
 
-| Modo | Como funciona | Quando usar |
-| :--- | :--- | :--- |
-| **🎥 Ao vivo (OpenCV)** | O servidor abre a webcam, processa cada quadro e transmite por **MJPEG**. Vídeo contínuo, com FPS reais. | Demonstração principal na palestra. |
-| **📸 Snapshot (navegador)** | Usa a câmera pelo próprio navegador e analisa uma foto por vez. | Plano B quando a webcam não abre, ou quando o painel está aberto em outro computador. |
+### Ou Manualmente via Python
+```powershell
+.\venv\Scripts\python.exe build_exe.py
+```
 
-#### 📷 Escolha da câmera
+O PyInstaller empacotará todas as dependências (FastAPI, WebView2, Ultralytics, PyTorch e pesos `yolov8n.pt`). O executável final é gerado em:
+```text
+dist/SpottingAI/SpottingAI.exe
+```
 
-O painel detecta as câmeras do sistema **pelo nome real** (“Camo”, “720p HD Camera”…) e mostra
-a resolução máxima que cada uma aceita. Três controles:
+---
 
-| Controle | Função |
+## 🖥️ Módulos Operacionais
+
+### 📹 1. Monitoramento em Tempo Real
+- **Streaming MJPEG em alta fluidez**: Processamento contínuo de vídeo em thread dedicada isolada, garantindo framerate estável sem bloqueio de I/O.
+- **Detecção de Dispositivos por Nome**: Identificação automática de hardware (“720p HD Camera”, “Camo”, “Iriun”, “OBS Virtual Camera”).
+- **Alternância Dinâmica de Resolução**: Suporte a resoluções de 640x480 até 4K (3840x2160) conforme a capacidade do hardware.
+- **Painel de KPIs ao Vivo**: Acompanhamento de FPS real, contagem de pessoas presentes no perímetro, total de objetos ativos e status de segurança.
+- **Log de Incidentes em Tempo Real**: Registro deduplicado de ocorrências e violações com exportação de auditoria em CSV.
+
+#### 🚁 Teste com o drone (um clique)
+
+Rode **`teste_drone.bat`**. Ele faz a checagem pré-voo (`tools/drone_preflight.py`: modelos, GPU, porta, firewall, Wi-Fi em 5 GHz, energia, disco e, via adb, o app e o IP salvo no celular). Depois inicia o SpottingAI com a fonte **Drone** já aguardando o celular (`autostart = true` em `config/video_source.toml`).
+
+- O vídeo recebido é **gravado** sem perda em `recordings\` (`[tcp_h264] record_dir`). Para reanalisar: `tools\h264_to_mp4.py` converte para MP4, que vai na aba Perícia com "Mídia aérea (drone)".
+- Roteiro completo de campo, com testes sugeridos e soluções: [docs/TESTE_DRONE.md](docs/TESTE_DRONE.md).
+- O cache de compilação do OpenVINO (`ov_cache\`) faz cada modelo abrir em menos de 1 s depois da primeira vez (antes: ~20 s).
+
+#### 🚁 Fonte de vídeo: drone DJI pela live RTMP do DJI Fly
+
+Nessa opção o próprio DJI Fly controla o drone e transmite ao vivo para o PC. O [MediaMTX](https://github.com/bluenviron/mediamtx) recebe o RTMP na porta 1935 e o SpottingAI o lê com PyAV em baixa latência (`src/rtmp_server.py`, `RtmpDroneSource`). No PC, a chegada até a IA leva ~40 ms (medido).
+
+1. Coloque `mediamtx.exe` em `tools/mediamtx/`. Use o zip `windows_amd64` da página de releases do MediaMTX; ele não é versionado. Na primeira execução, permita o acesso no Firewall do Windows.
+2. No painel, escolha **🚁 Drone DJI Fly (live RTMP)**. O servidor sobe sozinho e a tela de espera mostra o endereço.
+3. No DJI Fly, vá em **Transmissão → Plataformas de transmissão ao vivo → RTMP** e informe `rtmp://<IP do PC>:1935/live/drone`.
+
+Celular e PC precisam estar na mesma rede (o PC pode usar o hotspot do celular). O servidor está configurado em [config/mediamtx.yml](config/mediamtx.yml): só aceita publicação em `live/drone`, e só o próprio PC pode ler.
+
+#### 🚁 Fonte de vídeo: drone DJI Air 2S (H.264 via TCP)
+O vídeo original do drone chega por um app Android próprio ([drone-app/](drone-app/README.md), DJI Mobile SDK 4.18), que envia H.264 cru ao PC pela porta TCP 9000. No PC, o PyAV decodifica (`src/h264_receiver.py`) e guarda só o quadro mais recente, para manter a latência baixa. Se o celular cair, a análise não é interrompida: o painel mostra uma tela de espera e volta sozinho quando o vídeo retorna.
+
+- **Seleção da fonte**: no painel, escolha **🚁 Drone DJI**. Para deixar como padrão, edite [config/video_source.toml](config/video_source.toml) (`type = "webcam" | "url" | "tcp_h264" | "rtmp_dji"`; `url` aceita RTSP/RTMP/HTTP como alternativa).
+- **Teste sem drone**: `venv\Scripts\python.exe tools\h264_sim_sender.py` envia um vídeo H.264 sintético no mesmo formato do app.
+- **Testes automatizados**: `venv\Scripts\python.exe -m pytest tests -q` (antes, rode `pip install pytest`).
+
+### 🔎 2. Análise Forense & Perícia de Mídia
+- **Perícia de Imagens e Vídeos**: Processamento forense de arquivos de mídia (`.jpg`, `.png`, `.mp4`).
+- **Comparação Lado a Lado**: Visualização sincronizada da mídia original contra a mídia periciada com caixas delimitadoras e etiquetas de segurança.
+- **Identificação do Quadro Mais Crítico**: Em gravações de vídeo, o motor analisa os quadros e isola automaticamente a cena com o maior índice de risco.
+- **Relatório Forense de Evidências**: Estatísticas de distribuição de classes e exportação de logs periciais em CSV.
+
+---
+
+## 📺 Visualização em Tela Cheia Exclusiva
+
+Para salas de vigilância e monitores dedicados, o SpottingAI conta com modo **Full Screen Exclusivo do Feed de Câmera**:
+- **Ativação por Teclado**: Pressione a tecla `F` no teclado para alternar tela cheia da câmera.
+- **Ativação por Mouse**: Dê um **duplo clique** sobre o quadro do vídeo.
+- **Botão Flutuante**: Clique no ícone de ampliação no canto superior direito do vídeo (`#video-fs-btn`).
+- **Saída Rápida**: Pressione `Esc` ou `F` a qualquer momento para retornar ao painel de controle.
+
+> No modo de tela cheia, barras de navegação, painéis laterais de KPIs e tabelas de incidentes são ocultados automaticamente, dedicando 100% da resolução do monitor ao fluxo de segurança.
+
+---
+
+## ⚙️ Painel de Controle e Regras
+
+Os parâmetros de detecção podem ser ajustados a quente sem reiniciar o monitoramento:
+
+| Parâmetro | Descrição |
 | :--- | :--- |
-| **Câmera** | Escolhe o dispositivo. Trocar com o feed no ar reabre a captura automaticamente. |
-| **Resolução de captura** | Só oferece o que aquela câmera realmente aceita. |
-| **🔄 Procurar câmeras** | Refaz a varredura — use depois de **conectar ou desconectar** um celular. |
+| **Modelo Neural** | Rede das câmeras de chão (padrão: YOLO26s 640 via OpenVINO na GPU Intel). A lista mostra a precisão e o tempo medidos de cada opção. |
+| **Confiança Mínima** | Limiar de ativação (padrão calibrado: 25% para máxima sensibilidade perimetral). |
+| **Resolução de Inferência** | 320 px a 640 px (ajuste dinâmico de throughput e carga de processamento). |
+| **Lotação Máxima** | Gatilho de alerta para acúmulo excessivo de pessoas no perímetro monitorado. |
+| **Regras de Ameaça** | Ativação/desativação independente para objetos cortantes, aparelhos eletrônicos em zona restrita e bagagens não supervisionadas. |
+| **Rede neural para o drone** | Usada automaticamente quando a fonte é o drone (padrão: VisDrone YOLO26s Full HD INT8). |
+| **Fatiamento** | Modo "voo alto" (2×2 / 3×2) para pessoas muito pequenas; reduz o FPS. |
+| **Rastreamento / regras temporais** | IDs por objeto, pessoas únicas, permanência prolongada e bagagem abandonada. |
 
-> **Usar o celular como câmera vale muito a pena.** O sensor de um celular costuma ser bem
-> melhor que o de uma webcam integrada. Aplicativos como Camo, Iriun ou DroidCam criam uma
-> câmera virtual que aparece nessa lista como qualquer outra. Conecte o celular **antes** de
-> clicar em Procurar câmeras.
-
-O sistema testa dois backends de captura (**Media Foundation** e **DirectShow**) e usa o
-primeiro que realmente entregar imagem — não basta o dispositivo abrir. Isso importa: uma
-câmera virtual de celular chegou a entregar **1 FPS e metade dos quadros em branco** no
-DirectShow, contra **77 FPS estáveis** no Media Foundation. O backend em uso aparece ao lado
-do seletor.
-
-Exibe banner de estado (🟢 SEGURO / 🔴 ALERTA), KPIs ao vivo (FPS, pessoas, objetos, status)
-e a tabela de incidentes, tudo atualizado por WebSocket.
-
-### 🔎 Aba 2 — Análise Forense de Mídia
-
-- Botão **🖼️ Usar imagem de exemplo** (`sample_media/perimeter_test.jpg`) — funciona sem
-  internet e sem webcam. **Comece a demonstração por aqui:** não depende de hardware nenhum.
-- Upload de `.jpg`, `.png` ou `.mp4`, por clique ou arrastando o arquivo.
-- Comparação lado a lado: **Mídia Original** × **Mídia Periciada por IA**.
-- Em vídeos, o sistema amostra 1 a cada *N* quadros (configurável), mostra o progresso e
-  destaca o **quadro mais crítico** encontrado.
-- Gráfico de distribuição de classes e relatório forense em CSV.
-
-### 🧪 Aba 3 — Teachable Machine vs YOLO
-
-Cards conceituais (Classificação × Detecção), quadro comparativo de 8 critérios, roteiro
-cronometrado da dinâmica de 3 minutos com a plateia e link direto para o Teachable Machine.
-
-### 📜 Aba 4 — Turing, Ética & Ataques Adversariais
-
-Linha do tempo (1936 → hoje) e cards sobre vieses algorítmicos, LGPD/regulação e ataques adversariais.
+As configurações ficam **salvas entre execuções** em `config/user_settings.json`. O botão **"Restaurar configurações padrão"** volta ao `config/video_source.toml` e aos padrões do app. A fonte de vídeo inicial continua vindo do `.toml`.
 
 ---
 
-## ⚙️ Painel de controle
-
-Os controles da barra lateral valem para **as duas abas de análise** e são aplicados
-imediatamente — inclusive com a webcam rodando.
-
-| Controle | Efeito |
-| :--- | :--- |
-| **Rede neural** | `yolov8n.pt` (Nano, rápido) ou `yolov8s.pt` (Small, mais preciso). |
-| **Confiança mínima** | 10% a 95%. Abaixo desse valor a detecção é descartada. **Padrão 25%** — ver [Qualidade de detecção](#-qualidade-de-detecção). |
-| **Resolução de inferência** | 320 a 640 px. **É o parâmetro que mais afeta o FPS.** |
-| **Classes de segurança** | Quais objetos COCO são desenhados e avaliados pelas regras. |
-| **Limite de pessoas** | Acima desse número dispara alarme de aglomeração. |
-| **Toggles de ameaça** | Ativam as regras de objetos cortantes, dispositivos e bagagens. |
-| **Baixar relatório** | Exporta o CSV forense da sessão. |
-| **Limpar histórico** | Zera o registro de incidentes. |
-
-**Classes monitoradas:** `person` · `knife` · `scissors` · `backpack` · `handbag` · `suitcase` ·
-`cell phone` · `laptop` · `car` · `motorcycle` · `bus` · `truck`
-
----
-
-## 🎤 Roteiro da palestra (40 minutos)
-
-| Bloco | Tempo | Tema | Atividade |
-| :--- | :--- | :--- | :--- |
-| **1. Abertura & Gancho** | 00:00–07:00 | O legado de Turing | **Aba 4.** Enigma, Bombe e o nascimento da segurança computacional. Pergunta para a plateia. |
-| **2. Desmistificação** | 07:00–17:00 | Teachable Machine ao vivo | **Aba 3.** Treinar um classificador "Acesso Autorizado × Negado" em 3 min com 1 voluntário. |
-| **3. Demonstração Central** | 17:00–30:00 | SentinelAI (YOLOv8) | **Abas 1 e 2.** Detecção da plateia pela webcam, simulação de alarme e perícia forense. |
-| **4. O Lado B da IA** | 30:00–35:00 | Ética, falhas e ataques | **Aba 4.** Falsos positivos, LGPD e ataques adversariais. |
-| **5. Fechamento & Q&A** | 35:00–40:00 | Conclusão | Recapitulação e perguntas. |
-
-### ✅ Checklist antes de subir ao palco
-
-1. Rodar o app **uma vez com internet** para cachear os pesos do modelo.
-2. Testar a webcam na Aba 1 na **mesma máquina e sala** da apresentação.
-3. Fechar Teams / Zoom / Meet — eles travam a câmera.
-4. Deixar `yolov8n.pt` e a resolução em **320 px** (padrão) para máximo FPS.
-5. Testar a Aba 2 com a imagem de exemplo — é o plano B se a câmera falhar.
-6. Projetar as Abas 3 e 4 na tela real para conferir contraste e tamanho de fonte.
-7. Para o momento do alarme: baixar o **limite de pessoas para 1** — o banner vermelho dispara na hora.
-
----
-
-## 🏗️ Arquitetura
+## 🏗️ Arquitetura do Sistema
 
 ```text
-Projeto Topicos Especiais/
+SpottingAI/
 │
-├── app.py                      # Servidor FastAPI: rotas REST, MJPEG e WebSocket
+├── desktop.py                  # Entrypoint Desktop Nativo (Edge WebView2 + Servidor)
+├── app.py                      # Servidor FastAPI: REST, MJPEG e WebSocket
+├── build_exe.py                # Script automatizado de compilação para .exe
+├── run.bat                     # Inicializador do executável ou ambiente local
+├── build.bat                   # Compilador rápido com 1 clique
 │
-├── src/                        # Núcleo — não depende da camada de apresentação
-│   ├── detector.py             # Inferência YOLOv8 e anotação por categoria de segurança
-│   ├── rules.py                # Motor de regras de alarme (puro, sem I/O)
-│   ├── logger.py               # Histórico de incidentes e exportação CSV
-│   └── camera.py               # Thread de captura da webcam e stream MJPEG
+├── src/                        # Núcleo analítico desacoplado da interface
+│   ├── detector.py             # Inferência YOLO, fatiamento (SAHI) e anotação
+│   ├── detector_openvino.py    # Inferência OpenVINO (GPU Iris Xe): YOLOv8/11/26
+│   ├── tracker.py              # Rastreamento entre quadros (IDs, pessoas únicas)
+│   ├── camera.py               # Captura de webcam (MSMF/DSHOW) e stream MJPEG
+│   ├── video_source.py         # Fontes: webcam, URL, drone H.264/TCP, DJI Fly RTMP
+│   ├── h264_receiver.py        # Receptor do vídeo H.264 enviado pelo drone-app
+│   ├── rtmp_server.py          # MediaMTX local para a live RTMP do DJI Fly
+│   ├── rules.py                # Motor de regras de alarme, regras temporais e histerese
+│   ├── logger.py               # Gerenciador de auditoria e exportação CSV
+│   └── taxonomy.py             # Classes de segurança, modelos e nomes do VisDrone
 │
-├── static/                     # Painel de operação (sem dependências externas)
-│   ├── index.html · css/style.css · js/app.js · js/ui.js
+├── tools/eval_drone.py         # Avaliação de modelos no VisDrone (AP50, recall, tempo)
+├── tools/quantize_int8.py      # Gera versões INT8 (NNCF) dos modelos OpenVINO
+├── tools/drone_preflight.py    # Checagem pré-voo do PC e do celular
+├── tools/h264_to_mp4.py        # Converte as gravações do drone em MP4
+├── teste_drone.bat             # Checagem + SpottingAI com a fonte Drone aguardando
+├── drone-app/                  # App Android (DJI MSDK v4) com HUD de voo
 │
-├── sample_media/perimeter_test.jpg
-├── requirements.txt · run.bat · SPEC.md · implementation_plan.md
-└── legacy_streamlit/           # Arquivo morto da 1ª versão (não é importado)
+├── static/                     # Interface do painel de operações
+│   ├── index.html              # Layout operacional do dashboard
+│   ├── css/style.css           # Estilização profissional e temas escuros
+│   ├── js/app.js               # Conexões WebSocket e pipeline de eventos
+│   └── js/ui.js                # Interações de tela cheia, modais e controles
+│
+├── sample_media/               # Mídias locais para testes de perímetro
+└── requirements.txt            # Dependências do projeto
 ```
 
-Três princípios sustentam o desenho:
+---
 
-1. **O núcleo não conhece a interface.** `detector.py`, `rules.py` e `logger.py` não importam
-   FastAPI nem nada de UI. Sobreviveram sem uma linha alterada à troca completa da camada de
-   apresentação (Streamlit → HTML) — que é exatamente o teste de que o desacoplamento é real.
-2. **Uma única thread de captura.** Abrir uma segunda aba do navegador **não** abre uma segunda
-   câmera, e a taxa de inferência independe de quantos clientes estão conectados.
-3. **Três canais, três naturezas.** Vídeo por MJPEG, métricas por WebSocket, operações pontuais
-   por REST. Cada dado trafega pelo meio adequado à sua latência.
+## 🎯 Qualidade e Parâmetros de Detecção
 
-O mapa `SECURITY_CLASSES` em [`src/detector.py`](src/detector.py) é a fonte única da verdade da
-taxonomia de segurança — o painel, o esquema de cores e as regras leem dele.
+O limiar de confiança padrão foi calibrado em **0,25**:
+- Em medições perimetrais, objetos como mochilas e equipamentos em solo costumam registrar confiança entre 26% e 35%.
+- Limiares tradicionais de 0,40 descartavam cerca de 20% das ameaças reais.
+- A 0,25, o sistema atinge **80% de recall** sem geração de falsos positivos na taxonomia de segurança.
+
+### Rede das câmeras de chão
+
+Medido no **COCO val2017** (5.000 fotos marcadas, a referência oficial desses modelos), com `tools/eval_drone.py --dataset coco`, a 640 px no Iris Xe:
+
+| Modelo | Pessoas AP50 | Pessoas recall @0,25 | Objetos de segurança AP50* | ms/quadro |
+| :--- | ---: | ---: | ---: | ---: |
+| YOLOv8n (antigo padrão) | 0,739 | 66,2% | 0,312 | 11 |
+| YOLOv8s | 0,788 | 72,5% | 0,435 | 20 |
+| YOLO11n | 0,748 | 66,2% | 0,334 | 11 |
+| YOLO11s | 0,800 | 73,5% | 0,451 | 19 |
+| YOLO26n | 0,732 | 63,4% | 0,355 | 15 |
+| **YOLO26s (padrão)** | **0,807** | **73,1%** | **0,476** | 27 |
+
+\* Média de mochila, bolsa, mala, faca, notebook e celular: as classes das regras de alarme.
+
+O **YOLO26s** acerta ~52% mais objetos de segurança que o antigo padrão. Por exemplo, faca passou de 0,14 para 0,29 e celular de 0,37 para 0,57. Com ~27 ms por quadro, a webcam continua a 30 FPS (o limite dela).
+
+### Detecção em vídeo de drone
+
+Os modelos comuns (COCO) foram treinados com fotos tiradas do chão. Vistas do alto, as pessoas ficam pequenas e com outro formato, e esses modelos acham poucas delas. Por isso, quando a fonte é o drone, o SpottingAI troca sozinho para uma **rede treinada com imagens aéreas (VisDrone)**. A troca é configurável no painel ("Rede neural para o drone") ou em `config/video_source.toml` (`drone_model`).
+
+Resultados medidos com `tools/eval_drone.py` no **VisDrone2019-DET val** (548 imagens aéreas marcadas), em um Intel Iris Xe:
+
+| Modelo | Pessoas AP50 | Pessoas recall @0,25 | Precisão | Carros AP50 | ms/quadro |
+| :--- | ---: | ---: | ---: | ---: | ---: |
+| YOLOv8n HD (COCO, antigo padrão) | 0,311 | 21,0% | 84,8% | 0,540 | 27 |
+| YOLO11s HD (COCO) | 0,395 | 28,0% | 86,5% | 0,614 | 52 |
+| YOLO26s HD (COCO) | 0,414 | 29,5% | 84,2% | 0,645 | 64 |
+| YOLOv8n 640 + fatiamento 3×2 (COCO) | 0,372 | 28,8% | 79,5% | 0,575 | 97 |
+| VisDrone YOLO26n HD | 0,584 | 50,5% | 82,9% | 0,869 | 19 |
+| VisDrone YOLO26s HD 1280×736 | 0,663 | 59,5% | 84,0% | 0,892 | 41 |
+| VisDrone YOLO26s Full HD 1920×1088 (FP16) | 0,710 | 65,0% | 84,0% | 0,909 | 101 |
+| **VisDrone YOLO26s Full HD 1920×1088 INT8 (padrão do drone)** | **0,717** | **66,8%** | 82,5% | 0,906 | **68** |
+
+**Como o Full HD chegou a ~16 FPS ao vivo** (Iris Xe, partindo de 9,5 FPS):
+
+1. **INT8:** o modelo foi quantizado com NNCF por `tools/quantize_int8.py`, calibrado no VisDrone *test-dev* para não contaminar o val. A GPU passa a usar instruções de 8 bits. Ganho de ~1,5×, sem perda de precisão medida (tabela acima).
+2. **Pipeline:** no vídeo ao vivo, a GPU calcula o quadro N enquanto a CPU rastreia, desenha e comprime o N-1, com duas requisições OpenVINO alternadas. O FPS passa a ser o da GPU sozinha, com 1 quadro (~60 ms) a mais de atraso.
+3. **Sem redimensionar:** o 1080p entra no modelo só com borda até 1088.
+
+O limite agora é a própria GPU: o `benchmark_app` mede 16 FPS no modo INT8. Somar a CPU (`AUTO:GPU,CPU`) não ajudou, porque CPU e GPU dividem a energia do notebook. Para manter esse FPS, use o notebook **na tomada** e no modo de energia "Melhor desempenho".
+
+Para gerar a versão INT8 de outro modelo (requer `pip install nncf`):
+
+```powershell
+venv\Scripts\python.exe tools\quantize_int8.py visdrone_yolo26s --imgsz 1088 1920 --suffix fhd
+```
+
+- O modelo VisDrone acha cerca de **3× mais pessoas** que o antigo padrão (recall de 21% para 67%), com precisão parecida.
+- O **fatiamento** ("voo alto", 2×2 ou 3×2) divide o quadro em pedaços e analisa cada um em escala maior. Com o VisDrone 26n, o recall foi de 51,7% para 63,7% e a precisão caiu de 84% para 76%, custando ~5× o tempo. Use só quando o drone estiver muito alto.
+- **Resolução de entrada:** nos modelos OpenVINO ela é fixada na exportação (o seletor "Resolução de inferência" só vale para os `.pt`). O padrão do drone usa a resolução nativa do vídeo, **1920×1088**. Para vídeo mais fluido (~22 FPS), com um pouco menos de precisão, escolha `visdrone_yolo26s_hd_openvino` (1280×736).
+- Os modelos VisDrone só conhecem **pessoas e veículos**. Faca, mochila e celular continuam com a rede das câmeras de chão. O painel avisa quando há classes marcadas que o modelo em uso não detecta.
+- **Perícia de mídia aérea:** na aba de perícia, marque **"Mídia aérea (drone)"** para analisar a foto ou o vídeo enviado com a rede do drone. Desmarcado, usa a rede das câmeras de chão.
+- Ressalva: o `best.pt` público foi escolhido pelo desempenho nesse mesmo conjunto de validação, então os números absolutos podem estar um pouco otimistas. A diferença entre os modelos é muito maior que esse efeito.
+- Pesos: [dronefreak/visdrone-yolo26s](https://huggingface.co/dronefreak/visdrone-yolo26s) (e variantes), licença AGPL-3.0. O dataset VisDrone é **apenas para pesquisa não comercial**.
+
+### Rastreamento e regras temporais
+
+Com **Rastreamento de objetos** ligado (padrão), cada objeto ganha um ID (`#12 Pessoa 87%`). O rastreador é no estilo ByteTrack, em `src/tracker.py`. Com ele:
+
+- as caixas não "piscam" quando a confiança oscila;
+- com o **drone em movimento**, o deslocamento global da imagem é medido a cada quadro (correlação de fase, ~1–2 ms) e descontado. Assim, objetos parados no chão mantêm o ID e o tempo "parado" é medido em relação ao chão, não à imagem;
+- o cartão Pessoas mostra quantas pessoas **únicas** já passaram;
+- duas regras novas ficam disponíveis, ambas desligadas por padrão (0 s):
+
+| Regra | Dispara quando |
+| :--- | :--- |
+| **Permanência prolongada** | uma pessoa continua no perímetro por mais de N segundos |
+| **Bagagem abandonada** | mochila, bolsa ou mala fica parada por N segundos sem ninguém por perto |
+
+### Avaliar um modelo novo
+
+```powershell
+venv\Scripts\python.exe tools\eval_drone.py visdrone_yolo26s_hd_openvino yolo11n_hd_openvino@2x2
+```
+
+O sufixo `@CxL` liga o fatiamento. O conjunto de validação (~80 MB) é baixado sozinho em `datasets/`.
+
+### Backlog
+
+- **IA de vocabulário aberto (YOLO-World / YOLOE):** detectar o que for descrito em texto ("pessoa com capacete", "drone"), sem treino. É mais lenta e menos precisa que um detector fechado; seria um modo opcional de busca.
+- **Rede de drone com as classes de segurança:** treinar unindo o VisDrone a imagens aéreas de mochilas, malas e facas.
+- **Compensação de rotação e zoom do drone** no rastreador. Hoje só a translação é compensada; giros rápidos e mudanças bruscas de altura ainda podem trocar IDs.
 
 ---
 
-## 🎯 Qualidade de detecção
+## 🔧 Solução de Problemas
 
-Os padrões foram escolhidos por medição, não por intuição. O método: usar `yolov8s` a 1280 px
-como referência forte sobre 6 imagens (4 quadros reais de webcam + 2 cenas de rua) e medir
-quanto cada configuração mais barata recupera dela, além de quantos objetos inventa a mais.
-
-### O limiar de confiança é o que mais importa
-
-Um exemplo real, capturado pela câmera do celular numa sala de aula com uma mochila no chão:
-
-| Confiança | O que o sistema viu |
-| ---: | :--- |
-| 70% | *nada* |
-| 40% | notebook (65%) |
-| **25%** | notebook (65%) **+ mochila (28%)** |
-
-A mochila — o objeto que a regra de *bagagem suspeita* existe para pegar — fica em 28% de
-confiança. Qualquer limiar acima disso a descarta silenciosamente.
-
-| Confiança | Objetos encontrados | Falsos positivos | Recall |
-| ---: | ---: | ---: | ---: |
-| 0,15 | 21/25 | 1 | 84% |
-| **0,25** *(padrão)* | **20/25** | **0** | **80%** |
-| 0,30 | 19/25 | 0 | 76% |
-| 0,40 *(padrão antigo)* | 18/25 | 0 | 72% |
-
-Subir de 25% para 40% fazia o sistema **perder cerca de 1 objeto em cada 8 sem ganhar precisão
-alguma** — os falsos positivos já eram zero nos dois casos. Na prática, eram pessoas
-parcialmente visíveis na borda do quadro, detectadas com 27–37% de confiança.
-
-Abaixo de 0,20 os falsos positivos começam a aparecer, então 0,25 é o ponto de equilíbrio.
-
-### O que **não** funcionou
-
-Três otimizações plausíveis foram testadas e descartadas por medição:
-
-| Hipótese | Resultado medido | Veredito |
-| :--- | :--- | :--- |
-| Aumentar a resolução de inferência | 320 px e 640 px empatam em 80% de recall | ❌ Não ajuda |
-| Exportar para **OpenVINO** | 1,12× no `nano`; *mais lento* no `small` | ❌ Não compensa |
-| Rastreamento **ByteTrack** | 32% mais lento, estabilidade não melhorou | ❌ Não compensa |
-
-A resolução só ajuda em cenas com objetos **pequenos e distantes** (na foto de rua, 4/6 → 5/6).
-Para webcam em close, é indiferente — suba para 640 px apenas na análise forense de fotos
-abertas, onde a latência não importa.
-
-Se precisar do máximo de qualidade e puder aceitar ~11 FPS, `yolov8s` a 512 px atinge 84%.
-
-### Estabilidade do alarme
-
-A contagem de pessoas oscila naturalmente entre quadros — objetos no limiar de confiança entram
-e saem. Sem filtro, o banner piscava entre 🟢 e 🔴 várias vezes por segundo.
-
-O `AlarmDebouncer` ([src/rules.py](src/rules.py)) aplica **histerese assimétrica**: 2 avaliações
-seguidas para acionar o alarme, 8 para desligá-lo. Subir é fácil, descer é difícil — deixar de
-sinalizar uma ameaça real custa mais caro do que manter o alarme um instante a mais.
-
-Medido: uma entrada alternando a cada quadro (29 trocas) produz **0 trocas** na saída. Ao vivo,
-com a contagem oscilando entre 2 e 3 pessoas no limiar, o alarme não trocou nenhuma vez em 20 s.
-
-As **contagens exibidas continuam sendo as do quadro atual** — só o estado do alarme é
-suavizado, para os KPIs não mentirem sobre o que está na tela.
-
----
-
-## ⚡ Desempenho
-
-Medições nesta máquina (CPU, sem GPU dedicada), com `yolov8n.pt`:
-
-| Resolução de inferência | Tempo por quadro | FPS |
-| :--- | ---: | ---: |
-| 320 px *(padrão)* | ~43 ms | ~23 |
-| 416 px | ~59 ms | ~17 |
-| 512 px | ~63 ms | ~16 |
-| 640 px | ~94 ms | ~11 |
-
-**Monitoramento ao vivo: ~29 FPS sustentados** a 320 px, com o painel aberto no navegador —
-bem acima do mínimo de 15 FPS do RNF01.
-
-O número **não depende de quantas pessoas estão assistindo**: com 1 ou 3 clientes conectados ao
-stream simultaneamente, o FPS medido foi o mesmo (29,3 e 29,2 contra 28,9 sem ninguém). É o
-efeito da thread única de captura — os espectadores compartilham o mesmo quadro já processado.
-
-> Os valores variam com o estado térmico da máquina. Trate a tabela como ordem de grandeza.
-> O que é estável é a **relação entre as linhas**: dobrar a resolução de inferência mais que
-> dobra o custo.
-
-Três achados que orientam o ajuste:
-
-- **A inferência consome ~85% do tempo de cada quadro.** A resolução da *câmera* é praticamente
-  irrelevante para o FPS; o que importa é a **resolução de inferência**. Medido a 1280×720: o
-  desenho das caixas custa 1,7 ms e a codificação JPEG 5,2 ms, contra ~43 ms de inferência.
-- **Ajustar o número de threads do PyTorch não ajuda.** Medido em processos limpos, de 2 a 8
-  threads o resultado fica todo dentro da margem de ruído (57–67 ms). Não perca tempo com isso.
-- **Cuidado com trabalho no *event loop*.** Uma versão anterior reconstruía o histórico completo
-  de incidentes a cada envio do WebSocket (4×/s). O custo crescia com a duração da sessão e
-  derrubava o FPS de 29 para **0,8** com o painel aberto. Hoje esse caminho é O(1) no tamanho do
-  histórico — 1,3 ms mesmo com 40 mil eventos registrados.
-
-Se precisar de mais FPS: reduza a resolução de inferência, desmarque classes que não vai
-demonstrar e mantenha o modelo Nano.
-
----
-
-## 🔧 Solução de problemas
-
-| Sintoma | Causa provável | Solução |
-| :--- | :--- | :--- |
-| `Modelo indisponível` no topo da tela | Sem internet na primeira execução | Conecte-se uma vez para baixar os pesos; depois roda offline. |
-| `Não foi possível acessar a câmera` | Câmera ocupada por outro app | Feche Teams/Zoom/Meet e clique em Iniciar novamente. |
-| Webcam bloqueada no Windows | Permissão negada | *Configurações → Privacidade e segurança → Câmera* → permitir apps da área de trabalho. |
-| Celular não aparece na lista | Conectado depois da varredura | Conecte o app do celular e clique em **🔄 Procurar câmeras**. |
-| Câmera do celular travando ou lenta | App desconectado, ou rede instável | Confirme que o app está transmitindo. O backend já é escolhido automaticamente; o nome dele aparece ao lado do seletor. |
-| Lista mostra "Câmera 0, 1, 2…" sem nomes | `pygrabber` não instalado | Rode `pip install -r requirements.txt`. É opcional — só afeta os nomes exibidos. |
-| FPS abaixo de 15 | Resolução de inferência alta | Use 320 px e o modelo Nano; reduza as classes monitoradas. |
-| Objetos não são detectados | Confiança alta demais | Baixe o slider para 20–25%. Acima de 40% o sistema descarta detecções válidas de objetos parcialmente visíveis. |
-| Detecção some e volta | Comportamento normal do modelo | O **alarme** já é estabilizado por histerese; as caixas em si acompanham cada quadro. |
-| Feed atrasado em relação à cena | Buffer da câmera | Já mitigado (`CAP_PROP_BUFFERSIZE=1`). Se persistir, reduza a resolução de inferência — quanto mais rápida a inferência, menor o atraso. |
-| Vídeo `.mp4` não decodifica | Codec incompatível | Reconverta para H.264 (ex.: HandBrake ou `ffmpeg`). |
-| Acentos errados no CSV | Excel ignorando UTF-8 | O arquivo já usa `utf-8-sig`; se persistir, importe via *Dados → De Texto*. |
-| Porta 8000 ocupada | Outra instância rodando | Encerre a outra janela, ou altere a porta no final de `app.py`. |
-| O feed congela | Conexão do stream caiu | O painel reconecta sozinho; se não, recarregue a página (F5). |
-
----
-
-## 🔒 Nota sobre privacidade
-
-O SentinelAI detecta **objetos e pessoas**, não **identidades**. Não há reconhecimento facial,
-não há banco de rostos e nenhuma imagem é enviada para a internet — a inferência acontece
-inteiramente na máquina local, e o servidor escuta apenas em `127.0.0.1`.
-
-Em uso real, um sistema desses continua sujeito à **LGPD (Lei 13.709/2018)**: exige base legal,
-finalidade específica, aviso visível de monitoramento e prazo definido de descarte das gravações.
-Esse debate está desenvolvido na **Aba 4**.
-
----
-
-## 📚 Referências
-
-- [Ultralytics YOLOv8](https://docs.ultralytics.com/)
-- [COCO Dataset](https://cocodataset.org/) — 80 classes, 330 mil imagens
-- [Google Teachable Machine](https://teachablemachine.withgoogle.com/)
-- [LGPD — Lei 13.709/2018](https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709.htm)
-- Turing, A. M. *Computing Machinery and Intelligence*, Mind, 1950.
-
----
-
-**SentinelAI v1.0.0** · Projeto acadêmico de Tópicos Especiais em Inteligência Artificial.
+1. **A webcam não abre:**
+   - Feche softwares que possam estar usando a câmera em modo exclusivo (Zoom, Teams, OBS).
+   - Clique em **🔄 Procurar Câmeras** no painel para reindexar os dispositivos DirectShow e Media Foundation.
+2. **Uso de Smartphone como Câmera:**
+   - Conecte o celular via cabo ou mesma rede Wi-Fi usando aplicativos como Iriun, Camo ou DroidCam.
+   - O aplicativo criará uma câmera virtual que aparecerá diretamente no seletor de dispositivos do SpottingAI.
+3. **Porta 8000 ocupada:**
+   - O sistema detecta automaticamente se a porta 8000 está ocupada e vincula a próxima porta livre (8001, 8002...), evitando falhas na inicialização.

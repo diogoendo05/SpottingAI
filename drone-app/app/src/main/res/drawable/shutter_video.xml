@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Obturador em modo video, parado: circulo vermelho com anel -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="#66000000" />
+            <stroke android:width="3dp" android:color="#FFFFFFFF" />
+        </shape>
+    </item>
+    <item android:bottom="10dp" android:left="10dp" android:right="10dp" android:top="10dp">
+        <shape android:shape="oval">
+            <solid android:color="#FFE53935" />
+        </shape>
+    </item>
+</layer-list>

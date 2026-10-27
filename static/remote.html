@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>SpottingAI · Transmissão do Celular</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090B10;
+      --card-bg: rgba(18, 22, 34, 0.75);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --card-border-glow: rgba(0, 240, 255, 0.3);
+      --text: #F1F5F9;
+      --text-muted: #94A3B8;
+      --primary: #00F0FF;
+      --primary-glow: rgba(0, 240, 255, 0.35);
+      --accent: #6366F1;
+      --safe: #10B981;
+      --danger: #EF4444;
+      --warning: #F59E0B;
+      --radius: 16px;
+      --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: var(--bg);
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(0, 240, 255, 0.08) 0%, transparent 45%);
+      color: var(--text);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px;
+      overflow-x: hidden;
+    }
+
+    /* Container Principal */
+    .container {
+      width: 100%;
+      max-width: 500px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Cabeçalho */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #000;
+      font-weight: 800;
+      font-size: 16px;
+      box-shadow: 0 0 16px var(--primary-glow);
+    }
+
+    .brand-text h1 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+    }
+
+    .brand-text span {
+      font-size: 0.72rem;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 600;
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      transition: all 0.3s ease;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--text-muted);
+      transition: all 0.3s ease;
+    }
+
+    .status-badge.connected {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: rgba(16, 185, 129, 0.4);
+      color: var(--safe);
+    }
+    .status-badge.connected .status-dot {
+      background: var(--safe);
+      box-shadow: 0 0 8px var(--safe);
+      animation: pulse-dot 1.5s infinite;
+    }
+
+    .status-badge.streaming {
+      background: rgba(0, 240, 255, 0.15);
+      border-color: rgba(0, 240, 255, 0.5);
+      color: var(--primary);
+    }
+    .status-badge.streaming .status-dot {
+      background: var(--primary);
+      box-shadow: 0 0 10px var(--primary);
+      animation: pulse-dot 1s infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.7; }
+    }
+
+    /* Seletor de Modo */
+    .mode-selector {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      background: rgba(14, 18, 28, 0.85);
+      padding: 6px;
+      border-radius: var(--radius);
+      border: 1px solid var(--card-border);
+    }
+
+    .mode-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 12px 8px;
+      border-radius: 12px;
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .mode-btn .icon {
+      font-size: 1.4rem;
+    }
+
+    .mode-btn.active {
+      background: linear-gradient(135deg, rgba(0, 240, 255, 0.12), rgba(99, 102, 241, 0.2));
+      border-color: rgba(0, 240, 255, 0.4);
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Visor de Vídeo */
+    .preview-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .video-viewport {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    #stream-video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: none;
+    }
+
+    .viewport-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      color: var(--text-muted);
+      text-align: center;
+      padding: 20px;
+    }
+
+    .viewport-placeholder .symbol {
+      font-size: 2.4rem;
+      opacity: 0.6;
+    }
+
+    .viewport-placeholder p {
+      font-size: 0.85rem;
+      line-height: 1.4;
+    }
+
+    /* HUD de Telemetria */
+    .hud-overlay {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      right: 8px;
+      display: flex;
+      justify-content: space-between;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .hud-tag {
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(8px);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    /* Feedback da IA */
+    .ai-feedback-banner {
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid var(--card-border);
+      background: rgba(0, 0, 0, 0.4);
+    }
+
+    .ai-status-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      background: rgba(16, 185, 129, 0.2);
+      color: var(--safe);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+
+    .ai-status-pill.danger {
+      background: rgba(239, 68, 68, 0.2);
+      color: var(--danger);
+      border-color: rgba(239, 68, 68, 0.4);
+      animation: alert-pulse 1s infinite alternate;
+    }
+
+    @keyframes alert-pulse {
+      from { box-shadow: 0 0 4px rgba(239, 68, 68, 0.3); }
+      to { box-shadow: 0 0 16px rgba(239, 68, 68, 0.8); }
+    }
+
+    .ai-detections-text {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    /* Botão Principal de Transmissão */
+    .action-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .btn-stream {
+      position: relative;
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, var(--primary) 0%, #2563EB 100%);
+      color: #000;
+      font-family: var(--font-sans);
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 8px 24px var(--primary-glow);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn-stream:active {
+      transform: scale(0.98);
+    }
+
+    .btn-stream.active {
+      background: linear-gradient(135deg, #EF4444 0%, #B91C1C 100%);
+      color: #fff;
+      box-shadow: 0 8px 24px rgba(239, 68, 68, 0.4);
+    }
+
+    .btn-secondary {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background 0.2s;
+    }
+
+    .btn-secondary:active {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Painel de Ajustes */
+    .settings-panel {
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .settings-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .setting-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .setting-label {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .setting-select {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--card-border);
+      color: #fff;
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      padding: 6px 10px;
+      border-radius: 8px;
+      outline: none;
+    }
+
+    /* Instruções e Dicas */
+    .tips-card {
+      background: rgba(99, 102, 241, 0.08);
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      font-size: 0.82rem;
+      line-height: 1.5;
+      color: #C7D2FE;
+    }
+
+    .tips-card strong {
+      color: #fff;
+    }
+
+    .tips-card ol {
+      padding-left: 20px;
+      margin-top: 6px;
+    }
+
+    .tips-card li {
+      margin-bottom: 4px;
+    }
+
+    /* Canvas invisível para codificação */
+    #capture-canvas {
+      display: none;
+    }
+
+    /* Rodapé */
+    footer {
+      margin-top: auto;
+      padding: 16px 0;
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Cabeçalho -->
+    <header>
+      <div class="brand">
+        <div class="brand-icon">S</div>
+        <div class="brand-text">
+          <h1>SpottingAI</h1>
+          <span>Transmissor Mobile</span>
+        </div>
+      </div>
+      <div class="status-badge" id="status-badge">
+        <span class="status-dot"></span>
+        <span id="status-text">Desconectado</span>
+      </div>
+    </header>
+
+    <!-- Alerta de Conexão Insegura HTTP -->
+    <div id="insecure-notice" style="display:none; padding:12px 14px; background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.4); border-radius:var(--radius); font-size:0.8rem; line-height:1.45; color:#FDE68A;">
+      <div style="font-weight:700; color:#F59E0B; margin-bottom:4px; display:flex; align-items:center; gap:6px;">
+        <span>⚠️</span> Conexão HTTP Local Detectada
+      </div>
+      <div>
+        Navegadores móveis bloqueiam o compartilhamento de tela em HTTP. Para transmitir a tela:
+      </div>
+      <div style="margin-top:6px; font-size:0.76rem; color:#fff;">
+        <strong>1. Recomendado:</strong> No computador, clique em <strong>⚡ Ativar HTTPS</strong> e escaneie o novo QR Code.<br>
+        <strong>2. Alternativa:</strong> Mude para a aba <strong>📷 Câmera do Celular</strong> abaixo.<br>
+        <strong>3. App Android:</strong> Use o app gratuito <strong>Screen Stream over HTTP</strong>.
+      </div>
+    </div>
+
+    <!-- Seletor de Modo: Tela do Celular vs Câmera -->
+    <div class="mode-selector">
+      <button class="mode-btn active" id="btn-mode-screen" data-mode="screen">
+        <span class="icon">📱</span>
+        <span>Tela do Celular</span>
+      </button>
+      <button class="mode-btn" id="btn-mode-camera" data-mode="camera">
+        <span class="icon">📷</span>
+        <span>Câmera do Celular</span>
+      </button>
+    </div>
+
+    <!-- Visor de Pré-visualização -->
+    <div class="preview-card">
+      <div class="video-viewport">
+        <video id="stream-video" autoplay playsinline muted></video>
+        
+        <div class="viewport-placeholder" id="viewport-placeholder">
+          <div class="symbol" id="placeholder-icon">📱</div>
+          <p id="placeholder-text">Pronto para transmitir a tela.<br>Toque em <strong>Iniciar Transmissão</strong> abaixo.</p>
+        </div>
+
+        <div class="hud-overlay" id="hud-overlay" style="display:none">
+          <div class="hud-tag" id="hud-fps">0 FPS</div>
+          <div class="hud-tag" id="hud-res">0x0</div>
+        </div>
+      </div>
+
+      <!-- Resposta ao Vivo da IA -->
+      <div class="ai-feedback-banner">
+        <div class="ai-status-pill" id="ai-status-pill">
+          <span>●</span> <span id="ai-status-text">SISTEMA SEGURO</span>
+        </div>
+        <div class="ai-detections-text" id="ai-detections-text">
+          Aguardando stream...
+        </div>
+      </div>
+    </div>
+
+    <!-- Controles de Ação -->
+    <div class="action-controls">
+      <button class="btn-stream" id="btn-toggle-stream">
+        <span id="btn-stream-icon">🚀</span>
+        <span id="btn-stream-text">INICIAR TRANSMISSÃO DA TELA</span>
+      </button>
+
+      <button class="btn-secondary" id="btn-switch-camera" style="display:none">
+        🔄 Alternar Câmera (Traseira / Frontal)
+      </button>
+    </div>
+
+    <!-- Painel de Configurações de Qualidade -->
+    <div class="settings-panel">
+      <div class="settings-title">
+        <span>Ajustes da Transmissão</span>
+        <span id="stats-summary" style="font-family:var(--font-mono); font-size:0.75rem; color:var(--primary)">0 quadros enviados</span>
+      </div>
+
+      <div class="setting-row">
+        <span class="setting-label">Resolução:</span>
+        <select class="setting-select" id="setting-resolution">
+          <option value="640x360" selected>640x360 (Ultra Fluido / Latência Zero)</option>
+          <option value="854x480">854x480 (Alta Qualidade)</option>
+          <option value="1280x720">1280x720 (Alta Resolução)</option>
+        </select>
+      </div>
+
+      <div class="setting-row">
+        <span class="setting-label">Taxa de Quadros (FPS):</span>
+        <select class="setting-select" id="setting-fps">
+          <option value="15">15 FPS (Econômico)</option>
+          <option value="30" selected>30 FPS (Fluido / Padrão)</option>
+          <option value="45">45 FPS (Alta Fluidez)</option>
+          <option value="60">60 FPS (Ultra / Máximo)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Instruções para o Usuário -->
+    <div class="tips-card">
+      <div id="screen-tip">
+        <strong>💡 Como funciona o compartilhamento da tela:</strong>
+        <ol>
+          <li>Toque no botão <strong>Iniciar Transmissão</strong>.</li>
+          <li>O Android/iOS exibirá a permissão para gravar/compartilhar a tela.</li>
+          <li>Selecione <strong>"Tela inteira"</strong> e confirme.</li>
+          <li>Tudo o que for exibido no seu celular será analisado em tempo real pelo SpottingAI no computador!</li>
+        </ol>
+      </div>
+      <div id="camera-tip" style="display:none">
+        <strong>💡 Dica para a Câmera:</strong>
+        <p>Aponte o celular para o perímetro que deseja monitorar. O modelo YOLOv8 detectará pessoas, objetos e invasões automaticamente.</p>
+      </div>
+    </div>
+
+    <footer>
+      SpottingAI Video Analytics &bull; Conexão Local Wi-Fi
+    </footer>
+  </div>
+
+  <canvas id="capture-canvas"></canvas>
+
+  <script>
+    // Web Worker dedicado para temporização contínua sem throttling quando minimizado
+    const timerWorkerBlob = new Blob([`
+      let intervalId = null;
+      self.onmessage = function(e) {
+        if (e.data.action === 'start') {
+          if (intervalId) clearInterval(intervalId);
+          intervalId = setInterval(() => self.postMessage('tick'), e.data.interval);
+        } else if (e.data.action === 'stop') {
+          if (intervalId) clearInterval(intervalId);
+          intervalId = null;
+        }
+      };
+    `], { type: 'application/javascript' });
+    const timerWorker = new Worker(URL.createObjectURL(timerWorkerBlob));
+    timerWorker.onmessage = () => {
+      captureAndSendFrame();
+    };
+
+    // Estado da Transmissão
+    const S = {
+      mode: 'screen', // 'screen' ou 'camera'
+      facingMode: 'environment', // 'environment' ou 'user'
+      streaming: false,
+      ws: null,
+      mediaStream: null,
+      framesSent: 0,
+      targetFps: 30,
+      targetWidth: 640,
+      targetHeight: 360,
+      quality: 0.58,
+      lastFrameTime: performance.now(),
+      fpsHistory: [],
+    };
+
+    const $ = (id) => document.getElementById(id);
+    const video = $('stream-video');
+    const canvas = $('capture-canvas');
+    const ctx = canvas.getContext('2d', { alpha: false });
+
+    // AudioContext Keep-Alive (Impede que o navegador móvil suspenda a aba em segundo plano)
+    let keepAliveAudio = null;
+    let wakeLock = null;
+
+    function startKeepAlive() {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtx && !keepAliveAudio) {
+          keepAliveAudio = new AudioCtx();
+          const osc = keepAliveAudio.createOscillator();
+          const gain = keepAliveAudio.createGain();
+          gain.gain.value = 0.0001; // Quase mudo
+          osc.connect(gain);
+          gain.connect(keepAliveAudio.destination);
+          osc.start();
+          if (keepAliveAudio.state === 'suspended') {
+            keepAliveAudio.resume();
+          }
+        }
+      } catch (_) {}
+
+      try {
+        if ('wakeLock' in navigator) {
+          navigator.wakeLock.request('screen').then(wl => { wakeLock = wl; }).catch(() => {});
+        }
+      } catch (_) {}
+    }
+
+    function stopKeepAlive() {
+      if (keepAliveAudio) {
+        try { keepAliveAudio.close(); } catch (_) {}
+        keepAliveAudio = null;
+      }
+      if (wakeLock) {
+        try { wakeLock.release(); } catch (_) {}
+        wakeLock = null;
+      }
+    }
+
+    // Conexão WebSocket
+    function connectWebSocket() {
+      const loc = window.location;
+      const protocol = loc.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsUrl = `${protocol}//${loc.host}/ws/phone-stream`;
+
+      try {
+        S.ws = new WebSocket(wsUrl);
+        S.ws.binaryType = 'arraybuffer';
+
+        S.ws.onopen = () => {
+          updateStatus('connected', 'Conectado');
+        };
+
+        S.ws.onclose = () => {
+          updateStatus('disconnected', 'Desconectado');
+          if (S.streaming) stopStream();
+          setTimeout(connectWebSocket, 2000);
+        };
+
+        S.ws.onerror = (e) => {
+          console.warn('WebSocket erro:', e);
+        };
+
+        S.ws.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data);
+            if (data.ok) {
+              handleAiFeedback(data);
+            }
+          } catch (_) {}
+        };
+      } catch (err) {
+        console.error('Falha ao instanciar WebSocket:', err);
+      }
+    }
+
+    function updateStatus(state, text) {
+      const badge = $('status-badge');
+      const textElem = $('status-text');
+      badge.className = 'status-badge';
+      if (state === 'connected') badge.classList.add('connected');
+      if (state === 'streaming') badge.classList.add('streaming');
+      textElem.textContent = text;
+    }
+
+    function handleAiFeedback(data) {
+      const pill = $('ai-status-pill');
+      const pillText = $('ai-status-text');
+      const detText = $('ai-detections-text');
+
+      if (data.status === 'ALERT') {
+        pill.className = 'ai-status-pill danger';
+        pillText.textContent = 'ALERTA DE SEGURANÇA';
+      } else {
+        pill.className = 'ai-status-pill';
+        pillText.textContent = 'SISTEMA SEGURO';
+      }
+
+      let summary = [];
+      if (data.people_count > 0) summary.push(`${data.people_count} pessoa(s)`);
+      if (data.danger_count > 0) summary.push(`${data.danger_count} perigo`);
+      detText.textContent = summary.length ? summary.join(' • ') : 'Nenhum alvo detectado';
+    }
+
+    // Alternar modo Tela vs Câmera
+    $('btn-mode-screen').addEventListener('click', () => setMode('screen'));
+    $('btn-mode-camera').addEventListener('click', () => setMode('camera'));
+
+    function setMode(mode) {
+      if (S.streaming) {
+        if (!confirm('Deseja encerrar a transmissão atual para mudar de modo?')) return;
+        stopStream();
+      }
+      S.mode = mode;
+      $('btn-mode-screen').classList.toggle('active', mode === 'screen');
+      $('btn-mode-camera').classList.toggle('active', mode === 'camera');
+      $('btn-switch-camera').style.display = mode === 'camera' ? 'flex' : 'none';
+      $('screen-tip').style.display = mode === 'screen' ? 'block' : 'none';
+      $('camera-tip').style.display = mode === 'camera' ? 'block' : 'none';
+      $('placeholder-icon').textContent = mode === 'screen' ? '📱' : '📷';
+      $('placeholder-text').innerHTML = mode === 'screen'
+        ? 'Pronto para transmitir a tela.<br>Toque em <strong>Iniciar Transmissão</strong> abaixo.'
+        : 'Pronto para transmitir a câmera.<br>Toque em <strong>Iniciar Transmissão</strong> abaixo.';
+      $('btn-stream-text').textContent = mode === 'screen' 
+        ? 'INICIAR TRANSMISSÃO DA TELA' 
+        : 'INICIAR TRANSMISSÃO DA CÂMERA';
+    }
+
+    // Iniciar ou Parar Transmissão
+    $('btn-toggle-stream').addEventListener('click', () => {
+      if (S.streaming) {
+        stopStream();
+      } else {
+        startStream();
+      }
+    });
+
+    $('btn-switch-camera').addEventListener('click', async () => {
+      S.facingMode = S.facingMode === 'environment' ? 'user' : 'environment';
+      if (S.streaming && S.mode === 'camera') {
+        stopMediaTracks();
+        await initCameraStream();
+      }
+    });
+
+    // Ajustes
+    $('setting-resolution').addEventListener('change', (e) => {
+      const [w, h] = e.target.value.split('x').map(Number);
+      S.targetWidth = w;
+      S.targetHeight = h;
+    });
+
+    $('setting-fps').addEventListener('change', (e) => {
+      S.targetFps = Number(e.target.value);
+      if (S.streaming) {
+        scheduleLoop();
+      }
+    });
+
+    async function startStream() {
+      try {
+        if (S.mode === 'screen') {
+          if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
+            alert('Compartilhamento de tela direto bloqueado pelo navegador móvel em conexões HTTP.\n\nComo resolver:\n1. Ative o "Túnel HTTPS" no computador e escaneie o novo QR Code;\n2. Ou mude para a aba "Câmera do Celular";\n3. Ou use o aplicativo gratuito Screen Stream no Android.');
+            return;
+          }
+          S.mediaStream = await navigator.mediaDevices.getDisplayMedia({
+            video: {
+              cursor: 'always',
+              displaySurface: 'monitor',
+              frameRate: { ideal: 60, max: 60 },
+            },
+            audio: false
+          });
+        } else {
+          await initCameraStream();
+        }
+
+        // Otimização para fluidez máxima
+        const track = S.mediaStream.getVideoTracks()[0];
+        if (track && 'contentHint' in track) {
+          track.contentHint = 'motion';
+        }
+
+        video.srcObject = S.mediaStream;
+        await video.play();
+
+        video.style.display = 'block';
+        $('viewport-placeholder').style.display = 'none';
+        $('hud-overlay').style.display = 'flex';
+
+        S.streaming = true;
+        $('btn-toggle-stream').classList.add('active');
+        $('btn-stream-icon').textContent = '⏹️';
+        $('btn-stream-text').textContent = 'ENCERRAR TRANSMISSÃO';
+        updateStatus('streaming', 'Transmitindo');
+
+        // Ativa keep-alive de áudio/wakelock para não hibernar em segundo plano
+        startKeepAlive();
+
+        // Se o usuário parar o compartilhamento pelo botão nativo do sistema
+        track.addEventListener('ended', () => {
+          stopStream();
+        });
+
+        scheduleLoop();
+      } catch (err) {
+        console.error('Falha ao iniciar captura:', err);
+        alert('Não foi possível iniciar a captura: ' + (err.message || err.name));
+      }
+    }
+
+    async function initCameraStream() {
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        S.mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            facingMode: { ideal: S.facingMode },
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+            frameRate: { ideal: 60, max: 60 },
+          },
+          audio: false
+        });
+      } else {
+        throw new Error('Câmera indisponível no navegador.');
+      }
+    }
+
+    function stopMediaTracks() {
+      if (S.mediaStream) {
+        S.mediaStream.getTracks().forEach(t => t.stop());
+        S.mediaStream = null;
+      }
+    }
+
+    function stopStream() {
+      S.streaming = false;
+      timerWorker.postMessage({ action: 'stop' });
+      stopKeepAlive();
+      stopMediaTracks();
+
+      video.srcObject = null;
+      video.style.display = 'none';
+      $('viewport-placeholder').style.display = 'flex';
+      $('hud-overlay').style.display = 'none';
+
+      $('btn-toggle-stream').classList.remove('active');
+      $('btn-stream-icon').textContent = '🚀';
+      $('btn-stream-text').textContent = S.mode === 'screen' 
+        ? 'INICIAR TRANSMISSÃO DA TELA' 
+        : 'INICIAR TRANSMISSÃO DA CÂMERA';
+      updateStatus(S.ws && S.ws.readyState === WebSocket.OPEN ? 'connected' : 'disconnected', 
+                   S.ws && S.ws.readyState === WebSocket.OPEN ? 'Conectado' : 'Desconectado');
+    }
+
+    function scheduleLoop() {
+      const intervalMs = Math.max(16, Math.round(1000 / S.targetFps));
+      timerWorker.postMessage({ action: 'start', interval: intervalMs });
+    }
+
+    let isEncoding = false;
+
+    function captureAndSendFrame() {
+      if (!S.streaming || isEncoding) return;
+      if (!S.ws || S.ws.readyState !== WebSocket.OPEN) return;
+      if (S.ws.bufferedAmount > 80000) return; // Pula se a rede estiver congestionada para manter latência zero
+      if (!video.videoWidth || !video.videoHeight) return;
+
+      isEncoding = true;
+      try {
+        const vw = video.videoWidth;
+        const vh = video.videoHeight;
+        
+        // Calcula escala mantendo proporção
+        const scale = Math.min(S.targetWidth / vw, S.targetHeight / vh, 1.0);
+        const w = Math.round(vw * scale);
+        const h = Math.round(vh * scale);
+
+        if (canvas.width !== w || canvas.height !== h) {
+          canvas.width = w;
+          canvas.height = h;
+          $('hud-res').textContent = `${w}x${h}`;
+        }
+
+        ctx.drawImage(video, 0, 0, w, h);
+
+        canvas.toBlob((blob) => {
+          if (blob && S.ws && S.ws.readyState === WebSocket.OPEN) {
+            blob.arrayBuffer().then((buffer) => {
+              if (S.ws && S.ws.readyState === WebSocket.OPEN) {
+                S.ws.send(buffer);
+                S.framesSent++;
+                $('stats-summary').textContent = `${S.framesSent} quadros enviados`;
+                calcFps();
+              }
+            }).finally(() => {
+              isEncoding = false;
+            });
+          } else {
+            isEncoding = false;
+          }
+        }, 'image/jpeg', S.quality);
+      } catch (e) {
+        isEncoding = false;
+      }
+    }
+
+    function calcFps() {
+      const now = performance.now();
+      const delta = now - S.lastFrameTime;
+      S.lastFrameTime = now;
+      if (delta > 0) {
+        const currentFps = 1000 / delta;
+        S.fpsHistory.push(currentFps);
+        if (S.fpsHistory.length > 10) S.fpsHistory.shift();
+        const avgFps = Math.round(S.fpsHistory.reduce((a, b) => a + b, 0) / S.fpsHistory.length);
+        $('hud-fps').textContent = `${avgFps} FPS`;
+      }
+    }
+
+    // Verificação de Contexto Seguro
+    function checkSecurityContext() {
+      const isHttps = window.location.protocol === 'https:';
+      const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+      const hasScreenShare = !!(navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia);
+
+      if (!isHttps && !isLocalhost && !hasScreenShare) {
+        const notice = $('insecure-notice');
+        if (notice) notice.style.display = 'block';
+      }
+    }
+
+    // Inicialização
+    checkSecurityContext();
+    connectWebSocket();
+  </script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-"""Componentes visuais e tema *Dark Security Mode* do SentinelAI.
+"""Componentes visuais e tema *Dark Security Mode* do SpottingAI.
 
 Reune a folha de estilo injetada no Streamlit, os cards de KPI, o banner
 dinamico de alarme e os paineis didaticos dos Modulos 3 e 4.
@@ -62,7 +62,7 @@ def inject_css() -> None:
         }}
 
         /* ---------- Cabecalho ---------- */
-        .sentinel-header {{
+        .spotting-header {{
             border: 1px solid {COLOR_BORDER};
             border-left: 5px solid {COLOR_ACCENT};
             border-radius: 14px;
@@ -70,12 +70,12 @@ def inject_css() -> None:
             padding: 1.1rem 1.5rem;
             margin-bottom: 1.2rem;
         }}
-        .sentinel-header h1 {{
+        .spotting-header h1 {{
             margin: 0;
             font-size: 2.1rem;
             font-weight: 800;
         }}
-        .sentinel-header p {{
+        .spotting-header p {{
             margin: .35rem 0 0;
             color: {COLOR_MUTED};
             font-size: 1rem;
@@ -147,9 +147,9 @@ def inject_css() -> None:
             background: rgba(255, 59, 59, .12);
             border-color: {COLOR_ALERT};
             color: {COLOR_ALERT};
-            animation: sentinel-pulse 1.3s ease-in-out infinite;
+            animation: spotting-pulse 1.3s ease-in-out infinite;
         }}
-        @keyframes sentinel-pulse {{
+        @keyframes spotting-pulse {{
             0%, 100% {{ box-shadow: 0 0 0 0 rgba(255, 59, 59, .45); }}
             50%      {{ box-shadow: 0 0 22px 5px rgba(255, 59, 59, .18); }}
         }}
@@ -281,7 +281,7 @@ def render_header(title: str, subtitle: str) -> None:
     """Cabecalho principal do dashboard."""
     st.markdown(
         f"""
-        <div class="sentinel-header">
+        <div class="spotting-header">
             <h1>{html.escape(title)}</h1>
             <p>{html.escape(subtitle)}</p>
         </div>
@@ -465,7 +465,7 @@ def render_comparison_panel() -> None:
                 <tr>
                     <th style="width:16%">Critério</th>
                     <th style="width:42%">🧪 Google Teachable Machine</th>
-                    <th style="width:42%">🛡️ YOLOv8 (SentinelAI)</th>
+                    <th style="width:42%">🛡️ YOLOv8 (SpottingAI)</th>
                 </tr>
             </thead>
             <tbody>{rows}</tbody>
@@ -506,7 +506,7 @@ _LIVE_SCRIPT: tuple[tuple[str, str], ...] = (
     ),
     (
         "3:00",
-        "<strong>Virar a chave:</strong> voltar ao SentinelAI, Aba 1, e mostrar o YOLO "
+        "<strong>Virar a chave:</strong> voltar ao SpottingAI, Aba 1, e mostrar o YOLO "
         "desenhando caixas em cada pessoa da plateia. Essa é a diferença entre classificar "
         "e detectar.",
     ),
@@ -559,7 +559,7 @@ _TURING_CARDS: tuple[tuple[str, str, str, str], ...] = (
         "<ul>"
         "<li>Nasce ali a <strong>segurança computacional</strong>: máquinas defendendo pessoas.</li>"
         "<li>Estima-se que o feito antecipou o fim da guerra em cerca de <strong>2 anos</strong>.</li>"
-        "<li>O padrão é o mesmo do SentinelAI: <em>varrer um espaço enorme de possibilidades "
+        "<li>O padrão é o mesmo do SpottingAI: <em>varrer um espaço enorme de possibilidades "
         "rápido demais para um humano</em> — antes eram códigos, hoje são pixels.</li>"
         "</ul>",
         "safe",
@@ -609,7 +609,7 @@ _ETHICS_CARDS: tuple[tuple[str, str, str, str], ...] = (
         "<li>Exige base legal, finalidade específica e aviso claro de monitoramento.</li>"
         "<li>O <em>AI Act</em> europeu classifica vigilância biométrica em tempo real como "
         "<strong>risco inaceitável ou alto</strong>, conforme o uso.</li>"
-        "<li>Mitigação prática: processar <strong>localmente</strong> (como o SentinelAI faz), "
+        "<li>Mitigação prática: processar <strong>localmente</strong> (como o SpottingAI faz), "
         "detectar <em>pessoas</em> em vez de <em>identidades</em>, borrar rostos e definir prazo "
         "de descarte das gravações.</li>"
         "</ul>",
@@ -677,7 +677,7 @@ def render_concept_cards() -> None:
                 "devolve <strong>uma resposta por objeto</strong>, com coordenadas.</p>"
                 "<p><code>entrada: foto → saída: 4x person + 1x backpack + coordenadas</code></p>"
                 "<p>É o que permite <strong>contar</strong>, <strong>localizar</strong> e disparar "
-                "alarmes por regra — a base do SentinelAI.</p>",
+                "alarmes por regra — a base do SpottingAI.</p>",
                 "",
             ),
             unsafe_allow_html=True,

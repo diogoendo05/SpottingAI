@@ -1,4 +1,4 @@
-# 🛡️ SPEC TÉCNICA E FUNCIONAL: SentinelAI
+# 🛡️ SPEC TÉCNICA E FUNCIONAL: SpottingAI
 
 > **Projeto:** Sistema Interativo de Visão Computacional Aplicada à Segurança Física e Patrimonial  
 > **Contexto:** Trabalho Acadêmico de IA & Palestra Interativa (40 Minutos)  
@@ -30,7 +30,7 @@
 
 ## 1. Visão Geral e Contexto
 
-O projeto **SentinelAI** consiste em uma aplicação visual, modular e interativa que demonstra na prática o funcionamento de algoritmos de Visão Computacional voltados à segurança. 
+O projeto **SpottingAI** consiste em uma aplicação visual, modular e interativa que demonstra na prática o funcionamento de algoritmos de Visão Computacional voltados à segurança. 
 
 O projeto faz uma ponte histórica entre a **segurança computacional clássica** (iniciada por **Alan Turing** na quebra da máquina *Enigma* durante a Segunda Guerra Mundial) e a **segurança inteligente moderna**, baseada em Redes Neurais Convolucionais profundas (CNNs) e modelos em tempo real como o **YOLOv8**.
 
@@ -187,7 +187,7 @@ flowchart TD
 | :--- | :--- | :--- | :--- |
 | **1. Abertura & Gancho** | 00:00 - 07:00 | **O Legado de Turing** | Mostrar o salto histórico: da quebra da Enigma por Turing à Visão Computacional moderna. Pergunta para a plateia. |
 | **2. Desmistificação** | 07:00 - 17:00 | **Teachable Machine ao Vivo** | Treinar um classificador ao vivo em 3 minutos (ex: "Acesso Autorizado via Crachá" vs "Acesso Negado"). Chamar 1 voluntário. |
-| **3. Demonstração Central** | 17:00 - 30:00 | **O App SentinelAI (YOLOv8)** | Abrir o App. Mostrar detecção de pessoas na plateia pela webcam, simular alarme de invasão e fazer upload de cena de segurança forense. |
+| **3. Demonstração Central** | 17:00 - 30:00 | **O App SpottingAI (YOLOv8)** | Abrir o App. Mostrar detecção de pessoas na plateia pela webcam, simular alarme de invasão e fazer upload de cena de segurança forense. |
 | **4. O Lado B da IA** | 30:00 - 35:00 | **Ética, Falhas & Ataques** | Discutir falsos positivos, ataques de ilusão adversarial (camuflagens para IA) e dilemas éticos de vigilância. |
 | **5. Fechamento & Q&A** | 35:00 - 40:00 | **Conclusão & Perguntas** | Recapitulação final, agradecimentos e abertura para perguntas da banca/professores. |
 
@@ -196,7 +196,7 @@ flowchart TD
 ## 7. Estrutura de Arquivos do Projeto
 
 ```text
-sentinel_ai/
+spotting_ai/
 │
 ├── SPEC.md                     # Esta especificação técnica completa
 ├── README.md                   # Manual de uso, setup e roteiro resumido
@@ -267,7 +267,7 @@ internet (RNF03).
 
 ### Passo 1: Clonar/Navegar para a pasta do projeto
 ```powershell
-cd sentinel_ai
+cd spotting_ai
 ```
 
 ### Passo 2: Criar e ativar ambiente virtual (Recomendado)

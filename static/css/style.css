@@ -1,5 +1,5 @@
 /* ==========================================================================
-   SentinelAI — sistema de interface
+   SpottingAI — sistema de interface
    Console de operacao para videoanalitica. Tres regioes fixas: trilha de
    navegacao, area de trabalho e painel de configuracoes retratil.
    Sem dependencia externa: precisa subir offline durante a apresentacao.
@@ -1442,6 +1442,142 @@ details > *:not(summary) { animation: reveal .28s var(--ease-out); }
 .hint-more summary { font-size: .715rem; }
 
 /* ==========================================================================
+   Modo Tela Cheia: Exclusivo da Câmera (Camera-Only Fullscreen)
+   ========================================================================== */
+
+#video-shell:fullscreen,
+#video-shell:-webkit-full-screen,
+body.is-camera-fullscreen #video-shell {
+    position: fixed !important;
+    inset: 0 !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+    border-radius: 0 !important;
+    border: none !important;
+    background: #000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    z-index: 99999 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: none !important;
+}
+
+#video-shell:fullscreen img,
+#video-shell:fullscreen video,
+#video-shell:-webkit-full-screen img,
+#video-shell:-webkit-full-screen video,
+body.is-camera-fullscreen #video-shell img,
+body.is-camera-fullscreen #video-shell video {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+    object-fit: contain !important;
+    border-radius: 0 !important;
+}
+
+/* Esconde placeholder padrão quando a imagem/feed estiver ativo */
+#video-shell:fullscreen .video-placeholder,
+#video-shell:-webkit-full-screen .video-placeholder,
+body.is-camera-fullscreen #video-shell .video-placeholder {
+    max-width: 600px;
+}
+
+/* HUD corners maiores e mais imersivos no modo câmera tela cheia */
+#video-shell:fullscreen .hud-corner,
+#video-shell:-webkit-full-screen .hud-corner,
+body.is-camera-fullscreen #video-shell .hud-corner {
+    width: 32px;
+    height: 32px;
+    border-width: 2.5px;
+    opacity: 0.85;
+}
+#video-shell:fullscreen .hud-corner.tl,
+#video-shell:-webkit-full-screen .hud-corner.tl,
+body.is-camera-fullscreen #video-shell .hud-corner.tl { top: 22px; left: 22px; }
+#video-shell:fullscreen .hud-corner.tr,
+#video-shell:-webkit-full-screen .hud-corner.tr,
+body.is-camera-fullscreen #video-shell .hud-corner.tr { top: 22px; right: 22px; }
+#video-shell:fullscreen .hud-corner.bl,
+#video-shell:-webkit-full-screen .hud-corner.bl,
+body.is-camera-fullscreen #video-shell .hud-corner.bl { bottom: 22px; left: 22px; }
+#video-shell:fullscreen .hud-corner.br,
+#video-shell:-webkit-full-screen .hud-corner.br,
+body.is-camera-fullscreen #video-shell .hud-corner.br { bottom: 22px; right: 22px; }
+
+/* Badge "AO VIVO" ajustado */
+#video-shell:fullscreen .video-badge,
+#video-shell:-webkit-full-screen .video-badge,
+body.is-camera-fullscreen #video-shell .video-badge {
+    top: 24px;
+    left: 24px;
+    font-size: 0.76rem;
+    padding: 0.35rem 0.85rem;
+}
+
+/* Botão de alternar tela cheia embutido no player */
+.video-fs-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 10;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--r-sm);
+    background: rgba(8, 10, 16, 0.72);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    color: var(--text-2);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    opacity: 0.65;
+    transition: opacity 0.2s, background 0.2s, color 0.2s, transform 0.2s;
+}
+.video-shell:hover .video-fs-btn {
+    opacity: 1;
+}
+.video-fs-btn:hover {
+    background: rgba(91, 124, 250, 0.3);
+    border-color: var(--accent);
+    color: var(--accent-hi);
+    transform: scale(1.08);
+}
+
+#video-shell:fullscreen .video-fs-btn,
+#video-shell:-webkit-full-screen .video-fs-btn,
+body.is-camera-fullscreen #video-shell .video-fs-btn {
+    top: 24px;
+    right: 24px;
+    width: 44px;
+    height: 44px;
+    background: rgba(0, 0, 0, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    opacity: 0.4;
+}
+#video-shell:fullscreen:hover .video-fs-btn,
+#video-shell:-webkit-full-screen:hover .video-fs-btn,
+body.is-camera-fullscreen #video-shell:hover .video-fs-btn {
+    opacity: 1;
+}
+#video-shell:fullscreen .video-fs-btn:hover,
+#video-shell:-webkit-full-screen .video-fs-btn:hover,
+body.is-camera-fullscreen #video-shell .video-fs-btn:hover {
+    background: rgba(91, 124, 250, 0.38);
+    border-color: var(--accent-hi);
+    color: var(--accent-hi);
+    transform: scale(1.1);
+}
+
+/* ==========================================================================
    Avisos
    ========================================================================== */
 
@@ -1727,3 +1863,254 @@ body.is-ready .boot { opacity: 0; visibility: hidden; }
         scroll-behavior: auto !important;
     }
 }
+
+/* ==========================================================================
+   Modal de Conexão com Celular (Tela & IP Stream)
+   ========================================================================== */
+
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(5, 7, 12, 0.78);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.2rem;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .25s var(--ease), visibility .25s var(--ease);
+}
+.modal-backdrop.is-open {
+    opacity: 1;
+    visibility: visible;
+}
+.modal-card {
+    width: 100%;
+    max-width: 580px;
+    background: #0E121B;
+    border: 1px solid rgba(0, 240, 255, 0.25);
+    box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 240, 255, 0.15);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    transform: scale(0.95) translateY(12px);
+    transition: transform .25s var(--spring);
+}
+.modal-backdrop.is-open .modal-card {
+    transform: scale(1) translateY(0);
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.1rem 1.4rem;
+    border-bottom: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.02);
+}
+.modal-title {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    font-size: 1.02rem;
+    font-weight: 700;
+    color: #fff;
+}
+.modal-title .ic { width: 20px; height: 20px; color: var(--accent-hi); }
+.modal-close {
+    background: transparent;
+    border: none;
+    color: var(--text-3);
+    font-size: 1.4rem;
+    line-height: 1;
+    padding: .2rem .4rem;
+    cursor: pointer;
+    border-radius: var(--r-xs);
+    transition: color .15s, background .15s;
+}
+.modal-close:hover { color: #fff; background: var(--raise-2); }
+
+.modal-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background: rgba(0, 0, 0, 0.35);
+    border-bottom: 1px solid var(--line);
+}
+.modal-tab-btn {
+    padding: .85rem;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text-3);
+    font-family: inherit;
+    font-size: .84rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+    transition: all .2s;
+}
+.modal-tab-btn:hover { color: var(--text); background: rgba(255, 255, 255, 0.02); }
+.modal-tab-btn.active {
+    color: var(--accent-hi);
+    border-bottom-color: var(--accent);
+    background: rgba(91, 124, 250, 0.06);
+}
+
+.modal-body {
+    padding: 1.4rem;
+    max-height: 75vh;
+    overflow-y: auto;
+}
+
+.modal-tab-content { display: none; }
+.modal-tab-content.active { display: block; animation: fade-in .25s var(--ease-out); }
+
+/* Conteúdo QR Code */
+.qr-view-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1.1rem;
+}
+.qr-code-wrapper {
+    background: #fff;
+    padding: 12px;
+    border-radius: var(--r);
+    box-shadow: 0 0 25px rgba(0, 240, 255, 0.2);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 200px;
+    height: 200px;
+}
+.qr-code-wrapper svg, .qr-code-wrapper img {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.qr-url-box {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid var(--line-2);
+    border-radius: var(--r-sm);
+    padding: .4rem .6rem .4rem 1rem;
+    max-width: 100%;
+}
+.qr-url-text {
+    font-family: var(--mono);
+    font-size: .82rem;
+    color: var(--accent-hi);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.qr-status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    font-size: .78rem;
+    font-weight: 600;
+    padding: .35rem .85rem;
+    border-radius: 99px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--line);
+    color: var(--text-3);
+}
+.qr-status-pill.is-live {
+    background: rgba(16, 185, 129, 0.15);
+    border-color: rgba(16, 185, 129, 0.4);
+    color: var(--safe);
+}
+.qr-status-pill .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+}
+.qr-status-pill.is-live .dot {
+    box-shadow: 0 0 8px currentColor;
+    animation: pulse-dot 1s infinite;
+}
+
+.qr-instructions {
+    text-align: left;
+    background: var(--raise-1);
+    border: 1px solid var(--line);
+    border-radius: var(--r-sm);
+    padding: .9rem 1.1rem;
+    font-size: .8rem;
+    color: var(--text-2);
+    width: 100%;
+}
+.qr-instructions ol {
+    margin: .4rem 0 0;
+    padding-left: 1.2rem;
+}
+.qr-instructions li {
+    margin-bottom: .3rem;
+}
+
+/* Conteúdo Stream IP */
+.ip-stream-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+}
+.ip-presets-row {
+    display: flex;
+    gap: .5rem;
+    flex-wrap: wrap;
+}
+.preset-chip {
+    background: var(--raise-2);
+    border: 1px solid var(--line);
+    border-radius: 99px;
+    padding: .25rem .7rem;
+    font-size: .72rem;
+    color: var(--text-2);
+    cursor: pointer;
+    transition: all .15s;
+}
+.preset-chip:hover {
+    background: var(--raise-3);
+    border-color: var(--accent);
+    color: #fff;
+}
+
+.tunnel-box {
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+.tunnel-box:hover {
+    border-color: rgba(0, 240, 255, 0.45);
+    box-shadow: 0 0 16px rgba(0, 240, 255, 0.08);
+}
+#btn-share-pc-screen {
+    width: 100%;
+    padding: .85rem;
+    font-size: .95rem;
+    font-weight: 700;
+}
+
+#btn-share-screen {
+    background: rgba(0, 240, 255, 0.08);
+    border: 1px solid rgba(0, 240, 255, 0.35);
+    color: var(--accent-hi);
+    font-weight: 600;
+    transition: all .2s ease;
+}
+#btn-share-screen:hover {
+    background: rgba(0, 240, 255, 0.16);
+    border-color: var(--accent);
+    box-shadow: 0 0 12px rgba(0, 240, 255, 0.25);
+    color: #fff;
+}
+

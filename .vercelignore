@@ -1,0 +1,29 @@
+# Nada aqui e necessario para a funcao serverless (ver api/index.py).
+# Manter o upload enxuto encurta o build e ajuda a caber no limite da funcao.
+
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+
+# Pesos PyTorch: o deploy usa yolov8n.onnx, que precisa continuar incluido.
+*.pt
+
+# App Streamlit legado - substituido pelo frontend em static/.
+legacy_streamlit/
+
+# Servidor local: usa torch/ultralytics/webcam e nao roda em serverless.
+app.py
+run.bat
+requirements.txt
+
+# App Android do drone, simulador e testes: nao fazem parte da funcao.
+drone-app/
+tools/
+tests/
+
+# Documentacao e material de trabalho.
+*.md
+sample_media/*.mp4
+spottingai_report_*.csv
+kernel.errors.txt

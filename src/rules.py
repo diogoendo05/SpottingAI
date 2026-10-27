@@ -1,4 +1,4 @@
-"""Motor de regras de seguranca do SentinelAI.
+"""Motor de regras de seguranca do SpottingAI.
 
 Recebe a lista de deteccoes produzida por :mod:`src.detector` e decide se o
 perimetro esta SEGURO ou em ALERTA, descrevendo cada violacao encontrada.
@@ -27,6 +27,8 @@ RULE_CROWDING = "Aglomeracao / Lotacao Excedida"
 RULE_DANGEROUS = "Objeto Cortante / Ameaca"
 RULE_DEVICE = "Dispositivo Eletronico em Area Restrita"
 RULE_BAGGAGE = "Bagagem Suspeita / Abandonada"
+RULE_LOITERING = "Permanencia Prolongada no Perimetro"
+RULE_ABANDONED = "Bagagem Abandonada"
 
 #: Classes COCO monitoradas por cada regra baseada em objeto.
 DANGEROUS_CLASSES: tuple[str, ...] = ("knife", "scissors")
@@ -67,6 +69,10 @@ class RuleConfig:
         alert_devices: Dispara alarme ao detectar dispositivos eletronicos.
         alert_baggage: Dispara alarme ao detectar bagagens.
         min_confidence: Confianca minima para uma deteccao valer como violacao.
+        loiter_seconds: Alerta quando uma pessoa rastreada continua no
+            perimetro por mais que isso (0 = desligado). Exige rastreamento.
+        abandoned_seconds: Alerta quando uma bagagem fica parada por mais que
+            isso sem nenhuma pessoa por perto (0 = desligado). Exige rastreamento.
     """
 
     max_people: int = 3
@@ -74,6 +80,8 @@ class RuleConfig:
     alert_devices: bool = False
     alert_baggage: bool = False
     min_confidence: float = 0.0
+    loiter_seconds: float = 0.0
+    abandoned_seconds: float = 0.0
 
 
 # --------------------------------------------------------------------------- #
@@ -146,6 +154,9 @@ class SecurityRulesEvaluator:
             violations=violations,
         )
 
+        self._check_loitering(valid, violations)
+        self._check_abandoned(valid, violations)
+
         status = STATUS_ALERT if violations else STATUS_SAFE
         if violations:
             summary = " | ".join(v["message"] for v in violations)
@@ -182,6 +193,67 @@ class SecurityRulesEvaluator:
                     "count": person_count,
                 }
             )
+
+    def _check_loitering(self, detections: Sequence[dict[str, Any]], violations: list[dict[str, Any]]) -> None:
+        """Pessoa rastreada ha mais de ``loiter_seconds`` no perimetro."""
+        limit = self.config.loiter_seconds
+        if limit <= 0:
+            return
+        lingering = [
+            d for d in detections
+            if d.get("class_name") == "person" and "track_id" in d and float(d.get("age_s", 0)) >= limit
+        ]
+        if not lingering:
+            return
+        ids = ", ".join(f"#{d['track_id']} ({float(d['age_s']):.0f} s)" for d in lingering)
+        violations.append(
+            {
+                "rule": RULE_LOITERING,
+                "severity": SEVERITY_MEDIUM,
+                "message": f"Pessoa(s) no perimetro ha mais de {limit:.0f} s: {ids}.",
+                "classes": ["person"],
+                "count": len(lingering),
+            }
+        )
+
+    def _check_abandoned(self, detections: Sequence[dict[str, Any]], violations: list[dict[str, Any]]) -> None:
+        """Bagagem parada ha mais de ``abandoned_seconds`` sem pessoa por perto."""
+        limit = self.config.abandoned_seconds
+        if limit <= 0:
+            return
+        people = [d["bbox"] for d in detections if d.get("class_name") == "person"]
+        abandoned = []
+        for d in detections:
+            if d.get("class_name") not in BAGGAGE_CLASSES or "track_id" not in d:
+                continue
+            if float(d.get("stationary_s", 0)) < limit:
+                continue
+            x1, y1, x2, y2 = d["bbox"]
+            cx, cy = (x1 + x2) / 2, (y1 + y2) / 2
+            # "Por perto": ate 3 diagonais da bagagem (minimo 120 px) do centro de alguem.
+            radius = max(120.0, 3.0 * ((x2 - x1) ** 2 + (y2 - y1) ** 2) ** 0.5)
+            owner_near = any(
+                (((p[0] + p[2]) / 2 - cx) ** 2 + ((p[1] + p[3]) / 2 - cy) ** 2) ** 0.5 <= radius
+                for p in people
+            )
+            if not owner_near:
+                abandoned.append(d)
+        if not abandoned:
+            return
+        items = ", ".join(
+            f"{_PT_LABELS.get(d['class_name'], d['class_name'])} #{d['track_id']} "
+            f"({float(d['stationary_s']):.0f} s)"
+            for d in abandoned
+        )
+        violations.append(
+            {
+                "rule": RULE_ABANDONED,
+                "severity": SEVERITY_HIGH,
+                "message": f"Bagagem parada sem ninguem por perto: {items}.",
+                "classes": sorted({d["class_name"] for d in abandoned}),
+                "count": len(abandoned),
+            }
+        )
 
     def _check_group(
         self,

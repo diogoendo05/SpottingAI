@@ -1,0 +1,53 @@
+# Servidor RTMP do SpottingAI (MediaMTX) - recebe a live do DJI Fly.
+#
+# O SpottingAI inicia o MediaMTX sozinho com este arquivo quando a fonte
+# "Drone DJI Fly (RTMP)" e selecionada. No DJI Fly use:
+#   rtmp://<IP do PC>:1935/live/drone
+#
+# Ajustado para baixa latencia: so RTMP (entrada do celular) e RTSP local
+# (leitura pelo SpottingAI); HLS/WebRTC/SRT desligados.
+
+logLevel: warn
+logDestinations: [stdout]
+
+# A rede do celular pode ter picos: espera um pouco antes de derrubar o DJI Fly.
+readTimeout: 10s
+writeTimeout: 10s
+# Fila curta: se o leitor atrasar, descarta em vez de acumular latencia.
+writeQueueSize: 128
+
+api: false
+metrics: false
+pprof: false
+playback: false
+hls: false
+webrtc: false
+srt: false
+
+rtmp: true
+rtmpAddress: :1935
+
+# Leitura so pelo proprio PC, por TCP (sem perda de pacotes).
+rtsp: true
+rtspTransports: [tcp]
+rtspAddress: 127.0.0.1:8554
+
+authMethod: internal
+authInternalUsers:
+  # O celular (qualquer IP) pode publicar apenas em live/drone.
+  - user: any
+    pass:
+    ips: []
+    permissions:
+      - action: publish
+        path: live/drone
+  # So o proprio PC le o video.
+  - user: any
+    pass:
+    ips: ["127.0.0.1", "::1"]
+    permissions:
+      - action: read
+        path:
+
+paths:
+  all_others:

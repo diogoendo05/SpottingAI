@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="StatusText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">4dp</item>
+        <item name="android:textColor">#E6EDF3</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="Label">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:textColor">#00F0FF</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Input">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">#E6EDF3</item>
+        <item name="android:textColorHint">#6E7681</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <!-- Botoes sobre o video (HUD) -->
+    <style name="HudButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:minWidth">88dp</item>
+        <item name="android:layout_marginTop">6dp</item>
+        <item name="android:background">@drawable/hud_button</item>
+        <item name="android:paddingStart">10dp</item>
+        <item name="android:paddingEnd">10dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <!-- Itens da barra superior -->
+    <style name="HudBarText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginEnd">14dp</item>
+        <item name="android:fontFamily">monospace</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:shadowColor">#FF000000</item>
+        <item name="android:shadowRadius">3</item>
+    </style>
+
+    <!-- Linha "rotulo  [-] valor [+]" dos paineis -->
+    <style name="StepButton">
+        <item name="android:layout_width">44dp</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:background">@drawable/hud_button</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="StepValue">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">#E6EDF3</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <!-- Botao de valor nos paineis (abre a lista de opcoes) -->
+    <style name="ValueButton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">44dp</item>
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:background">@drawable/hud_button</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="Tab">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_marginEnd">4dp</item>
+        <item name="android:background">@drawable/hud_button</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="Option">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">#E6EDF3</item>
+    </style>
+</resources>

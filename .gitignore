@@ -2,10 +2,19 @@
 venv/
 .venv/
 
-# Pesos YOLO baixados em tempo de execucao (nao versionar: ~6 MB a ~22 MB)
+# Pesos YOLO baixados e modelos compilados (nao versionar)
 *.pt
+*.onnx
+*_openvino_model/
+dist/
+build/
+*.zip
+
+# Binario do MediaMTX (56 MB; baixado de github.com/bluenviron/mediamtx/releases)
+tools/mediamtx/
 
 # Relatorios forenses gerados pela aplicacao
+spottingai_report_*.csv
 sentinelai_report_*.csv
 
 # Python
@@ -24,3 +33,16 @@ desktop.ini
 .idea/
 .claude/
 *.errors.txt
+
+# Conjuntos de dados para avaliar/treinar modelos (baixados por tools/)
+datasets/
+
+# Configuracoes salvas pelo painel (estado local de cada maquina)
+config/user_settings.json
+config/user_settings.tmp
+
+# Cache de compilacao do OpenVINO (gerado na 1a abertura de cada modelo)
+ov_cache/
+
+# Gravacoes do video do drone (tools / [tcp_h264] record_dir)
+recordings/

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SpottingAI Drone</string>
+
+    <string name="preview_waiting">Aguardando vídeo do drone…</string>
+    <string name="status_sdk_initial">SDK: aguardando permissões…</string>
+    <string name="status_product_none">Drone: não conectado (ligue o RC-N1 e o drone)</string>
+    <string name="status_socket_stopped">PC: envio parado</string>
+
+    <string name="label_pc">PC do SpottingAI (IP e porta)</string>
+    <string name="hint_ip">192.168.0.10</string>
+    <string name="hint_port">9000</string>
+
+    <string name="label_feed">Feed enviado ao PC</string>
+    <string name="feed_transcoded">Transcodificado (H.264 padrão — recomendado)</string>
+    <string name="feed_primary">Primário (experimental: formato DJI, sem SPS/PPS)</string>
+
+    <string name="label_bitrate">Bitrate do transcodificado (Mbps, 0,3 a 20)</string>
+    <string name="hint_bitrate">8</string>
+
+    <string name="label_transmission">TRANSMISSÃO DO DRONE</string>
+    <string name="label_definition">Definição do vídeo ao vivo</string>
+    <string name="def_sd">Nítida (720p)</string>
+    <string name="def_hd">HD (1080p)</string>
+    <string name="label_frequency">Frequência do rádio</string>
+    <string name="band_24">2,4 GHz</string>
+    <string name="band_58">5,8 GHz</string>
+    <string name="band_dual">Dupla (auto)</string>
+    <string name="band_waiting">Conecte o drone para ver as frequências disponíveis.</string>
+    <string name="hd_live_view_note">Só vale com a câmera em modo vídeo gravando em 1080p ou 2.7K sem câmera lenta. Em 4K o live view fica em 720p. Se o vídeo travar, use 720p: exige metade da banda do rádio e do celular.</string>
+    <string name="label_channel_mode">Modo de canal</string>
+    <string name="mode_auto">Automático</string>
+    <string name="mode_manual">Manual</string>
+    <string name="label_bandwidth">Largura de banda</string>
+    <string name="bw_10">10 MHz</string>
+    <string name="bw_20">20 MHz</string>
+    <string name="bw_40">40 MHz</string>
+    <string name="manual_note">Escolha o canal com barras baixas/verdes no gráfico. 40 MHz = mais qualidade e menos alcance; 10 MHz = mais alcance e imagem mais leve.</string>
+    <string name="label_interference">Interferência por frequência</string>
+    <string name="btn_link_reset">Restaurar transmissão automática (padrão DJI)</string>
+
+    <string name="btn_start">Iniciar envio</string>
+    <string name="btn_stop">Parar envio</string>
+    <string name="btn_close">Fechar ✕</string>
+    <string name="chip_stopped">PC: parado</string>
+</resources>

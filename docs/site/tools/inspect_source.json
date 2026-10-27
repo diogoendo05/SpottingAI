@@ -1,0 +1,2301 @@
+{
+  "summary": {
+    "file": "site\\assets\\models\\source\\dji-air-2s\\source\\66371f2fbf595bfe531d2c38ab1b50d6.glb",
+    "objects": 70,
+    "meshes": 34,
+    "triangles": 142400,
+    "scene_bbox_min": [
+      -326.4842,
+      -345.0953,
+      -108.8165
+    ],
+    "scene_bbox_max": [
+      326.4842,
+      353.4584,
+      50.4977
+    ],
+    "scene_center": [
+      0.0,
+      4.1815,
+      -29.1594
+    ],
+    "images": [
+      {
+        "name": "Image_0",
+        "size": [
+          2048,
+          2048
+        ]
+      },
+      {
+        "name": "Image_1",
+        "size": [
+          2048,
+          2048
+        ]
+      },
+      {
+        "name": "Image_2",
+        "size": [
+          2048,
+          2048
+        ]
+      }
+    ],
+    "materials": [
+      "lambert1"
+    ]
+  },
+  "objects": [
+    {
+      "name": "Mavic_air_2s",
+      "type": "EMPTY",
+      "parent": "RootNode",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "name": "RootNode",
+      "type": "EMPTY",
+      "parent": null,
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "name": "polySurface10",
+      "type": "EMPTY",
+      "parent": "Mavic_air_2s",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "name": "polySurface10.001",
+      "type": "MESH",
+      "parent": "polySurface10",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 6854,
+      "loose_parts": 25,
+      "materials": [
+        "lambert1"
+      ],
+      "bbox_min": [
+        36.8312,
+        74.1684,
+        -75.1244
+      ],
+      "bbox_max": [
+        249.1669,
+        212.7664,
+        -28.2004
+      ],
+      "center": [
+        142.999,
+        143.4674,
+        -51.6624
+      ],
+      "size": [
+        212.3357,
+        138.598,
+        46.924
+      ]
+    },
+    {
+      "name": "polySurface101",
+      "type": "EMPTY",
+      "parent": "Mavic_air_2s",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "name": "polySurface101.001",
+      "type": "MESH",
+      "parent": "polySurface101",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 204,
+      "loose_parts": 3,
+      "materials": [
+        "lambert1"
+      ],
+      "bbox_min": [
+        -249.7935,
+        198.9112,
+        -71.2828
+      ],
+      "bbox_max": [
+        -241.783,
+        209.316,
+        -50.8783
+      ],
+      "center": [
+        -245.7883,
+        204.1136,
+        -61.0806
+      ],
+      "size": [
+        8.0105,
+        10.4048,
+        20.4044
+      ]
+    },
+    {
+      "name": "polySurface107",
+      "type": "EMPTY",
+      "parent": "Mavic_air_2s",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "name": "polySurface107.001",
+      "type": "MESH",
+      "parent": "polySurface107",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 856,
+      "loose_parts": 21,
+      "materials": [
+        "lambert1"
+      ],
+      "bbox_min": [
+        -64.5703,
+        -194.6812,
+        -88.2162
+      ],
+      "bbox_max": [
+        64.5703,
+        126.9266,
+        43.6569
+      ],
+      "center": [
+        0.0,
+        -33.8773,
+        -22.2796
+      ],
+      "size": [
+        129.1406,
+        321.6078,
+        131.8731
+      ]
+    },
+    {
+      "name": "polySurface123",
+      "type": "EMPTY",
+      "parent": "Mavic_air_2s",
+      "location": [
+        0.0292,
+        -0.005,
+        0.2261
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "name": "polySurface123.001",
+      "type": "MESH",
+      "parent": "polySurface123",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 186,
+      "loose_parts": 5,
+      "materials": [
+        "lambert1"
+      ],
+      "bbox_min": [
+        -46.889,
+        -93.6298,
+        -79.9611
+      ],
+      "bbox_max": [
+        46.9474,
+        127.7579,
+        -33.3596
+      ],
+      "center": [
+        0.0292,
+        17.064,
+        -56.6603
+      ],
+      "size": [
+        93.8364,
+        221.3877,
+        46.6016
+      ]
+    },
+    {
+      "name": "polySurface16",
+      "type": "EMPTY",
+      "parent": "Mavic_air_2s",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "name": "polySurface16.001",
+      "type": "MESH",
+      "parent": "polySurface16",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 1227,
+      "loose_parts": 5,
+      "materials": [
+        "lambert1"
+      ],
+      "bbox_min": [
+        133.3008,
+        193.6991,
+        -12.5852
+      ],
+      "bbox_max": [
+        227.6783,
+        353.4584,
+        8.3513
+      ],
+      "center": [
+        180.4895,
+        273.5787,
+        -2.1169
+      ],
+      "size": [
+        94.3775,
+        159.7593,
+        20.9365
+      ]
+    },
+    {
+      "name": "polySurface167",
+      "type": "EMPTY",
+      "parent": "Mavic_air_2s",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "name": "polySurface167.001",
+      "type": "MESH",
+      "parent": "polySurface167",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 6218,
+      "loose_parts": 56,
+      "materials": [
+        "lambert1"
+      ],
+      "bbox_min": [
+        235.2157,
+        -191.1252,
+        23.3544
+      ],
+      "bbox_max": [
+        276.1634,
+        -149.064,
+        45.0219
+      ],
+      "center": [
+        255.6895,
+        -170.0946,
+        34.1882
+      ],
+      "size": [
+        40.9477,
+        42.0612,
+        21.6676
+      ]
+    },
+    {
+      "name": "polySurface168",
+      "type": "EMPTY",
+      "parent": "Mavic_air_2s",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "name": "polySurface168.001",
+      "type": "MESH",
+      "parent": "polySurface168",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 1518,
+      "loose_parts": 27,
+      "materials": [
+        "lambert1"
+      ],
+      "bbox_min": [
+        233.6539,
+        -193.4194,
+        -2.8959
+      ],
+      "bbox_max": [
+        277.0904,
+        -149.148,
+        44.7582
+      ],
+      "center": [
+        255.3721,
+        -171.2837,
+        20.9311
+      ],
+      "size": [
+        43.4365,
+        44.2714,
+        47.6542
+      ]
+    },
+    {
+      "name": "polySurface169",
+      "type": "EMPTY",
+      "parent": "Mavic_air_2s",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "name": "polySurface169.001",
+      "type": "MESH",
+      "parent": "polySurface169",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 6218,
+      "loose_parts": 56,
+      "materials": [
+        "lambert1"
+      ],
+      "bbox_min": [
+        -276.1634,
+        -191.1252,
+        23.3544
+      ],
+      "bbox_max": [
+        -235.2157,
+        -149.064,
+        45.0219
+      ],
+      "center": [
+        -255.6895,
+        -170.0946,
+        34.1882
+      ],
+      "size": [
+        40.9477,
+        42.0612,
+        21.6676
+      ]
+    },
+    {
+      "name": "polySurface171",
+      "type": "EMPTY",
+      "parent": "Mavic_air_2s",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "name": "polySurface171.001",
+      "type": "MESH",
+      "parent": "polySurface171",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 1518,
+      "loose_parts": 27,
+      "materials": [
+        "lambert1"
+      ],
+      "bbox_min": [
+        -277.0904,
+        -193.4194,
+        -2.8959
+      ],
+      "bbox_max": [
+        -233.6539,
+        -149.148,
+        44.7582
+      ],
+      "center": [
+        -255.3721,
+        -171.2837,
+        20.9311
+      ],
+      "size": [
+        43.4365,
+        44.2714,
+        47.6542
+      ]
+    },
+    {
+      "name": "polySurface172",
+      "type": "EMPTY",
+      "parent": "Mavic_air_2s",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "name": "polySurface172.001",
+      "type": "MESH",
+      "parent": "polySurface172",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 6218,
+      "loose_parts": 56,
+      "materials": [
+        "lambert1"
+      ],
+      "bbox_min": [
+        -247.5451,
+        169.6226,
+        -18.8937
+      ],
+      "bbox_max": [
+        -206.5832,
+        210.6223,
+        2.7824
+      ],
+      "center": [
+        -227.0641,
+        190.1225,
+        -8.0556
+      ],
+      "size": [
+        40.9619,
+        40.9997,
+        21.6761
+      ]
+    },
+    {
+      "name": "polySurface174",
+      "type": "EMPTY",
+      "parent": "Mavic_air_2s",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "name": "polySurface174.001",
+      "type": "MESH",
+      "parent": "polySurface174",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 1518,
+      "loose_parts": 27,
+      "materials": [
+        "lambert1"
+      ],
+      "bbox_min": [
+        -248.5091,
+        168.581,
+        -45.156
+      ],
+      "bbox_max": [
+        -204.8816,
+        212.7395,
+        2.5262
+      ],
+      "center": [
+        -226.6954,
+        190.6602,
+        -21.3149
+      ],
+      "size": [
+        43.6275,
+        44.1585,
+        47.6822
+      ]
+    },
+    {
+      "name": "polySurface175",
+      "type": "EMPTY",
+      "parent": "Mavic_air_2s",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "name": "polySurface175.001",
+      "type": "MESH",
+      "parent": "polySurface175",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 6218,
+      "loose_parts": 56,
+      "materials": [
+        "lambert1"
+      ],
+      "bbox_min": [
+        206.5832,
+        169.6226,
+        -18.8937
+      ],
+      "bbox_max": [
+        247.5451,
+        210.6223,
+        2.7824
+      ],
+      "center": [
+        227.0641,
+        190.1225,
+        -8.0556
+      ],
+      "size": [
+        40.9619,
+        40.9997,
+        21.6761
+      ]
+    },
+    {
+      "name": "polySurface177",
+      "type": "EMPTY",
+      "parent": "Mavic_air_2s",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "name": "polySurface177.001",
+      "type": "MESH",
+      "parent": "polySurface177",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 1518,
+      "loose_parts": 27,
+      "materials": [
+        "lambert1"
+      ],
+      "bbox_min": [
+        204.8816,
+        168.581,
+        -45.156
+      ],
+      "bbox_max": [
+        248.5091,
+        212.7395,
+        2.5262
+      ],
+      "center": [
+        226.6954,
+        190.6602,
+        -21.3149
+      ],
+      "size": [
+        43.6275,
+        44.1585,
+        47.6822
+      ]
+    },
+    {
+      "name": "polySurface179",
+      "type": "EMPTY",
+      "parent": "Mavic_air_2s",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "name": "polySurface179.001",
+      "type": "MESH",
+      "parent": "polySurface179",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 23731,
+      "loose_parts": 114,
+      "materials": [
+        "lambert1"
+      ],
+      "bbox_min": [
+        -76.895,
+        -211.7185,
+        -95.8916
+      ],
+      "bbox_max": [
+        76.895,
+        139.2622,
+        46.6783
+      ],
+      "center": [
+        0.0,
+        -36.2281,
+        -24.6067
+      ],
+      "size": [
+        153.7901,
+        350.9807,
+        142.5699
+      ]
+    },
+    {
+      "name": "polySurface182",
+      "type": "EMPTY",
+      "parent": "Mavic_air_2s",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "name": "polySurface182.001",
+      "type": "MESH",
+      "parent": "polySurface182",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 10374,
+      "loose_parts": 22,
+      "materials": [
+        "lambert1"
+      ],
+      "bbox_min": [
+        -60.4534,
+        -202.0239,
+        -84.595
+      ],
+      "bbox_max": [
+        60.4534,
+        121.7126,
+        34.3535
+      ],
+      "center": [
+        0.0,
+        -40.1556,
+        -25.1207
+      ],
+      "size": [
+        120.9067,
+        323.7365,
+        118.9485
+      ]
+    },
+    {
+      "name": "polySurface183",
+      "type": "EMPTY",
+      "parent": "Mavic_air_2s",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "name": "polySurface183.001",
+      "type": "MESH",
+      "parent": "polySurface183",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 4652,
+      "loose_parts": 222,
+      "materials": [
+        "lambert1"
+      ],
+      "bbox_min": [
+        -81.183,
+        -202.5684,
+        -86.3987
+      ],
+      "bbox_max": [
+        81.183,
+        121.8941,
+        40.7301
+      ],
+      "center": [
+        0.0,
+        -40.3372,
+        -22.8343
+      ],
+      "size": [
+        162.3659,
+        324.4625,
+        127.1287
+      ]
+    },
+    {
+      "name": "polySurface184",
+      "type": "EMPTY",
+      "parent": "Mavic_air_2s",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "name": "polySurface184.001",
+      "type": "MESH",
+      "parent": "polySurface184",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 19761,
+      "loose_parts": 159,
+      "materials": [
+        "lambert1"
+      ],
+      "bbox_min": [
+        -48.793,
+        -102.0835,
+        -89.254
+      ],
+      "bbox_max": [
+        48.793,
+        127.6886,
+        -69.6101
+      ],
+      "center": [
+        0.0,
+        12.8025,
+        -79.4321
+      ],
+      "size": [
+        97.586,
+        229.7721,
+        19.6439
+      ]
+    },
+    {
+      "name": "polySurface19",
+      "type": "EMPTY",
+      "parent": "Mavic_air_2s",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "name": "polySurface19.001",
+      "type": "MESH",
+      "parent": "polySurface19",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 1227,
+      "loose_parts": 5,
+      "materials": [
+        "lambert1"
+      ],
+      "bbox_min": [
+        185.5355,
+        -345.0953,
+        29.6276
+      ],
+      "bbox_max": [
+        258.2849,
+        -175.2389,
+        50.4977
+      ],
+      "center": [
+        221.9102,
+        -260.1671,
+        40.0627
+      ],
+      "size": [
+        72.7494,
+        169.8564,
+        20.8701
+      ]
+    },
+    {
+      "name": "polySurface21",
+      "type": "EMPTY",
+      "parent": "Mavic_air_2s",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "name": "polySurface21.001",
+      "type": "MESH",
+      "parent": "polySurface21",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 1227,
+      "loose_parts": 5,
+      "materials": [
+        "lambert1"
+      ],
+      "bbox_min": [
+        226.7383,
+        25.2539,
+        -17.9331
+      ],
+      "bbox_max": [
+        321.7325,
+        185.1021,
+        -0.5529
+      ],
+      "center": [
+        274.2354,
+        105.178,
+        -9.243
+      ],
+      "size": [
+        94.9942,
+        159.8482,
+        17.3802
+      ]
+    },
+    {
+      "name": "polySurface25",
+      "type": "EMPTY",
+      "parent": "Mavic_air_2s",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "name": "polySurface25.001",
+      "type": "MESH",
+      "parent": "polySurface25",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 9620,
+      "loose_parts": 66,
+      "materials": [
+        "lambert1"
+      ],
+      "bbox_min": [
+        -42.25,
+        -206.7423,
+        -77.2367
+      ],
+      "bbox_max": [
+        42.25,
+        -112.2169,
+        6.1858
+      ],
+      "center": [
+        0.0,
+        -159.4796,
+        -35.5255
+      ],
+      "size": [
+        84.5,
+        94.5254,
+        83.4225
+      ]
+    },
+    {
+      "name": "polySurface44",
+      "type": "EMPTY",
+      "parent": "Mavic_air_2s",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "name": "polySurface44.001",
+      "type": "MESH",
+      "parent": "polySurface44",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 1227,
+      "loose_parts": 5,
+      "materials": [
+        "lambert1"
+      ],
+      "bbox_min": [
+        -326.4842,
+        -164.5736,
+        24.3562
+      ],
+      "bbox_max": [
+        -253.1349,
+        5.502,
+        41.715
+      ],
+      "center": [
+        -289.8096,
+        -79.5358,
+        33.0356
+      ],
+      "size": [
+        73.3493,
+        170.0756,
+        17.3588
+      ]
+    },
+    {
+      "name": "polySurface47",
+      "type": "EMPTY",
+      "parent": "Mavic_air_2s",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "name": "polySurface47.001",
+      "type": "MESH",
+      "parent": "polySurface47",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 1227,
+      "loose_parts": 5,
+      "materials": [
+        "lambert1"
+      ],
+      "bbox_min": [
+        -321.7325,
+        25.2539,
+        -17.9331
+      ],
+      "bbox_max": [
+        -226.7383,
+        185.1021,
+        -0.5529
+      ],
+      "center": [
+        -274.2354,
+        105.178,
+        -9.243
+      ],
+      "size": [
+        94.9942,
+        159.8482,
+        17.3802
+      ]
+    },
+    {
+      "name": "polySurface52",
+      "type": "EMPTY",
+      "parent": "Mavic_air_2s",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "name": "polySurface52.001",
+      "type": "MESH",
+      "parent": "polySurface52",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 8027,
+      "loose_parts": 34,
+      "materials": [
+        "lambert1"
+      ],
+      "bbox_min": [
+        -281.6167,
+        -193.1212,
+        -108.8165
+      ],
+      "bbox_max": [
+        -47.7664,
+        -79.6109,
+        27.1295
+      ],
+      "center": [
+        -164.6916,
+        -136.3661,
+        -40.8435
+      ],
+      "size": [
+        233.8503,
+        113.5103,
+        135.946
+      ]
+    },
+    {
+      "name": "polySurface53",
+      "type": "EMPTY",
+      "parent": "Mavic_air_2s",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "name": "polySurface53.001",
+      "type": "MESH",
+      "parent": "polySurface53",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 269,
+      "loose_parts": 3,
+      "materials": [
+        "lambert1"
+      ],
+      "bbox_min": [
+        -282.8629,
+        -185.0027,
+        -31.2724
+      ],
+      "bbox_max": [
+        -273.5593,
+        -172.0572,
+        -10.6495
+      ],
+      "center": [
+        -278.2111,
+        -178.53,
+        -20.961
+      ],
+      "size": [
+        9.3036,
+        12.9455,
+        20.623
+      ]
+    },
+    {
+      "name": "polySurface56",
+      "type": "EMPTY",
+      "parent": "Mavic_air_2s",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "name": "polySurface56.001",
+      "type": "MESH",
+      "parent": "polySurface56",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 1227,
+      "loose_parts": 5,
+      "materials": [
+        "lambert1"
+      ],
+      "bbox_min": [
+        -258.2849,
+        -345.0953,
+        29.6276
+      ],
+      "bbox_max": [
+        -185.5355,
+        -175.2389,
+        50.4977
+      ],
+      "center": [
+        -221.9102,
+        -260.1671,
+        40.0627
+      ],
+      "size": [
+        72.7494,
+        169.8564,
+        20.8701
+      ]
+    },
+    {
+      "name": "polySurface65",
+      "type": "EMPTY",
+      "parent": "Mavic_air_2s",
+      "location": [
+        0.0,
+        0.0,
+        0.0074
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "name": "polySurface65.001",
+      "type": "MESH",
+      "parent": "polySurface65",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 269,
+      "loose_parts": 3,
+      "materials": [
+        "lambert1"
+      ],
+      "bbox_min": [
+        273.5593,
+        -185.0027,
+        -31.2724
+      ],
+      "bbox_max": [
+        282.8629,
+        -172.0572,
+        -10.6495
+      ],
+      "center": [
+        278.2111,
+        -178.53,
+        -20.961
+      ],
+      "size": [
+        9.3036,
+        12.9455,
+        20.623
+      ]
+    },
+    {
+      "name": "polySurface66",
+      "type": "EMPTY",
+      "parent": "Mavic_air_2s",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "name": "polySurface66.001",
+      "type": "MESH",
+      "parent": "polySurface66",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 416,
+      "loose_parts": 2,
+      "materials": [
+        "lambert1"
+      ],
+      "bbox_min": [
+        -3.479,
+        -191.7879,
+        -54.5593
+      ],
+      "bbox_max": [
+        3.479,
+        -189.3653,
+        -47.6014
+      ],
+      "center": [
+        0.0,
+        -190.5766,
+        -51.0804
+      ],
+      "size": [
+        6.958,
+        2.4226,
+        6.958
+      ]
+    },
+    {
+      "name": "polySurface8",
+      "type": "EMPTY",
+      "parent": "Mavic_air_2s",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "name": "polySurface8.001",
+      "type": "MESH",
+      "parent": "polySurface8",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 1120,
+      "loose_parts": 42,
+      "materials": [
+        "lambert1"
+      ],
+      "bbox_min": [
+        -266.3306,
+        -187.93,
+        -77.4294
+      ],
+      "bbox_max": [
+        266.3306,
+        105.3193,
+        -10.2803
+      ],
+      "center": [
+        0.0,
+        -41.3053,
+        -43.8549
+      ],
+      "size": [
+        532.6612,
+        293.2493,
+        67.1491
+      ]
+    },
+    {
+      "name": "polySurface83",
+      "type": "EMPTY",
+      "parent": "Mavic_air_2s",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "name": "polySurface83.001",
+      "type": "MESH",
+      "parent": "polySurface83",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 8027,
+      "loose_parts": 34,
+      "materials": [
+        "lambert1"
+      ],
+      "bbox_min": [
+        47.7664,
+        -193.1212,
+        -108.8165
+      ],
+      "bbox_max": [
+        281.6167,
+        -79.6109,
+        27.1295
+      ],
+      "center": [
+        164.6916,
+        -136.3661,
+        -40.8435
+      ],
+      "size": [
+        233.8503,
+        113.5103,
+        135.946
+      ]
+    },
+    {
+      "name": "polySurface84",
+      "type": "EMPTY",
+      "parent": "Mavic_air_2s",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "name": "polySurface84.001",
+      "type": "MESH",
+      "parent": "polySurface84",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 1227,
+      "loose_parts": 5,
+      "materials": [
+        "lambert1"
+      ],
+      "bbox_min": [
+        253.1349,
+        -164.5736,
+        24.3562
+      ],
+      "bbox_max": [
+        326.4842,
+        5.502,
+        41.715
+      ],
+      "center": [
+        289.8096,
+        -79.5358,
+        33.0356
+      ],
+      "size": [
+        73.3493,
+        170.0756,
+        17.3588
+      ]
+    },
+    {
+      "name": "polySurface9",
+      "type": "EMPTY",
+      "parent": "Mavic_air_2s",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "name": "polySurface9.001",
+      "type": "MESH",
+      "parent": "polySurface9",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 6932,
+      "loose_parts": 25,
+      "materials": [
+        "lambert1"
+      ],
+      "bbox_min": [
+        -249.1669,
+        74.1684,
+        -75.1244
+      ],
+      "bbox_max": [
+        -36.8312,
+        212.7664,
+        -28.2004
+      ],
+      "center": [
+        -142.999,
+        143.4674,
+        -51.6624
+      ],
+      "size": [
+        212.3357,
+        138.598,
+        46.924
+      ]
+    },
+    {
+      "name": "polySurface91",
+      "type": "EMPTY",
+      "parent": "Mavic_air_2s",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "name": "polySurface91.001",
+      "type": "MESH",
+      "parent": "polySurface91",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 138,
+      "loose_parts": 6,
+      "materials": [
+        "lambert1"
+      ],
+      "bbox_min": [
+        -21.8714,
+        86.6331,
+        -84.4328
+      ],
+      "bbox_max": [
+        21.8714,
+        106.4635,
+        -84.0121
+      ],
+      "center": [
+        0.0,
+        96.5483,
+        -84.2225
+      ],
+      "size": [
+        43.7427,
+        19.8304,
+        0.4207
+      ]
+    },
+    {
+      "name": "polySurface93",
+      "type": "EMPTY",
+      "parent": "Mavic_air_2s",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "name": "polySurface93.001",
+      "type": "MESH",
+      "parent": "polySurface93",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 204,
+      "loose_parts": 3,
+      "materials": [
+        "lambert1"
+      ],
+      "bbox_min": [
+        241.783,
+        198.9112,
+        -71.2828
+      ],
+      "bbox_max": [
+        249.7935,
+        209.316,
+        -50.8783
+      ],
+      "center": [
+        245.7883,
+        204.1136,
+        -61.0806
+      ],
+      "size": [
+        8.0105,
+        10.4048,
+        20.4044
+      ]
+    },
+    {
+      "name": "polySurface96",
+      "type": "EMPTY",
+      "parent": "Mavic_air_2s",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "name": "polySurface96.001",
+      "type": "MESH",
+      "parent": "polySurface96",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_euler_deg": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 1227,
+      "loose_parts": 5,
+      "materials": [
+        "lambert1"
+      ],
+      "bbox_min": [
+        -227.6783,
+        193.6991,
+        -12.5852
+      ],
+      "bbox_max": [
+        -133.3008,
+        353.4584,
+        8.3513
+      ],
+      "center": [
+        -180.4895,
+        273.5787,
+        -2.1169
+      ],
+      "size": [
+        94.3775,
+        159.7593,
+        20.9365
+      ]
+    }
+  ]
+}

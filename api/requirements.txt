@@ -1,0 +1,20 @@
+# Dependencias do build serverless da Vercel (ver api/index.py).
+# O requirements.txt da raiz e o do servidor local e NAO e usado aqui: a Vercel
+# resolve o requirements.txt mais proximo do entrypoint.
+#
+# Orcamento: o limite e 250 MB descompactados por funcao. Medido nas wheels
+# manylinux x86_64 (tamanho comprimido -> ~2.5x descompactado):
+#   onnxruntime 22 MB | numpy 17 MB | pillow 7 MB | fastapi + pydantic ~3 MB
+#   = ~49 MB comprimidos -> ~125 MB, mais 12 MB do yolov8n.onnx.
+#
+# Ficam de fora de proposito:
+#   torch + ultralytics (~490 MB) -> substituidos pelo ONNX Runtime
+#   opencv-python-headless (58 MB comprimidos, ~150 MB abertos) -> substituido
+#     por Pillow em src/imaging.py; sozinho ele estourava o limite
+#   pandas (~60 MB) -> src/logger.py o importa sob demanda e o CSV sai pelo
+#     modulo csv da biblioteca padrao
+fastapi>=0.110.0
+python-multipart>=0.0.9
+pillow>=10.0.0
+numpy>=1.24.0,<2.0.0
+onnxruntime>=1.17.0

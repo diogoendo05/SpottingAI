@@ -1,5 +1,5 @@
 /* ==========================================================================
-   SentinelAI - Painel de operacao
+   SpottingAI - Painel de operacao
    Sincroniza os controles com a API, consome o feed MJPEG e recebe os KPIs
    e incidentes pelo WebSocket. Sem dependencias externas: o app precisa
    funcionar 100% offline durante a apresentacao.
@@ -17,7 +17,12 @@ const S = {
   ws: null,
   lastForensic: null,
   cameras: [],
-  allResolutions: [],
+  allResolutions: [
+    [1920, 1080],
+    [1280, 720],
+    [960, 540],
+    [640, 480],
+  ],
 };
 
 /* ---------------------------------------------------------------- utilitarios */
@@ -94,9 +99,42 @@ function buildModelSelect() {
   const updateHint = () => {
     const model = S.config.models.find((m) => m.name === select.value);
     $("model-hint").textContent = model ? model.description : "";
+    syncImgszField(select.value);
   };
   select.addEventListener("change", updateHint);
   updateHint();
+
+  // Rede do drone: mesma lista, mais a opcao de usar a do painel.
+  const drone = $("drone-model-select");
+  drone.innerHTML = `<option value="">(a mesma da rede neural acima)</option>` + S.config.models
+    .map((m) => `<option value="${escapeHtml(m.name)}">${escapeHtml(m.name)}</option>`)
+    .join("");
+  const updateDroneHint = () => {
+    const model = S.config.models.find((m) => m.name === drone.value);
+    $("drone-model-hint").textContent = "Usada automaticamente quando a fonte é o drone." +
+      (model ? " " + model.description : "");
+  };
+  drone.addEventListener("change", updateDroneHint);
+  updateDroneHint();
+}
+
+/**
+ * Modelos OpenVINO tem a entrada fixada na exportacao: o seletor de resolucao
+ * so vale para os .pt (CPU). Para os OpenVINO mostra a resolucao real, travado.
+ */
+function syncImgszField(modelName) {
+  const field = $("imgsz");
+  const fixed = /openvino/i.test(modelName || "");
+  field.disabled = fixed;
+  let note = field.parentElement.parentElement.querySelector(".imgsz-fixed");
+  if (!note) {
+    note = document.createElement("span");
+    note.className = "hint imgsz-fixed";
+    field.parentElement.after(note);
+  }
+  const size = /_fhd_/i.test(modelName) ? "1920 × 1088" : /_hd_/i.test(modelName) ? "1280 × 736" : "640 × 640";
+  note.textContent = fixed ? `Fixa neste modelo: ${size} px (definida na exportação para OpenVINO).` : "";
+  note.style.display = fixed ? "" : "none";
 }
 
 function buildClassList() {
@@ -113,6 +151,7 @@ function buildClassList() {
 
 function applySettings(settings) {
   $("model-select").value = settings.model_name;
+  syncImgszField(settings.model_name);
   $("confidence").value = Math.round(settings.confidence * 100);
   $("confidence-value").textContent = Math.round(settings.confidence * 100) + "%";
   $("imgsz").value = settings.imgsz;
@@ -120,11 +159,18 @@ function applySettings(settings) {
   $("alert-dangerous").checked = settings.alert_dangerous;
   $("alert-devices").checked = settings.alert_devices;
   $("alert-baggage").checked = settings.alert_baggage;
+  $("drone-model-select").value = settings.drone_model_name || "";
+  $("drone-model-select").dispatchEvent(new Event("change"));
+  $("tiling").value = settings.tiling || "off";
+  $("tracking").checked = settings.tracking !== false;
+  $("loiter-seconds").value = settings.loiter_seconds || 0;
+  $("abandoned-seconds").value = settings.abandoned_seconds || 0;
 
   S.classes = new Set(settings.classes);
   document.querySelectorAll("[data-class]").forEach((box) => {
     box.checked = S.classes.has(box.dataset.class);
   });
+  S.applied = { ...settings, classes: [...settings.classes].sort() };
 }
 
 function renderLegend(hostId) {
@@ -143,21 +189,34 @@ function pushSettings() {
   clearTimeout(settingsTimer);
   // Debounce: arrastar o slider dispararia dezenas de requisicoes.
   settingsTimer = setTimeout(async () => {
+    const form = {
+      model_name: $("model-select").value,
+      confidence: Number($("confidence").value) / 100,
+      classes: [...S.classes].sort(),
+      imgsz: Number($("imgsz").value),
+      max_people: Number($("max-people").value),
+      alert_dangerous: $("alert-dangerous").checked,
+      alert_devices: $("alert-devices").checked,
+      alert_baggage: $("alert-baggage").checked,
+      drone_model_name: $("drone-model-select").value,
+      tiling: $("tiling").value,
+      tracking: $("tracking").checked,
+      loiter_seconds: Number($("loiter-seconds").value) || 0,
+      abandoned_seconds: Number($("abandoned-seconds").value) || 0,
+    };
+    // Envia so o que mudou: um campo velho (outra aba, formulario restaurado pelo
+    // navegador) nao pode sobrescrever o que esta valendo no servidor.
+    const applied = S.applied || {};
+    const changes = Object.fromEntries(Object.entries(form)
+      .filter(([key, value]) => JSON.stringify(value) !== JSON.stringify(applied[key])));
+    if (!Object.keys(changes).length) return;
     try {
-      await api("/api/settings", {
+      const result = await api("/api/settings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model_name: $("model-select").value,
-          confidence: Number($("confidence").value) / 100,
-          classes: [...S.classes],
-          imgsz: Number($("imgsz").value),
-          max_people: Number($("max-people").value),
-          alert_dangerous: $("alert-dangerous").checked,
-          alert_devices: $("alert-devices").checked,
-          alert_baggage: $("alert-baggage").checked,
-        }),
+        body: JSON.stringify(changes),
       });
+      S.applied = { ...result.settings, classes: [...result.settings.classes].sort() };
     } catch (error) {
       toast("Falha ao salvar configurações: " + error.message, true);
     }
@@ -170,7 +229,8 @@ function bindControls() {
     pushSettings();
   });
 
-  ["model-select", "imgsz", "max-people", "alert-dangerous", "alert-devices", "alert-baggage"]
+  ["model-select", "imgsz", "max-people", "alert-dangerous", "alert-devices", "alert-baggage",
+    "drone-model-select", "tiling", "tracking", "loiter-seconds", "abandoned-seconds"]
     .forEach((id) => $(id).addEventListener("change", pushSettings));
 
   $("class-list").addEventListener("change", (event) => {
@@ -201,6 +261,16 @@ function bindControls() {
     renderIncidents("live-incidents", []);
     renderIncidents("forensic-incidents", []);
     toast("Histórico de incidentes limpo.");
+  });
+
+  $("reset-settings").addEventListener("click", async () => {
+    try {
+      const result = await api("/api/settings/reset", { method: "POST" });
+      applySettings(result.settings);
+      toast("Configurações padrão restauradas.");
+    } catch (error) {
+      toast("Falha ao restaurar: " + error.message, true);
+    }
   });
 }
 
@@ -238,13 +308,35 @@ async function pollState() {
          internet <strong>apenas uma vez</strong>. Depois o sistema roda 100% offline.</p>`);
     }
     $("incident-pill-text").textContent = state.incidents + " incidentes";
+
+    // Classes marcadas que o modelo ativo nao conhece (ex.: rede do drone sem faca/mochila).
+    const missing = state.model.unsupported_classes || [];
+    const compat = $("class-compat");
+    if (missing.length && state.model.ready) {
+      const names = missing.map((c) => {
+        const info = (S.config.classes || []).find((k) => k.name === c);
+        return info ? info.label : c;
+      });
+      compat.textContent = `⚠ O modelo em uso (${state.model.name}) não detecta: ${names.join(", ")}. ` +
+        "As regras dessas classes ficam inativas com esta fonte de vídeo.";
+      compat.style.display = "";
+      pill.title = compat.textContent;
+    } else {
+      compat.style.display = "none";
+      pill.title = "";
+    }
   } catch (_) { /* servidor reiniciando: a proxima sondagem resolve */ }
 }
+
+// Reconexão automática resiliente para monitoramento contínuo 24/7.
+let wsAttempts = 0;
 
 function connectWebSocket() {
   const protocol = location.protocol === "https:" ? "wss" : "ws";
   const ws = new WebSocket(`${protocol}://${location.host}/ws/events`);
   S.ws = ws;
+
+  ws.onopen = () => { wsAttempts = 0; };
 
   ws.onmessage = (event) => {
     const data = JSON.parse(event.data);
@@ -256,13 +348,40 @@ function connectWebSocket() {
       renderLiveKpis(evaluation, camera.fps || 0, camera.frames_processed || 0);
       $("live-badge").style.display = camera.running ? "flex" : "none";
       setCameraRunning(!!camera.running);
+
+      if (camera.running && camera.camera_name) {
+        $("camera-note").className = "camera-note";
+        $("camera-note").innerHTML =
+          `Capturando de <strong>${escapeHtml(camera.camera_name)}</strong>` +
+          (camera.width ? ` a ${camera.width}×${camera.height}` : "") +
+          (camera.backend ? ` · via ${escapeHtml(camera.backend)}` : "") +
+          (camera.source_status ? `<br>${escapeHtml(camera.source_status)}` : "");
+      }
     }
+
+    const modalStatus = $("modal-mobile-status");
+    const modalText = $("modal-mobile-status-text");
+    if (modalStatus && modalText) {
+      if (camera.camera_index === "remote" && camera.running) {
+        modalStatus.className = "qr-status-pill is-live";
+        modalText.textContent = "📱 Celular Conectado e Transmitindo!";
+      } else if (!camera.running && modalStatus.classList.contains("is-live")) {
+        modalStatus.className = "qr-status-pill";
+        modalText.textContent = "Aguardando conexão do celular...";
+      }
+    }
+
     renderIncidents("live-incidents", data.incidents || []);
     $("incident-pill-text").textContent = (data.incident_total || 0) + " incidentes";
   };
 
-  // Reconecta sozinho: durante a palestra ninguem vai recarregar a pagina na mao.
-  ws.onclose = () => setTimeout(connectWebSocket, 1500);
+  // Reconexão contínua com backoff exponencial suave limitado a 5 segundos.
+  // Permite suportar reinicializações e oscilações de rede sem interromper o monitoramento.
+  ws.onclose = () => {
+    wsAttempts++;
+    const delay = Math.min(5000, 1000 + Math.min(wsAttempts * 500, 4000));
+    setTimeout(connectWebSocket, delay);
+  };
 }
 
 /* ---------------------------------------------------------------- renderizacao */
@@ -313,7 +432,9 @@ function renderLiveKpis(evaluation, fps, frames = 0) {
   $("live-kpis").innerHTML =
     kpiCard("FPS", fps ? fps.toFixed(1) : "—", `${frames} quadros`, "", "activity") +
     kpiCard("Pessoas", evaluation ? evaluation.person_count : "—",
-            "limite " + $("max-people").value, tone, "users") +
+            "limite " + $("max-people").value +
+              (evaluation && evaluation.unique_people != null ? ` · ${evaluation.unique_people} únicas` : ""),
+            tone, "users") +
     kpiCard("Objetos", evaluation ? evaluation.total_detections : "—",
             `${S.classes.size} classes`, "", "target") +
     kpiCard("Status", evaluation ? (alert ? "Alerta" : "Seguro") : "Inativo",
@@ -398,6 +519,21 @@ function setCameraRunning(running) {
 
 /* --- selecao de camera ------------------------------------------------- */
 
+// Mesmos prefixos de URL_PREFIXES em src/video_source.py.
+const STREAM_URL_PREFIXES = ["http://", "https://", "rtsp://", "rtmp://", "rtmps://", "mms://"];
+
+function isStreamUrl(value) {
+  const v = String(value || "").trim().toLowerCase();
+  return STREAM_URL_PREFIXES.some((p) => v.startsWith(p));
+}
+
+function droneOptionHtml(port) {
+  return `<option value="drone_rtmp">🚁 Drone DJI Fly (live RTMP :1935)</option>` +
+    `<option value="drone">🚁 Drone DJI (app próprio · TCP :${Number(port) || 9000})</option>`;
+}
+
+const DRONE_VALUES = ["drone", "drone_rtmp"];
+
 function currentResolution() {
   const [w, h] = ($("camera-resolution").value || "1280x720").split("x").map(Number);
   return { capture_width: w, capture_height: h };
@@ -423,26 +559,38 @@ function renderResolutionOptions(camera) {
 async function loadCameras(refresh = false) {
   const select = $("camera-select");
   const note = $("camera-note");
+
+  // Opcoes fixas: captura de tela (navegador) e receptor H.264 do drone (servidor).
+  const fixedOptions = () =>
+    `<option value="screen">🖥️ Tela / Janela do Computador</option>` + droneOptionHtml(S.dronePort);
+
+  // Exibe a opção de captura de tela imediatamente, eliminando o travamento em "Detectando..."
+  if (!select.options.length || select.value === "screen" || select.options[0].text.includes("Detectando")) {
+    select.innerHTML = fixedOptions() + `<option value="" disabled>Detectando webcams físicas…</option>`;
+    select.value = "screen";
+  }
+
   if (refresh) {
     note.className = "camera-note is-busy";
     note.textContent = "Procurando câmeras…";
-    select.disabled = true;
   }
 
   try {
     const data = await api(`/api/cameras${refresh ? "?refresh=true" : ""}`);
     S.cameras = data.cameras;
     S.allResolutions = data.resolutions;
+    if (data.drone && data.drone.port) S.dronePort = data.drone.port;
 
     if (!data.cameras.length) {
-      select.innerHTML = `<option value="">Nenhuma câmera encontrada</option>`;
+      select.innerHTML = fixedOptions() + `<option value="" disabled>— Nenhuma webcam física detectada —</option>`;
+      select.value = DRONE_VALUES.includes(String(data.selected.index)) ? String(data.selected.index) : "screen";
       note.className = "camera-note";
-      note.textContent = "Conecte uma câmera e clique em Procurar câmeras.";
+      note.innerHTML = "Webcam física não encontrada. Use <strong>🖥️ Tela / Janela do Computador</strong>.";
       renderResolutionOptions(null);
       return;
     }
 
-    select.innerHTML = data.cameras
+    const camOptions = data.cameras
       .map((c) => {
         const best = c.resolutions && c.resolutions.length ? c.resolutions[0] : null;
         const detail = c.in_use ? " — em uso"
@@ -454,11 +602,14 @@ async function loadCameras(refresh = false) {
       })
       .join("");
 
+    select.innerHTML = fixedOptions() + camOptions;
+
     const wanted = String(data.selected.index);
     if ([...select.options].some((o) => o.value === wanted && !o.disabled)) select.value = wanted;
     else {
       const first = data.cameras.find((c) => c.available);
       if (first) select.value = String(first.index);
+      else select.value = "screen";
     }
 
     onCameraSelected();
@@ -469,7 +620,7 @@ async function loadCameras(refresh = false) {
     }
 
     note.className = "camera-note";
-    note.innerHTML = `${data.cameras.filter((c) => c.available).length} câmera(s) disponível(is)` +
+    note.innerHTML = `${data.cameras.filter((c) => c.available).length} câmera(s) física(s) + <strong>Captura de Tela</strong> + <strong>Drone DJI</strong>` +
       (chosen && chosen.in_use ? " · <strong>em uso agora</strong>" : "");
   } catch (error) {
     note.className = "camera-note";
@@ -485,6 +636,9 @@ function onCameraSelected() {
 }
 
 async function applyCameraChange() {
+  if (pcScreenStream) {
+    stopDesktopScreenSharing();
+  }
   // Trocar de camera com o feed no ar exige reabrir o dispositivo.
   if (!S.cameraRunning) return;
   await api("/api/camera/stop", { method: "POST" });
@@ -492,17 +646,33 @@ async function applyCameraChange() {
   await startCamera();
 }
 
-async function startCamera() {
+async function startCamera(customIndex = null, mirror = null) {
   clearNotice("live-notice");
+  const rawVal = customIndex !== null ? customIndex : $("camera-select").value;
+  if (rawVal === "screen") {
+    return await startDesktopScreenSharing();
+  }
+
   $("cam-start").disabled = true;
   try {
+    const isUrlOrRemote = typeof rawVal === "string" && (
+      rawVal === "remote" ||
+      DRONE_VALUES.includes(rawVal) ||
+      rawVal.toLowerCase().startsWith("tcp://") ||
+      isStreamUrl(rawVal)
+    );
+    const camera_index = isUrlOrRemote ? rawVal : Number(rawVal || 0);
+
+    const bodyPayload = {
+      camera_index: camera_index,
+      ...currentResolution(),
+    };
+    if (mirror !== null) bodyPayload.mirror = mirror;
+
     const result = await api("/api/camera/start", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        camera_index: Number($("camera-select").value || 0),
-        ...currentResolution(),
-      }),
+      body: JSON.stringify(bodyPayload),
     });
     setCameraRunning(true);
     const cam = result.camera;
@@ -510,7 +680,7 @@ async function startCamera() {
       $("camera-note").className = "camera-note";
       $("camera-note").innerHTML =
         `Capturando de <strong>${escapeHtml(cam.camera_name || "câmera")}</strong> ` +
-        `a ${cam.width}×${cam.height}` +
+        (cam.width ? `a ${cam.width}×${cam.height}` : "") +
         (cam.backend ? ` · via ${escapeHtml(cam.backend)}` : "");
     }
     return true;
@@ -521,7 +691,7 @@ async function startCamera() {
       <ol>
         <li>Feche outros programas que estejam usando a câmera (Teams, Zoom, Meet).</li>
         <li>Se for a câmera do celular, confirme que o aplicativo está conectado e
-            clique em <strong>🔄 Procurar câmeras</strong>.</li>
+            clique em <strong>🔄 Procurar câmeras</strong> ou use <strong>📱 Celular</strong>.</li>
         <li>Verifique <em>Configurações do Windows → Privacidade → Câmera</em> e permita
             o acesso a aplicativos da área de trabalho.</li>
         <li>Sem câmera disponível, use o modo <strong>📸 Snapshot</strong> ou a aba
@@ -539,9 +709,17 @@ function bindLiveTab() {
   });
   $("camera-resolution").addEventListener("change", applyCameraChange);
 
-  $("cam-start").addEventListener("click", startCamera);
+  const btnShareScreen = $("btn-share-screen");
+  if (btnShareScreen) {
+    btnShareScreen.addEventListener("click", () => startDesktopScreenSharing());
+  }
+
+  $("cam-start").addEventListener("click", () => startCamera());
 
   $("cam-stop").addEventListener("click", async () => {
+    if (pcScreenStream) {
+      stopDesktopScreenSharing();
+    }
     await api("/api/camera/stop", { method: "POST" });
     setCameraRunning(false);
     renderBanner("live-banner", null);
@@ -576,6 +754,393 @@ function bindLiveTab() {
 
   $("snap-enable").addEventListener("click", startBrowserCamera);
   $("snap-capture").addEventListener("click", captureBrowserFrame);
+
+  bindMobileModal();
+}
+
+function bindMobileModal() {
+  const modal = $("mobile-connect-modal");
+  const openBtn = $("btn-open-mobile-modal");
+  const closeBtn = $("modal-mobile-close");
+  const tabQrBtn = $("tab-btn-qr");
+  const tabIpBtn = $("tab-btn-ip");
+  const tabPcBtn = $("tab-btn-pc");
+  const tabQrContent = $("tab-qr");
+  const tabIpContent = $("tab-ip");
+  const tabPcContent = $("tab-pc");
+
+  if (!modal || !openBtn) return;
+
+  // Abrir Modal
+  openBtn.addEventListener("click", async () => {
+    modal.classList.add("is-open");
+    modal.setAttribute("aria-hidden", "false");
+    await refreshMobileInfo();
+  });
+
+  // Fechar Modal
+  const closeModal = () => {
+    modal.classList.remove("is-open");
+    modal.setAttribute("aria-hidden", "true");
+  };
+  closeBtn.addEventListener("click", closeModal);
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) closeModal();
+  });
+
+  // Alternar abas do modal
+  const switchTab = (activeBtn, activeContent) => {
+    [tabQrBtn, tabIpBtn, tabPcBtn].forEach((b) => b && b.classList.remove("active"));
+    [tabQrContent, tabIpContent, tabPcContent].forEach((c) => c && c.classList.remove("active"));
+    activeBtn.classList.add("active");
+    activeContent.classList.add("active");
+  };
+
+  tabQrBtn.addEventListener("click", () => switchTab(tabQrBtn, tabQrContent));
+  tabIpBtn.addEventListener("click", () => switchTab(tabIpBtn, tabIpContent));
+  if (tabPcBtn && tabPcContent) {
+    tabPcBtn.addEventListener("click", () => switchTab(tabPcBtn, tabPcContent));
+  }
+
+  // Copiar link do celular
+  $("btn-copy-mobile-url").addEventListener("click", () => {
+    const url = $("modal-mobile-url").textContent;
+    if (navigator.clipboard && url) {
+      navigator.clipboard.writeText(url);
+      toast("Link copiado para a área de transferência!");
+    }
+  });
+
+  // Alternar Túnel Seguro HTTPS
+  $("btn-toggle-tunnel").addEventListener("click", async () => {
+    const btn = $("btn-toggle-tunnel");
+    btn.disabled = true;
+    try {
+      if (S.isTunnelActive) {
+        toast("Desativando túnel HTTPS...");
+        await api("/api/remote/tunnel/stop", { method: "POST" });
+        S.isTunnelActive = false;
+        toast("Túnel encerrado. Usando endereço IP local.");
+      } else {
+        btn.textContent = "Iniciando túnel...";
+        toast("Iniciando túnel HTTPS via Localtunnel (aguarde ~2s)...");
+        const res = await api("/api/remote/tunnel/start", { method: "POST" });
+        if (res.ok) {
+          S.isTunnelActive = true;
+          toast("Túnel HTTPS ativado com sucesso!");
+        }
+      }
+      await refreshMobileInfo();
+    } catch (err) {
+      toast("Falha no túnel HTTPS: " + err.message, true);
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  // Copiar senha do túnel
+  $("btn-copy-tunnel-pwd").addEventListener("click", () => {
+    const pwd = $("tunnel-password-val").textContent;
+    if (navigator.clipboard && pwd) {
+      navigator.clipboard.writeText(pwd);
+      toast("Senha do túnel copiada: " + pwd);
+    }
+  });
+
+  // Ativar feed do celular (Modo Web)
+  $("btn-activate-mobile-stream").addEventListener("click", async () => {
+    closeModal();
+    toast("Aguardando stream do celular...");
+    await startCamera("remote", false);
+  });
+
+  // Presets de Stream IP
+  $("preset-screen-stream").addEventListener("click", () => {
+    const ip = S.remoteLanIp || "192.168.1.50";
+    $("ip-stream-url").value = `http://${ip}:8080/stream.mjpeg`;
+  });
+  $("preset-ip-webcam").addEventListener("click", () => {
+    const ip = S.remoteLanIp || "192.168.1.50";
+    $("ip-stream-url").value = `http://${ip}:8080/video`;
+  });
+  $("preset-droidcam").addEventListener("click", () => {
+    const ip = S.remoteLanIp || "192.168.1.50";
+    $("ip-stream-url").value = `http://${ip}:4747/video`;
+  });
+
+  // Conectar Stream IP
+  $("btn-connect-ip-stream").addEventListener("click", async () => {
+    const url = $("ip-stream-url").value.trim();
+    if (!url) {
+      toast("Por favor, digite a URL do stream IP.", true);
+      return;
+    }
+    if (!isStreamUrl(url)) {
+      toast("A URL deve começar com http://, https://, rtsp:// ou rtmp://", true);
+      return;
+    }
+    closeModal();
+    toast("Conectando ao stream IP...");
+    const ok = await startCamera(url, false);
+    if (ok) {
+      toast("Stream IP conectado com sucesso!");
+    }
+  });
+
+  // Compartilhamento de Janela / Espelhamento no PC
+  const pcShareBtn = $("btn-share-pc-screen");
+  if (pcShareBtn) {
+    pcShareBtn.addEventListener("click", startDesktopScreenSharing);
+  }
+}
+
+async function refreshMobileInfo() {
+  try {
+    const data = await api("/api/remote/info");
+    S.remoteLanIp = data.lan_ip;
+    S.isTunnelActive = !!data.is_tunnel_active;
+
+    $("modal-mobile-url").textContent = data.remote_url;
+    $("qr-code-img").src = `/api/remote/qr?url=${encodeURIComponent(data.remote_url)}&t=${Date.now()}`;
+
+    const statusPill = $("modal-mobile-status");
+    const statusText = $("modal-mobile-status-text");
+
+    if (data.is_remote_active) {
+      statusPill.className = "qr-status-pill is-live";
+      statusText.textContent = "📱 Celular Conectado e Transmitindo!";
+    } else {
+      statusPill.className = "qr-status-pill";
+      statusText.textContent = "Aguardando conexão do celular...";
+    }
+
+    const tunnelBadge = $("tunnel-badge-state");
+    const tunnelBtn = $("btn-toggle-tunnel");
+    const tunnelPanel = $("tunnel-info-panel");
+    const tunnelPwdVal = $("tunnel-password-val");
+
+    if (data.is_tunnel_active) {
+      tunnelBadge.textContent = "Ativo (HTTPS)";
+      tunnelBadge.style.color = "var(--safe)";
+      tunnelBadge.style.background = "rgba(16, 185, 129, 0.2)";
+      tunnelBtn.textContent = "⏹️ Desativar HTTPS";
+      tunnelPanel.style.display = "block";
+      tunnelPwdVal.textContent = data.tunnel_password || data.lan_ip;
+    } else {
+      tunnelBadge.textContent = "Desativado";
+      tunnelBadge.style.color = "var(--text-3)";
+      tunnelBadge.style.background = "rgba(255, 255, 255, 0.08)";
+      tunnelBtn.textContent = "⚡ Ativar HTTPS";
+      tunnelPanel.style.display = "none";
+    }
+  } catch (err) {
+    console.warn("Falha ao buscar info remota:", err);
+  }
+}
+
+let pcScreenStream = null;
+let pcScreenWs = null;
+let pcScreenTimer = null;
+let pcScreenSending = false;
+
+async function startDesktopScreenSharing() {
+  if (pcScreenStream) {
+    stopDesktopScreenSharing();
+  }
+
+  const modal = $("mobile-connect-modal");
+  if (modal) {
+    modal.classList.remove("is-open");
+    modal.setAttribute("aria-hidden", "true");
+  }
+
+  try {
+    const stream = await navigator.mediaDevices.getDisplayMedia({
+      video: {
+        cursor: "always",
+        frameRate: { ideal: 60, max: 60 },
+      },
+      audio: false,
+    });
+
+    pcScreenStream = stream;
+
+    const track = stream.getVideoTracks()[0];
+    if (track && "contentHint" in track) {
+      track.contentHint = "motion";
+    }
+
+    let videoEl = $("screen-capture-video");
+    if (!videoEl) {
+      videoEl = document.createElement("video");
+      videoEl.id = "screen-capture-video";
+      videoEl.autoplay = true;
+      videoEl.playsInline = true;
+      videoEl.muted = true;
+      videoEl.style.cssText = "position:fixed; top:-9999px; left:-9999px; width:640px; height:360px; pointer-events:none; opacity:0; z-index:-1;";
+      document.body.appendChild(videoEl);
+    }
+    videoEl.srcObject = stream;
+    try {
+      await videoEl.play();
+    } catch (_) {}
+
+    await new Promise((resolve) => {
+      if (videoEl.videoWidth > 0 && videoEl.videoHeight > 0) {
+        resolve();
+      } else {
+        const onLoaded = () => {
+          videoEl.removeEventListener("loadedmetadata", onLoaded);
+          resolve();
+        };
+        videoEl.addEventListener("loadedmetadata", onLoaded);
+        setTimeout(resolve, 800);
+      }
+    });
+
+    toast("🖥️ Janela capturada! Conectando feed ao SpottingAI...");
+
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d", { alpha: false });
+
+    const loc = window.location;
+    const protocol = loc.protocol === "https:" ? "wss:" : "ws:";
+    const wsUrl = `${protocol}//${loc.host}/ws/screen-stream`;
+
+    pcScreenWs = new WebSocket(wsUrl);
+    pcScreenWs.binaryType = "arraybuffer";
+
+    pcScreenWs.onopen = () => {
+      toast("🚀 Espelhamento ativo com taxa máxima de atualização!");
+      setCameraRunning(true);
+      const note = $("camera-note");
+      if (note) {
+        note.className = "camera-note";
+        note.innerHTML = `Capturando de <strong>Tela / Janela do Computador</strong> (${videoEl.videoWidth || 1280}×${videoEl.videoHeight || 720}) · Ultra Fluido (até 60 FPS)`;
+      }
+
+      pcScreenSending = false;
+
+      function scheduleNext() {
+        if (!pcScreenStream || !pcScreenWs || pcScreenWs.readyState !== WebSocket.OPEN) {
+          return;
+        }
+        if ("requestVideoFrameCallback" in videoEl) {
+          videoEl.requestVideoFrameCallback(() => sendNextFrame());
+        } else {
+          pcScreenTimer = setTimeout(sendNextFrame, 16);
+        }
+      }
+
+      const sendNextFrame = () => {
+        if (!pcScreenStream || !pcScreenWs || pcScreenWs.readyState !== WebSocket.OPEN) {
+          return;
+        }
+
+        const vw = videoEl.videoWidth || 1280;
+        const vh = videoEl.videoHeight || 720;
+        if (!vw || !vh) {
+          pcScreenTimer = setTimeout(sendNextFrame, 50);
+          return;
+        }
+
+        // Se a rede estiver ocupada, pula o quadro para manter latência ZERO
+        if (pcScreenSending || pcScreenWs.bufferedAmount > 80000) {
+          scheduleNext();
+          return;
+        }
+
+        pcScreenSending = true;
+
+        // Escala para resolução ideal de inferência YOLO (ultra rápida)
+        const scale = Math.min(854 / vw, 480 / vh, 1.0);
+        const w = Math.round(vw * scale);
+        const h = Math.round(vh * scale);
+        if (canvas.width !== w || canvas.height !== h) {
+          canvas.width = w;
+          canvas.height = h;
+        }
+
+        ctx.drawImage(videoEl, 0, 0, w, h);
+
+        canvas.toBlob(
+          (blob) => {
+            if (blob && pcScreenWs && pcScreenWs.readyState === WebSocket.OPEN) {
+              blob.arrayBuffer().then((buf) => {
+                try {
+                  if (pcScreenWs && pcScreenWs.readyState === WebSocket.OPEN) {
+                    pcScreenWs.send(buf);
+                  }
+                } catch (_) {}
+              }).finally(() => {
+                pcScreenSending = false;
+                scheduleNext();
+              });
+            } else {
+              pcScreenSending = false;
+              scheduleNext();
+            }
+          },
+          "image/jpeg",
+          0.58
+        );
+      };
+
+      sendNextFrame();
+    };
+
+    pcScreenWs.onclose = () => {
+      if (pcScreenStream) {
+        stopDesktopScreenSharing();
+      }
+    };
+
+    pcScreenWs.onerror = (err) => {
+      console.warn("WebSocket de tela:", err);
+    };
+
+    stream.getVideoTracks()[0].addEventListener("ended", () => {
+      stopDesktopScreenSharing();
+    });
+
+    return true;
+  } catch (err) {
+    if (err.name === "NotAllowedError") {
+      toast("Seleção de janela/tela cancelada.");
+    } else {
+      toast("Falha ao capturar janela/tela: " + err.message, true);
+    }
+    return false;
+  }
+}
+
+function stopDesktopScreenSharing() {
+  if (pcScreenTimer) {
+    clearTimeout(pcScreenTimer);
+    pcScreenTimer = null;
+  }
+  pcScreenSending = false;
+  if (pcScreenWs) {
+    try {
+      pcScreenWs.close();
+    } catch (_) {}
+    pcScreenWs = null;
+  }
+  if (pcScreenStream) {
+    try {
+      pcScreenStream.getTracks().forEach((t) => t.stop());
+    } catch (_) {}
+    pcScreenStream = null;
+  }
+  const videoEl = $("screen-capture-video");
+  if (videoEl) {
+    videoEl.srcObject = null;
+  }
+  api("/api/camera/stop", { method: "POST" }).catch(() => {});
+  setCameraRunning(false);
+  renderBanner("live-banner", null);
+  renderLiveKpis(null, 0);
+  toast("Transmissão de tela encerrada.");
 }
 
 async function startBrowserCamera() {
@@ -642,18 +1207,21 @@ function bindForensicTab() {
   const dropzone = $("dropzone");
   const input = $("file-input");
 
-  $("use-sample").disabled = !S.config.has_sample;
-  $("use-sample").addEventListener("click", async () => {
-    clearNotice("forensic-notice");
-    setBusy(true, "Periciando a imagem de exemplo…");
-    try {
-      showForensic(await api("/api/analyze/sample"));
-    } catch (error) {
-      showNotice("forensic-notice", "error", "Falha na análise", `<p>${escapeHtml(error.message)}</p>`);
-    } finally {
-      setBusy(false);
-    }
-  });
+  const sampleBtn = $("use-sample");
+  if (sampleBtn) {
+    sampleBtn.disabled = !S.config.has_sample;
+    sampleBtn.addEventListener("click", async () => {
+      clearNotice("forensic-notice");
+      setBusy(true, "Periciando a imagem de teste…");
+      try {
+        showForensic(await api("/api/analyze/sample"));
+      } catch (error) {
+        showNotice("forensic-notice", "error", "Falha na análise", `<p>${escapeHtml(error.message)}</p>`);
+      } finally {
+        setBusy(false);
+      }
+    });
+  }
 
   dropzone.addEventListener("click", () => input.click());
   dropzone.addEventListener("dragover", (e) => {
@@ -683,6 +1251,7 @@ async function handleUpload(file) {
   const name = file.name.toLowerCase();
   const form = new FormData();
   form.append("file", file);
+  form.append("aerial", $("aerial-media").checked ? "true" : "false");
 
   try {
     if (/\.(jpg|jpeg|png)$/.test(name)) {
@@ -791,7 +1360,7 @@ init().catch((error) => {
   document.body.innerHTML = `
     <div class="fatal">
       <div class="fatal-card">
-        <h2>Falha ao inicializar o SentinelAI</h2>
+        <h2>Falha ao inicializar o SpottingAI</h2>
         <p class="fatal-detail">${escapeHtml(error.message)}</p>
         <p>Verifique o terminal onde o servidor foi iniciado e recarregue a página.</p>
       </div>

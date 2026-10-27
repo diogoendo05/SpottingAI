@@ -1,4 +1,4 @@
-# Tema nativo do SentinelAI (Dark Security Mode).
+# Tema nativo do SpottingAI (Dark Security Mode).
 #
 # O CSS injetado em src/ui_components.py estiliza os componentes proprios da
 # aplicacao, mas nao alcanca o interior dos widgets do Streamlit (botoes,
