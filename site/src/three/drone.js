@@ -4,10 +4,15 @@
 import { Box3, Group, MathUtils, Object3D, Vector3 } from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
+import { createBeam } from "./beam.js";
 import { createDiscMaterial, createPropDisc, DISC_RADIUS } from "./propBlur.js";
 
 const ARMS = ["FL", "FR", "RL", "RR"];
 const PROP_SPEED = 40; // rad/s com prop = 1
+// Fração do lado menor do painel ocupada por R ao ancorar. A spec dá 0,42, mas com os discos girando
+// o drone vai além de R e era recortado pela borda durante o giro para a vista de cima (t ≈ 860).
+// 0,35 cabe no pior caso; o zoom final (keyframes) sobe na mesma proporção.
+const PANEL_FILL = 0.35;
 const TAU = Math.PI * 2;
 const UP = new Vector3(0, 1, 0);
 const rad = MathUtils.degToRad;
@@ -100,6 +105,8 @@ class Drone {
     this.lens = new Object3D();
     this.lens.position.copy(vec(P.camera_lens.origin).sub(cameraOrigin));
     this.pCamera.add(this.lens);
+    this.beam = createBeam();
+    this.lens.add(this.beam.mesh);
 
     // anchorGroup (posição e escala) → spinGroup (Z) → poseGroup (YXZ) → bobGroup (flutuação) → root.
     this.bobGroup = new Group();
@@ -129,7 +136,7 @@ class Drone {
     if (s.anchor > 0 && slot) {
       const pxP = (slot.left + slot.width / 2) / window.innerWidth - 0.5;
       const pyP = 0.5 - (slot.top + slot.height / 2) / window.innerHeight;
-      const scaleP = (0.42 * Math.min(slot.width, slot.height) * H) / window.innerHeight / this.radius;
+      const scaleP = (PANEL_FILL * Math.min(slot.width, slot.height) * H) / window.innerHeight / this.radius;
       px = MathUtils.lerp(px, pxP, s.anchor);
       py = MathUtils.lerp(py, pyP, s.anchor);
       scale = MathUtils.lerp(scale, scaleP, s.anchor);
@@ -164,6 +171,8 @@ class Drone {
     this.discMaterial.opacity = 0.5 * blur;
     this.discMaterial.visible = blur > 0;
     this.propMaterial.opacity = 1 - 0.6 * blur;
+
+    this.beam.update(s.beam, time);
 
     return s.prop > 0 || s.hover > 0 || s.beam > 0;
   }

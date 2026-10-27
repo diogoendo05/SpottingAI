@@ -10,6 +10,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { mode, watchMode } from "./core/mode.js";
 import { initScroll } from "./core/scroll.js";
 import { onFrame, startTicker } from "./core/ticker.js";
+import { capacidadesFrame } from "./sections/capacidades.js";
 import { createMaster } from "./timeline/master.js";
 import { consumeDirty, debugState, markDirty, state } from "./timeline/state.js";
 import { createLoader } from "./ui/loader.js";
@@ -49,7 +50,6 @@ async function startFull() {
     });
     stage.scene.add(drone.object);
     if (window.spotting) Object.assign(window.spotting, { drone, stage });
-    const slot = document.getElementById("cap-slot");
     const view = stage.view;
 
     // Primeiro quadro já com o estado aplicado, para o compileAsync ver o que será desenhado.
@@ -61,8 +61,8 @@ async function startFull() {
     // Render sob demanda (§6.6): estado mudou, animação por tempo ativa ou resize.
     onFrame((time, deltaMs) => {
       if (document.hidden) return;
-      // Leitura do slot antes de qualquer escrita no DOM do quadro.
-      const rect = state.anchor > 0 ? slot.getBoundingClientRect() : null;
+      // Painel e recorte de Capacidades: lê o slot antes de qualquer escrita no DOM do quadro.
+      const rect = capacidadesFrame();
       const animating = drone.update(state, time, Math.min(deltaMs / 1000, 0.1), view, rect);
       const dirty = consumeDirty();
       const resized = stage.consumeResize();

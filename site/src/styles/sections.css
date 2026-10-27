@@ -436,6 +436,25 @@
   color: var(--ink);
 }
 
+/* Duas camadas: a de baixo em --muted, a de cima em --ink (só o passo ativo a mostra). */
+.cap-step__label {
+  display: grid;
+}
+
+.cap-step__layer {
+  grid-area: 1 / 1;
+  white-space: nowrap;
+}
+
+.cap-step__layer--ink {
+  color: var(--ink);
+  opacity: 0;
+}
+
+.cap-step.is-active .cap-step__layer--ink {
+  opacity: 1;
+}
+
 .cap-slot {
   display: none;
 }
@@ -787,6 +806,27 @@
   aspect-ratio: 4 / 3;
 }
 
+/* Lista sem reflow (§5.6): todo item fica em --fs-lead e o inativo é encolhido por scale(0.7);
+   a timeline anima o scale e a camada --ink. O gap compensa a altura perdida na escala. */
+.mode-full .cap-steps {
+  gap: calc(var(--s-4) - 0.3 * 1.25 * var(--fs-lead));
+}
+
+.mode-full .cap-step {
+  font-size: var(--fs-lead);
+  font-weight: 350;
+  line-height: 1.25;
+}
+
+.mode-full .cap-step__label {
+  transform-origin: left center;
+  transform: scale(0.7);
+}
+
+.mode-full .cap-step.is-active .cap-step__label {
+  transform: none;
+}
+
 .mode-full .cap-blocks {
   gap: 0;
 }
@@ -795,7 +835,7 @@
   grid-area: 1 / 1;
 }
 
-/* Até a timeline de Capacidades (etapa 5), só o passo 1 aparece. */
+/* Antes da timeline montar, só o passo 1 aparece (depois ela controla a opacidade). */
 .mode-full .cap-block + .cap-block {
   opacity: 0;
 }

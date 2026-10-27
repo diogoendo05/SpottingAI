@@ -11,6 +11,7 @@ import { initManifesto } from "../sections/manifesto.js";
 import { initPerimetro } from "../sections/perimetro.js";
 import { initNumeros } from "../sections/numeros.js";
 import { initAplicacoes } from "../sections/aplicacoes.js";
+import { initCapacidades } from "../sections/capacidades.js";
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
@@ -36,7 +37,7 @@ export function createMaster() {
   });
 
   addDroneKeyframes(tl);
-  sections.push(initHero(tl), initManifesto(tl), initPerimetro(tl), initNumeros(tl), initAplicacoes(tl));
+  sections.push(initHero(tl), initManifesto(tl), initPerimetro(tl), initNumeros(tl), initAplicacoes(tl), initCapacidades(tl));
   tl.set({}, {}, STORY_LENGTH); // fixa a duração
 
   return tl;

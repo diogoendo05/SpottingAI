@@ -31,6 +31,9 @@ export const KEYFRAMES = [
   { t: 995, ease: "sine.inOut", from: 970, values: { align: 1 } },
   { t: 1000, ease: "sine.out", from: 950, values: { hover: 0 } },
   { t: 1020, ease: "sine.inOut", from: 985, values: { foldF: 1 } },
-  { t: 1040, ease: "sine.inOut", from: { foldR: 1005, spin: 990, zoom: 990 }, values: { spin: 270, foldR: 1, zoom: 1.3 } },
+  // Ajustes no olho: a spec começa spin e zoom em 990, mas girar com os braços traseiros ainda abertos
+  // leva as pontas das pás para fora do painel (t ≈ 1012); os três começam juntos em 1005. O zoom é
+  // 1,3 × 0,42 / 0,35 = 1,56 para compensar o PANEL_FILL menor (three/drone.js).
+  { t: 1040, ease: "sine.inOut", from: 1005, values: { spin: 270, foldR: 1, zoom: 1.56 } },
   { t: 1160, set: true, values: { visible: false } },
 ];

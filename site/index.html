@@ -241,9 +241,21 @@
             <h2 id="capacidades-title" class="cap-title" aria-label="Capacidades" tabindex="-1">CAPACIDADES</h2>
             <div class="cap-grid">
               <ol class="cap-steps" role="list">
-                <li><button class="cap-step is-active" type="button" data-step="0">Detectar</button></li>
-                <li><button class="cap-step" type="button" data-step="1">Transmitir</button></li>
-                <li><button class="cap-step" type="button" data-step="2">Portabilidade</button></li>
+                <li>
+                  <button class="cap-step is-active" type="button" data-step="0" aria-current="step">
+                    <span class="cap-step__label"><span class="cap-step__layer">Detectar</span><span class="cap-step__layer cap-step__layer--ink" aria-hidden="true">Detectar</span></span>
+                  </button>
+                </li>
+                <li>
+                  <button class="cap-step" type="button" data-step="1">
+                    <span class="cap-step__label"><span class="cap-step__layer">Transmitir</span><span class="cap-step__layer cap-step__layer--ink" aria-hidden="true">Transmitir</span></span>
+                  </button>
+                </li>
+                <li>
+                  <button class="cap-step" type="button" data-step="2">
+                    <span class="cap-step__label"><span class="cap-step__layer">Portabilidade</span><span class="cap-step__layer cap-step__layer--ink" aria-hidden="true">Portabilidade</span></span>
+                  </button>
+                </li>
               </ol>
               <div id="cap-slot" class="cap-slot" aria-hidden="true"></div>
               <div class="cap-blocks">
