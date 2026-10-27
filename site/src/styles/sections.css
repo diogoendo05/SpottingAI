@@ -413,11 +413,19 @@
   visibility: visible;
 }
 
-/* ---------- Placeholders de imagem (§8: imagens pendentes) ---------- */
+/* ---------- Imagens das seções ---------- */
 .media-reveal {
   overflow: hidden;
 }
 
+.media-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: var(--panel);
+}
+
+/* Placeholder para uma imagem que ainda não existe (§8). */
 .placeholder {
   display: grid;
   place-items: center;
@@ -704,7 +712,7 @@
 }
 
 /* Celular com a mesma altura da captura grande (16:10 sobre 8 de 12 colunas). */
-.shot--phone .placeholder {
+.shot--phone .media-img {
   height: calc(((100cqw + var(--col-gap)) * 8 / 12 - var(--col-gap)) * 10 / 16);
   width: auto;
 }
@@ -803,7 +811,7 @@
   .footer__credits {
     grid-column: 1 / -1;
   }
-  .shot--phone .placeholder {
+  .shot--phone .media-img {
     height: auto;
     width: 60%;
   }

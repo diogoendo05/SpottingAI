@@ -5,10 +5,15 @@
 2. Rode, na raiz do repositório:
    venv\\Scripts\\python.exe -I docs/site/tools/captures.py <pasta-com-os-png>
 
+Converte o que estiver na pasta (dá para refazer só uma parte). As capturas do painel (Aplicações e
+"O painel") saem do próprio SpottingAI rodando em localhost, com a imagem de exemplo de rostos
+desfocados servida como câmera IP (ver SPEC §12).
+
 Saída (tetos da SPEC §8):
 - site/public/poster-hero.webp          1600×1000, ≤ 150 KB, com transparência
 - site/public/og-image.png               1200×630,  ≤ 300 KB
 - site/assets/images/cap-*.webp          1600×1200, ≤ 120 KB cada
+- site/assets/images/apps-*.webp e painel-*.webp, ≤ 250 KB cada
 """
 import io
 import sys
@@ -27,6 +32,16 @@ TARGETS = [
 ]
 
 
+IMAGES = SITE / "assets" / "images"
+OPTIONAL = [
+    ("apps-perimetro.png", IMAGES / "apps-perimetro.webp", 250_000),
+    ("apps-pericia.png", IMAGES / "apps-pericia.webp", 250_000),
+    ("painel-ao-vivo.png", IMAGES / "painel-ao-vivo.webp", 250_000),
+    ("painel-celular.png", IMAGES / "painel-celular.webp", 250_000),
+    ("painel-pericia.png", IMAGES / "painel-pericia.webp", 250_000),
+]
+
+
 def webp_under(img: Image.Image, limit: int) -> tuple[bytes, int]:
     """Maior qualidade (de 85 para baixo) que cabe no limite."""
     for quality in range(85, 40, -5):
@@ -39,7 +54,10 @@ def webp_under(img: Image.Image, limit: int) -> tuple[bytes, int]:
 
 def main() -> None:
     src = Path(sys.argv[1])
-    for name, out, limit in TARGETS:
+    found = [t for t in TARGETS + OPTIONAL if (src / t[0]).exists()]
+    if not found and not (src / "og-image.png").exists():
+        raise SystemExit(f"nenhuma captura em {src}")
+    for name, out, limit in found:
         img = Image.open(src / name)
         img = img.convert("RGBA" if img.mode == "RGBA" and img.getextrema()[3][0] < 255 else "RGB")
         data, quality = webp_under(img, limit)
@@ -47,6 +65,8 @@ def main() -> None:
         out.write_bytes(data)
         print(f"{out.relative_to(ROOT)}  {img.size[0]}×{img.size[1]}  q{quality}  {len(data) / 1000:.0f} KB")
 
+    if not (src / "og-image.png").exists():
+        return
     og = Image.open(src / "og-image.png").convert("RGB")
     out = SITE / "public" / "og-image.png"
     og.save(out, "PNG", optimize=True)

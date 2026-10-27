@@ -1120,4 +1120,19 @@ Medições na Iris Xe do notebook, com o build de produção:
 
 Capturas: com `npm run dev`, abra `?capture=hero|og|cap1|cap2|cap3` (só em desenvolvimento) e depois rode `docs/site/tools/captures.py` para gerar `public/poster-hero.webp`, `public/og-image.png` e `assets/images/cap-*.webp`.
 
-Ainda dependem do autor (§11): as imagens de Aplicações e do Painel, a autoria no rodapé, o projeto Vercel (já existe `site/vercel.json`) e a URL absoluta do `og:image` quando houver domínio.
+### 12.1 Pendências resolvidas depois (27/10/2026)
+
+- **Incidente com imagem (§5.5):** o `IncidentLogger` guarda horário, origem, classe, confiança, status e regra, sem imagem. A coluna B de “Perícia” usa a frase alternativa (“Cada alerta vira um incidente com horário…”).
+- **Ficha da DJI (§5.6):** conferida na página oficial (dji.com/br, suporte do Air 2S): 595 g; dobrado 180×97×77 mm; desdobrado 183×253×77 mm.
+- **Capturas do painel (§8), decididas pelo autor:**
+  - origem: o próprio SpottingAI rodando em localhost, lendo como câmera IP (stream MJPEG local) a `sample_media/perimeter_test.jpg`, que é a `bus.jpg` das amostras da Ultralytics, AGPL-3.0, creditada no rodapé;
+  - rostos desfocados antes da análise; imagem recortada em 4:3;
+  - arquivos gerados: `apps-perimetro`, `apps-pericia`, `painel-ao-vivo`, `painel-celular` e `painel-pericia` (WebP, 108–194 KB).
+- **“O mesmo painel no celular” (§5.7.2):** o `/remote` não é o painel, e sim o *Transmissor Mobile* (manda câmera ou tela do celular para o PC; ao ser aberto, ele troca a fonte do painel). A captura do celular é o painel principal (`/`), que é responsivo e abre pela rede local.
+- **Aba “Vista aérea”:** sem gravação aérea disponível, ela usa por enquanto a ilustração `cap-detectar.webp` (o drone com o cone). Troque por `apps-aerea.webp` quando houver um quadro dos voos reais.
+- **Autoria (§5.7.4), decidida pelo autor:** só o link do repositório público, `github.com/diogoendo05/SpottingAI`, sem nomes.
+
+Ainda com o autor:
+- o quadro aéreo dos voos reais;
+- o deploy no projeto Vercel (o autor publica; `site/vercel.json` já existe);
+- a URL absoluta do `og:image` quando houver domínio.
