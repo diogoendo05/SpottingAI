@@ -1,0 +1,131 @@
+/* Reset, fonte, foco, sr-only e vinheta. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  font-optical-sizing: auto;
+  font-feature-settings: "ss01", "cv11";
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  font-size: var(--fs-body);
+  line-height: 1.55;
+}
+
+/* Vinheta sutil, atrás de tudo (inclusive do backdrop). */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: var(--bg-vignette);
+  pointer-events: none;
+}
+
+h1,
+h2,
+h3,
+p,
+dl,
+dd,
+ol,
+ul,
+figure {
+  margin: 0;
+}
+
+ul[role="list"],
+ol[role="list"] {
+  list-style: none;
+  padding: 0;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+}
+
+img,
+svg,
+canvas {
+  display: block;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+}
+
+/* Títulos recebem foco programático depois do scrollTo; o anel só faz sentido no teclado. */
+[tabindex="-1"]:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.sr-only,
+.mode-full .sr-only-full {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: fixed;
+  top: var(--s-3);
+  left: var(--gutter);
+  z-index: 60;
+  padding: var(--s-2) var(--s-4);
+  background: var(--ink);
+  color: var(--bg);
+  font-size: var(--fs-small);
+  text-decoration: none;
+  transform: translateY(-200%);
+}
+
+.skip-link:focus-visible {
+  transform: none;
+}
+
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ?debug */
+.debug {
+  position: fixed;
+  right: var(--s-3);
+  top: 64px;
+  z-index: 70;
+  margin: 0;
+  padding: var(--s-2) var(--s-3);
+  max-width: min(560px, calc(100vw - 24px));
+  white-space: pre-wrap;
+  background: rgb(17 19 22 / 0.85);
+  color: #fff;
+  font: 11px/1.4 ui-monospace, "Cascadia Mono", Consolas, monospace;
+  pointer-events: none;
+}

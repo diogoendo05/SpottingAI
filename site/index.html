@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SpottingAI: visão computacional para segurança perimetral</title>
+    <meta
+      name="description"
+      content="O SpottingAI detecta pessoas e veículos em tempo real, 100% no notebook, com câmeras de chão e com um DJI Air 2S como câmera aérea."
+    />
+    <meta name="theme-color" content="#EEF1F4" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:title" content="SpottingAI: visão computacional para segurança perimetral" />
+    <meta
+      property="og:description"
+      content="Detecção de pessoas e veículos em tempo real, 100% local, com câmeras de chão e um drone."
+    />
+    <!-- og:image: pendente (public/og-image.png, gerado por ?capture=hero na etapa 7) -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script>
+      // Escolhe o layout antes do primeiro paint. Mesma regra de src/core/mode.js
+      // (consulta de mídia + "Ver sem 3D" guardado na sessão).
+      (function () {
+        var forced = false;
+        try {
+          forced = sessionStorage.getItem("spottingai:sem3d") === "1";
+        } catch (e) {}
+        var simple =
+          forced || matchMedia("(max-width: 767px), (max-height: 599px), (prefers-reduced-motion: reduce)").matches;
+        document.documentElement.classList.add("js", simple ? "mode-simple" : "mode-full");
+        if (simple) return;
+        document.documentElement.classList.add("is-loading");
+        // Rede de segurança da tela de entrada (§7.3): fica aqui, e não no módulo, para funcionar
+        // mesmo se o JS principal não carregar. Em 12 s sem o 3D pronto, oferece "Ver sem 3D".
+        setTimeout(function () {
+          var button = document.querySelector(".loader__fallback");
+          if (button) button.hidden = false;
+        }, 12000);
+        document.addEventListener("click", function (event) {
+          if (!event.target.closest || !event.target.closest(".loader__fallback")) return;
+          try {
+            sessionStorage.setItem("spottingai:sem3d", "1");
+          } catch (e) {}
+          location.reload();
+        });
+      })();
+    </script>
+    <script type="module" src="/src/main.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+
+    <nav class="nav" aria-label="Principal">
+      <div class="nav__group">
+        <a class="nav__brand" href="#hero" data-scroll-to>
+          <svg class="brand-icon" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true" focusable="false">
+            <circle cx="10" cy="10" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5" />
+            <circle cx="10" cy="10" r="2" fill="currentColor" />
+          </svg>
+          <span class="nav__name">SpottingAI</span>
+        </a>
+        <span class="nav__trail" aria-hidden="true">
+          <span class="nav__trail-item is-on">Visão geral</span>
+          <span class="nav__trail-item"></span>
+        </span>
+      </div>
+      <ul class="nav__links" role="list">
+        <li><a href="#hero" data-scroll-to>Visão geral</a></li>
+        <li><a href="#numeros" data-scroll-to>Drone</a></li>
+        <li><a href="#capacidades" data-scroll-to>Capacidades</a></li>
+      </ul>
+      <div class="nav__group nav__group--end">
+        <a class="nav__credits" href="#creditos" data-scroll-to>Créditos</a>
+        <a class="nav__cta" href="#como-funciona" data-scroll-to>Como funciona</a>
+      </div>
+    </nav>
+
+    <div id="loader" class="loader" role="status" aria-live="polite" aria-label="Carregando o drone 3D">
+      <p class="loader__brand">
+        <svg class="brand-icon" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true" focusable="false">
+          <circle cx="10" cy="10" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5" />
+          <circle cx="10" cy="10" r="2" fill="currentColor" />
+        </svg>
+        SpottingAI
+      </p>
+      <div class="loader__progress">
+        <div class="loader__track"><div class="loader__bar"></div></div>
+        <span class="loader__pct tnum">0%</span>
+      </div>
+      <button class="loader__fallback" type="button" hidden>Ver sem 3D</button>
+    </div>
+
+    <!-- Camada 0: tudo o que fica atrás do drone (§6.2). Movido só pela timeline. -->
+    <div id="backdrop" aria-hidden="true">
+      <div class="watermark">SPOTTINGAI</div>
+      <div class="mega-word"><span class="mega-word__text">Perímetro</span></div>
+      <div class="cap-panel"></div>
+    </div>
+
+    <!-- Camada 1: o drone. -->
+    <canvas id="gl" role="img" aria-label="Drone DJI Air 2S em 3D"></canvas>
+
+    <!-- Camada 2: conteúdo. -->
+    <main id="conteudo" tabindex="-1">
+      <div id="story">
+        <section id="hero" class="hero" aria-labelledby="hero-title" data-trail="Visão geral">
+          <div class="hero__bottom">
+            <h1 id="hero-title" class="hero__title" tabindex="-1">
+              Visão computacional para segurança perimetral.<br />
+              Em tempo real, 100% local.
+            </h1>
+            <p class="hero__hint" aria-hidden="true">Role para explorar</p>
+          </div>
+        </section>
+
+        <section id="manifesto" class="manifesto" aria-labelledby="manifesto-title" data-trail="Visão geral">
+          <div class="frame manifesto__frame">
+            <h2 id="manifesto-title" class="sr-only" tabindex="-1">O que o sistema faz</h2>
+            <p class="manifesto__text">
+              O SpottingAI reconhece <span class="kw">pessoas e veículos</span> em cada quadro, dá a cada um uma
+              identidade e <span class="kw">segue seu trajeto</span>, mesmo com a câmera em movimento. Avisa quando
+              alguém <span class="kw">fica tempo demais no perímetro</span> ou quando uma
+              <span class="kw">bagagem é deixada para trás</span>. Cada <span class="kw">alerta</span> vira um
+              incidente registrado, pronto para a <span class="kw">perícia</span>. E nada sai do
+              <span class="kw">computador</span>.
+            </p>
+          </div>
+        </section>
+
+        <section id="perimetro" class="perimetro" aria-labelledby="perimetro-title" data-trail="Perímetro">
+          <!-- No modo completo a palavra visível mora no backdrop; no modo simples, esta é a visível. -->
+          <h2 id="perimetro-title" class="perimetro__title sr-only-full" tabindex="-1">Perímetro</h2>
+        </section>
+
+        <section id="numeros" class="numeros" aria-labelledby="numeros-title" data-trail="Números">
+          <div class="frame numeros__frame">
+            <h2 id="numeros-title" class="sr-only" tabindex="-1">Números</h2>
+            <svg class="reticle" viewBox="0 0 32 32" width="32" height="32" aria-hidden="true" focusable="false">
+              <g class="reticle__state reticle__state--box">
+                <path d="M4 10V4h6M22 4h6v6M28 22v6h-6M10 28H4v-6" />
+              </g>
+              <g class="reticle__state reticle__state--aim">
+                <circle cx="16" cy="16" r="11" />
+                <path d="M16 5V0M27 16h5M16 27v5M5 16H0" />
+              </g>
+              <g class="reticle__state reticle__state--timer">
+                <path d="M21 7.34A10 10 0 1 1 11 7.34" />
+                <path d="M16 16V8" />
+              </g>
+            </svg>
+            <dl class="stats">
+              <div class="stat stat--1">
+                <dt class="stat__caption">ao vivo no drone, em Full HD, com a rede INT8 na GPU Intel Iris Xe</dt>
+                <dd class="stat__value">16 FPS</dd>
+              </div>
+              <div class="stat stat--2">
+                <dt class="stat__caption">
+                  das pessoas encontradas em imagens aéreas do VisDrone. O modelo anterior achava 21%.
+                </dt>
+                <dd class="stat__value">66,8%*</dd>
+              </div>
+              <div class="stat stat--3">
+                <dt class="stat__caption">para abrir o modelo com o cache do OpenVINO. Sem o cache, ~20 s.</dt>
+                <dd class="stat__value">&lt;1 s</dd>
+              </div>
+            </dl>
+            <p class="numeros__note">
+              * Medido nas 548 imagens de validação do VisDrone. Os pesos públicos foram escolhidos nesse mesmo
+              conjunto, então os valores absolutos podem estar um pouco otimistas.
+            </p>
+          </div>
+        </section>
+
+        <section id="aplicacoes" class="aplicacoes" aria-labelledby="aplicacoes-title" data-trail="Aplicações">
+          <h2 id="aplicacoes-title" class="display-title" tabindex="-1">Aplicações</h2>
+          <div class="aplicacoes__grid">
+            <div class="aplicacoes__text">
+              <div class="tabs" role="tablist" aria-label="Aplicações">
+                <button class="tab" role="tab" id="tab-perimetro" aria-controls="panel-perimetro" aria-selected="true">
+                  Perímetro
+                </button>
+                <button class="tab" role="tab" id="tab-aerea" aria-controls="panel-aerea" aria-selected="false" tabindex="-1">
+                  Vista aérea
+                </button>
+                <button class="tab" role="tab" id="tab-pericia" aria-controls="panel-pericia" aria-selected="false" tabindex="-1">
+                  Perícia
+                </button>
+                <span class="tabs__indicator" aria-hidden="true"></span>
+              </div>
+              <div class="tabpanel" role="tabpanel" id="panel-perimetro" aria-labelledby="tab-perimetro" tabindex="0">
+                <p>
+                  Câmeras de chão vigiam portões, cercas e pátios. A rede YOLO26 roda na GPU integrada do notebook, a
+                  cerca de 27 ms por quadro.
+                </p>
+                <p>
+                  Regras com histerese evitam alarmes de um quadro só. Permanência prolongada, bagagem abandonada e
+                  objetos de risco geram alertas.
+                </p>
+              </div>
+              <div class="tabpanel" role="tabpanel" id="panel-aerea" aria-labelledby="tab-aerea" tabindex="0">
+                <p>
+                  O DJI Air 2S vira uma câmera aérea. Um app Android próprio recebe o vídeo do controle e o envia ao PC
+                  pelo Wi‑Fi.
+                </p>
+                <p>
+                  Uma rede treinada com imagens aéreas encontra pessoas e veículos vistos do alto, em Full HD, a cerca de
+                  16 quadros por segundo.
+                </p>
+              </div>
+              <div class="tabpanel" role="tabpanel" id="panel-pericia" aria-labelledby="tab-pericia" tabindex="0">
+                <p>
+                  Envie uma foto ou um vídeo gravado e veja pessoas e objetos marcados quadro a quadro. Para mídia aérea,
+                  o sistema usa a rede do drone.
+                </p>
+                <!-- Antes de publicar: confirmar que o incidente guarda a imagem (§5.5). -->
+                <p>Cada alerta vira um incidente com horário e imagem, e a lista pode ser exportada em CSV para o relatório.</p>
+              </div>
+            </div>
+            <div class="aplicacoes__media">
+              <!-- apps-perimetro.webp, apps-aerea.webp, apps-pericia.webp: pendentes (§8). -->
+              <div class="media-reveal">
+                <div class="placeholder placeholder--4x3"><span>Imagem pendente</span></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="capacidades" class="capacidades" aria-labelledby="capacidades-title" data-trail="Capacidades">
+          <div class="frame capacidades__frame">
+            <h2 id="capacidades-title" class="cap-title" aria-label="Capacidades" tabindex="-1">CAPACIDADES</h2>
+            <div class="cap-grid">
+              <ol class="cap-steps" role="list">
+                <li><button class="cap-step is-active" type="button" data-step="0">Detectar</button></li>
+                <li><button class="cap-step" type="button" data-step="1">Transmitir</button></li>
+                <li><button class="cap-step" type="button" data-step="2">Portabilidade</button></li>
+              </ol>
+              <div id="cap-slot" class="cap-slot" aria-hidden="true"></div>
+              <div class="cap-blocks">
+                <div class="cap-block" data-step="0">
+                  <h3 class="sr-only">Detectar</h3>
+                  <p class="cap-block__number">0,717</p>
+                  <p class="cap-block__caption">AP50 de pessoas no VisDrone</p>
+                  <p class="cap-block__text">
+                    YOLO26 acelerado pelo OpenVINO na GPU integrada. Treinada com imagens aéreas, a rede acha pessoas e
+                    veículos pequenos vistos do alto.
+                  </p>
+                </div>
+                <div class="cap-block" data-step="1">
+                  <h3 class="sr-only">Transmitir</h3>
+                  <p class="cap-block__number">~8 Mbps</p>
+                  <p class="cap-block__caption">de vídeo H.264 do celular ao PC</p>
+                  <p class="cap-block__text">
+                    Air 2S → controle RC-N1 → celular com o app SpottingAI → Wi‑Fi → PC. O app recebe o vídeo pelo SDK
+                    da DJI e o reenvia ao computador.
+                  </p>
+                </div>
+                <div class="cap-block" data-step="2">
+                  <h3 class="sr-only">Portabilidade</h3>
+                  <p class="cap-block__number">595 g</p>
+                  <p class="cap-block__caption">dobrado: 180 × 97 × 77 mm</p>
+                  <p class="cap-block__text">
+                    Os braços se dobram junto ao corpo. O drone vai a campo na mochila, ao lado do notebook que faz todo
+                    o processamento.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <section id="como-funciona" class="ext como-funciona" aria-labelledby="como-funciona-title" data-trail="Como funciona">
+        <h2 id="como-funciona-title" class="display-title" tabindex="-1">Como funciona</h2>
+        <p class="ext__lead">
+          O vídeo sai do drone, passa pelo controle e chega ao celular. O app reenvia tudo ao notebook, onde cada quadro é
+          analisado e nunca deixa a máquina.
+        </p>
+        <svg
+          class="flow"
+          viewBox="0 0 1200 380"
+          role="img"
+          aria-labelledby="flow-title flow-desc"
+          preserveAspectRatio="xMidYMid meet"
+        >
+          <title id="flow-title">Caminho do vídeo, do drone ao alerta</title>
+          <desc id="flow-desc">
+            Primeira linha, o vídeo: o Air 2S envia por rádio (OcuSync) ao controle RC-N1, que passa por USB ao celular
+            com o app SpottingAI (Java, DJI Mobile SDK 4.18), que envia por Wi‑Fi e TCP, em H.264 a cerca de 8 Mbps, ao
+            PC. Segunda linha, no PC: decodificar (PyAV), detectar (YOLO26 com OpenVINO), rastrear (IDs estilo
+            ByteTrack), aplicar regras (histerese, permanência, bagagem) e gerar alerta e incidente (painel, celular e
+            CSV).
+          </desc>
+          <path class="flow__line" id="flow-path" d="M60 90H1140V195H60V300H1140" />
+          <g class="flow__edges">
+            <text x="240" y="78">rádio</text>
+            <text x="600" y="78">USB</text>
+            <text x="960" y="60">Wi‑Fi · TCP</text>
+            <text x="960" y="78" class="flow__muted">H.264 ~8 Mbps</text>
+          </g>
+          <g class="flow__nodes">
+            <g class="flow__node" transform="translate(60 90)">
+              <circle r="5" /><text y="28">Air 2S</text><text y="46" class="flow__muted">OcuSync</text>
+            </g>
+            <g class="flow__node" transform="translate(420 90)">
+              <circle r="5" /><text y="28">RC-N1</text><text y="46" class="flow__muted">USB</text>
+            </g>
+            <g class="flow__node" transform="translate(780 90)">
+              <circle r="5" /><text y="28">Celular · app SpottingAI</text>
+              <text y="46" class="flow__muted">Java · DJI Mobile SDK 4.18</text>
+            </g>
+            <g class="flow__node" transform="translate(1140 90)">
+              <!-- Rótulo acima: a linha desce do PC para a linha 2. -->
+              <circle r="5" /><text y="-36">PC</text><text y="-18" class="flow__muted">H.264 por TCP</text>
+            </g>
+            <g class="flow__node" transform="translate(60 300)">
+              <circle r="5" /><text y="28">Decodificar</text><text y="46" class="flow__muted">PyAV</text>
+            </g>
+            <g class="flow__node" transform="translate(330 300)">
+              <circle r="5" /><text y="28">Detectar</text><text y="46" class="flow__muted">YOLO26 · OpenVINO</text>
+            </g>
+            <g class="flow__node" transform="translate(600 300)">
+              <circle r="5" /><text y="28">Rastrear</text><text y="46" class="flow__muted">IDs estilo ByteTrack</text>
+            </g>
+            <g class="flow__node" transform="translate(870 300)">
+              <circle r="5" /><text y="28">Aplicar regras</text>
+              <text y="46" class="flow__muted">histerese, permanência, bagagem</text>
+            </g>
+            <g class="flow__node" transform="translate(1140 300)">
+              <circle r="5" /><text y="28">Alerta e incidente</text>
+              <text y="46" class="flow__muted">painel, celular e CSV</text>
+            </g>
+          </g>
+          <circle class="flow__packet" r="2" cx="60" cy="90" />
+        </svg>
+        <p class="ext__note">Também aceita webcam, câmeras RTSP/HTTP e RTMP direto do app DJI Fly.</p>
+      </section>
+
+      <section id="painel" class="ext painel" aria-labelledby="painel-title" data-trail="Painel">
+        <h2 id="painel-title" class="display-title" tabindex="-1">O painel</h2>
+        <p class="ext__lead">
+          O painel abre numa janela própria do Windows e também no navegador, em localhost. Dá para acompanhar pelo
+          celular na mesma rede.
+        </p>
+        <!-- painel-ao-vivo.webp, painel-celular.webp, painel-pericia.webp: pendentes (§8). -->
+        <div class="painel__grid">
+          <figure class="shot shot--main">
+            <div class="media-reveal"><div class="placeholder placeholder--16x10"><span>Imagem pendente</span></div></div>
+            <figcaption>Monitoramento ao vivo, com caixas, IDs e alertas.</figcaption>
+          </figure>
+          <div class="painel__side">
+            <figure class="shot shot--phone">
+              <div class="media-reveal"><div class="placeholder placeholder--phone"><span>Imagem pendente</span></div></div>
+              <figcaption>O mesmo painel no celular, pela rede local.</figcaption>
+            </figure>
+            <figure class="shot shot--small">
+              <div class="media-reveal"><div class="placeholder placeholder--16x10"><span>Imagem pendente</span></div></div>
+              <figcaption>Perícia de fotos e vídeos gravados.</figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <section id="tecnologia" class="ext tecnologia" aria-labelledby="tecnologia-title" data-trail="Tecnologia">
+        <h2 id="tecnologia-title" class="display-title" tabindex="-1">Tecnologia</h2>
+        <dl class="tech">
+          <div><dt>Servidor</dt><dd>Python 3.13 e FastAPI, com REST, MJPEG e WebSocket</dd></div>
+          <div><dt>Inferência</dt><dd>OpenVINO na GPU Intel Iris Xe; INT8 com NNCF</dd></div>
+          <div><dt>Redes</dt><dd>YOLO26 (câmeras de chão e drone), YOLOv8 e YOLO11</dd></div>
+          <div><dt>Rastreamento</dt><dd>IDs estilo ByteTrack, com compensação do movimento da câmera</dd></div>
+          <div><dt>Vídeo</dt><dd>PyAV para H.264, RTSP/HTTP, RTMP e webcam</dd></div>
+          <div><dt>Desktop</dt><dd>pywebview com Edge WebView2, empacotado com PyInstaller</dd></div>
+          <div><dt>Drone</dt><dd>App Android em Java com DJI Mobile SDK 4.18</dd></div>
+          <div><dt>Painel</dt><dd>HTML, CSS e JavaScript, sem framework</dd></div>
+          <div><dt>Demonstração web</dt><dd>ONNX Runtime em função serverless</dd></div>
+        </dl>
+      </section>
+    </main>
+
+    <footer id="creditos" class="footer" aria-labelledby="creditos-title" data-trail="Créditos">
+      <div class="footer__brand">
+        <p class="footer__name">
+          <svg class="brand-icon" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true" focusable="false">
+            <circle cx="10" cy="10" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5" />
+            <circle cx="10" cy="10" r="2" fill="currentColor" />
+          </svg>
+          SpottingAI
+        </p>
+        <p class="footer__tagline">Visão computacional para segurança perimetral, 100% local.</p>
+      </div>
+      <div class="footer__credits">
+        <h2 id="creditos-title" class="sr-only" tabindex="-1">Créditos</h2>
+        <ul role="list">
+          <li>
+            Modelo 3D “<a href="https://sketchfab.com/3d-models/dji-air-2s-e913c9bf161243b9b6b1085677908edc">Dji Air 2S</a>”
+            por <strong>SomeBlocks</strong>, licença
+            <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Modificado para este site: peças
+            separadas, pivôs, escala e compressão.
+          </li>
+          <li>
+            Pesos do detector aéreo:
+            <a href="https://huggingface.co/dronefreak/visdrone-yolo26s">dronefreak/visdrone-yolo26s</a>, licença
+            AGPL-3.0.
+          </li>
+          <li>
+            Dataset <a href="https://github.com/VisDrone/VisDrone-Dataset">VisDrone</a> (AISKYEYE, Universidade de
+            Tianjin): uso somente em pesquisa, não comercial.
+          </li>
+          <li>
+            Redes YOLO por <a href="https://github.com/ultralytics/ultralytics">Ultralytics</a> (AGPL-3.0). Inferência
+            com <a href="https://github.com/openvinotoolkit/openvino">OpenVINO</a> (Apache-2.0).
+          </li>
+          <li>Fonte <a href="https://rsms.me/inter/">Inter</a> (SIL OFL 1.1).</li>
+          <li>DJI, Air 2S e RC-N1 são marcas da SZ DJI Technology Co., Ltd. Este site não é afiliado à DJI.</li>
+        </ul>
+        <p class="footer__copy">© 2026 SpottingAI</p>
+        <p><!-- autoria: pendente --></p>
+      </div>
+    </footer>
+  </body>
+</html>

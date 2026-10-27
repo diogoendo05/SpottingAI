@@ -1,0 +1,53 @@
+/* Design tokens (SPEC §2). Valores com ≈ na spec são ajustados no olho. */
+:root {
+  /* 2.1 Cores */
+  --bg: #eef1f4;
+  --bg-vignette: radial-gradient(120% 90% at 50% 42%, rgb(255 255 255 / 0.55) 0%, rgb(255 255 255 / 0) 55%),
+    radial-gradient(140% 120% at 50% 50%, transparent 60%, rgb(20 30 40 / 0.06) 100%);
+  --ink: #111316;
+  --ink-strong: #050607;
+  --ink-2: #2b2f33;
+  --muted: #5b6269; /* todo texto pequeno que informa (AA) */
+  --muted-large: #7a8189; /* só números ≥ 24 px */
+  --faint: #b8bdc2; /* só decoração */
+  --line: #c9ced3;
+  --panel: #dce3e8;
+  --beam: #4c9dff;
+  --focus: #1f6feb;
+
+  /* 2.2 Tipografia */
+  --font: "Inter Variable", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --fs-watermark: 15vw;
+  --fs-mega: clamp(5rem, 13vw, 16rem);
+  --fs-display: clamp(4rem, 10vw, 12rem);
+  --fs-display-wide: clamp(3rem, 8.4vw, 10.5rem);
+  --fs-stat: clamp(3.5rem, 7vw, 8rem);
+  --fs-manifesto: clamp(1.75rem, 3vw, 3.25rem);
+  --fs-cap-number: clamp(2.5rem, 4vw, 4.5rem);
+  --fs-lead: clamp(1.125rem, 1.45vw, 1.5rem);
+  --fs-body: 0.875rem;
+  --fs-small: 0.75rem;
+  --fs-hint: 0.6875rem;
+
+  /* 2.3 Espaçamento e grid */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+  --s-8: 64px;
+  --s-9: 96px;
+  --s-10: 128px;
+  --gutter: clamp(16px, 3.2vw, 48px);
+  --col-gap: clamp(12px, 1.6vw, 24px);
+
+  /* 2.4 Movimento */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --dur-fast: 150ms;
+  --dur-ui: 220ms;
+  --dur-reveal: 600ms;
+}
