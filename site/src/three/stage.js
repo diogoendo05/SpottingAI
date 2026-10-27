@@ -13,7 +13,8 @@ import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 const FOV = 30;
 const CAMERA_Z = 10;
 
-export function createStage(canvas) {
+// `container`: elemento cujo tamanho o canvas copia (padrão: a janela, para o canvas fixo).
+export function createStage(canvas, { container = null } = {}) {
   const dpr = window.devicePixelRatio || 1;
   const renderer = new WebGLRenderer({
     canvas,
@@ -21,7 +22,11 @@ export function createStage(canvas) {
     alpha: true, // o fundo é o CSS
     powerPreference: "high-performance",
   });
-  renderer.setPixelRatio(Math.min(dpr, 1.5));
+  // DPR adaptativo (§7.2): começa em até 1,5 e só desce (1,5 → 1,25 → 1,0) na mesma sessão.
+  const ratios = [1.5, 1.25, 1].filter((r) => r <= Math.min(dpr, 1.5));
+  if (!ratios.length) ratios.push(Math.min(dpr, 1));
+  let ratioIndex = 0;
+  renderer.setPixelRatio(ratios[0]);
   renderer.toneMapping = NeutralToneMapping;
   renderer.outputColorSpace = SRGBColorSpace;
 
@@ -42,18 +47,26 @@ export function createStage(canvas) {
   camera.position.set(0, 0, CAMERA_Z);
   camera.lookAt(0, 0, 0);
 
-  // Altura e largura visíveis no plano z = 0.
-  const view = { W: 1, H: 2 * CAMERA_Z * Math.tan((FOV / 2) * (Math.PI / 180)) };
+  // Altura e largura visíveis no plano z = 0, e o tamanho do canvas em px CSS.
+  const view = { W: 1, H: 2 * CAMERA_Z * Math.tan((FOV / 2) * (Math.PI / 180)), pxW: 1, pxH: 1 };
 
   let resized = true;
-  const resize = () => {
-    const w = window.innerWidth;
-    const h = window.innerHeight;
+  const setSize = (w, h) => {
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
     view.W = view.H * camera.aspect;
+    view.pxW = w;
+    view.pxH = h;
     resized = true;
+  };
+  const resize = () => {
+    if (container) {
+      const r = container.getBoundingClientRect();
+      setSize(Math.max(1, Math.round(r.width)), Math.max(1, Math.round(r.height)));
+    } else {
+      setSize(window.innerWidth, window.innerHeight);
+    }
   };
   resize();
   window.addEventListener("resize", resize);
@@ -64,6 +77,14 @@ export function createStage(canvas) {
     camera,
     view,
     compile: () => renderer.compileAsync(scene, camera),
+    setSize,
+    // Desce um degrau de escala de pixels; devolve false se já está no mínimo.
+    degrade() {
+      if (ratioIndex >= ratios.length - 1) return false;
+      renderer.setPixelRatio(ratios[++ratioIndex]);
+      resize();
+      return true;
+    },
     consumeResize() {
       const was = resized;
       resized = false;

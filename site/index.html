@@ -16,7 +16,12 @@
       property="og:description"
       content="Detecção de pessoas e veículos em tempo real, 100% local, com câmeras de chão e um drone."
     />
-    <!-- og:image: pendente (public/og-image.png, gerado por ?capture=hero na etapa 7) -->
+    <!-- Gerado por ?capture=og (docs/site/tools/captures.py). Quando houver domínio, troque por URL absoluta. -->
+    <meta property="og:image" content="/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Drone DJI Air 2S em 3D sobre fundo claro" />
+    <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <script>
       // Escolhe o layout antes do primeiro paint. Mesma regra de src/core/mode.js
@@ -105,6 +110,19 @@
     <main id="conteudo" tabindex="-1">
       <div id="story">
         <section id="hero" class="hero" aria-labelledby="hero-title" data-trail="Visão geral">
+          <!-- Modo simples (§7.4): o drone mora aqui, fora da camada fixa; sem 3D, o pôster. -->
+          <div class="hero__stage">
+            <canvas class="hero__gl" role="img" aria-label="Drone DJI Air 2S em 3D"></canvas>
+            <img
+              class="hero__poster"
+              src="/poster-hero.webp"
+              alt="Drone DJI Air 2S"
+              width="1600"
+              height="1000"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
           <div class="hero__bottom">
             <h1 id="hero-title" class="hero__title" tabindex="-1">
               Visão computacional para segurança perimetral.<br />
@@ -260,7 +278,16 @@
               <div id="cap-slot" class="cap-slot" aria-hidden="true"></div>
               <div class="cap-blocks">
                 <div class="cap-block" data-step="0">
-                  <h3 class="sr-only">Detectar</h3>
+                  <h3 class="cap-block__title sr-only-full">Detectar</h3>
+                  <img
+                    class="cap-block__media"
+                    src="/assets/images/cap-detectar.webp"
+                    alt="Drone visto levemente de cima, com o cone azul de varredura saindo da câmera"
+                    width="1600"
+                    height="1200"
+                    loading="lazy"
+                    decoding="async"
+                  />
                   <p class="cap-block__number">0,717</p>
                   <p class="cap-block__caption">AP50 de pessoas no VisDrone</p>
                   <p class="cap-block__text">
@@ -269,7 +296,16 @@
                   </p>
                 </div>
                 <div class="cap-block" data-step="1">
-                  <h3 class="sr-only">Transmitir</h3>
+                  <h3 class="cap-block__title sr-only-full">Transmitir</h3>
+                  <img
+                    class="cap-block__media"
+                    src="/assets/images/cap-transmitir.webp"
+                    alt="Drone visto de cima, com os quatro braços abertos"
+                    width="1600"
+                    height="1200"
+                    loading="lazy"
+                    decoding="async"
+                  />
                   <p class="cap-block__number">~8 Mbps</p>
                   <p class="cap-block__caption">de vídeo H.264 do celular ao PC</p>
                   <p class="cap-block__text">
@@ -278,7 +314,16 @@
                   </p>
                 </div>
                 <div class="cap-block" data-step="2">
-                  <h3 class="sr-only">Portabilidade</h3>
+                  <h3 class="cap-block__title sr-only-full">Portabilidade</h3>
+                  <img
+                    class="cap-block__media"
+                    src="/assets/images/cap-portabilidade.webp"
+                    alt="Drone dobrado, visto de cima, com os braços junto ao corpo"
+                    width="1600"
+                    height="1200"
+                    loading="lazy"
+                    decoding="async"
+                  />
                   <p class="cap-block__number">595 g</p>
                   <p class="cap-block__caption">dobrado: 180 × 97 × 77 mm</p>
                   <p class="cap-block__text">
@@ -355,6 +400,24 @@
           </g>
           <circle class="flow__packet" r="2" cx="60" cy="60" />
         </svg>
+        <!-- Telas estreitas: o mesmo caminho na vertical (o SVG ficaria com texto de ~5 px). -->
+        <div class="flow-list">
+          <h3 class="flow-list__title">O vídeo</h3>
+          <ol role="list">
+            <li><span>Air 2S</span> OcuSync, por rádio</li>
+            <li><span>RC-N1</span> USB</li>
+            <li><span>Celular · app SpottingAI</span> Java · DJI Mobile SDK 4.18</li>
+            <li><span>PC</span> H.264 por TCP no Wi‑Fi, ~8 Mbps</li>
+          </ol>
+          <h3 class="flow-list__title">No PC</h3>
+          <ol role="list">
+            <li><span>Decodificar</span> PyAV</li>
+            <li><span>Detectar</span> YOLO26 · OpenVINO</li>
+            <li><span>Rastrear</span> IDs estilo ByteTrack</li>
+            <li><span>Aplicar regras</span> histerese, permanência, bagagem</li>
+            <li><span>Alerta e incidente</span> painel, celular e CSV</li>
+          </ol>
+        </div>
         <p class="ext__note">Também aceita webcam, câmeras RTSP/HTTP e RTMP direto do app DJI Fly.</p>
       </section>
 

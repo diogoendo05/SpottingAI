@@ -7,7 +7,8 @@ export const FORCE_SIMPLE_KEY = "spottingai:sem3d";
 
 export const mode = document.documentElement.classList.contains("mode-full") ? "full" : "simple";
 
-function forcedSimple() {
+// "Ver sem 3D" escolhido nesta sessão.
+export function forcedSimple() {
   try {
     return sessionStorage.getItem(FORCE_SIMPLE_KEY) === "1";
   } catch {

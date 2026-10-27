@@ -1090,3 +1090,34 @@ Cada etapa termina com algo verificável no navegador. Rode `npm run dev` e test
 - **Modelo de comparação dos 21%:** o README compara com o YOLOv8n HD (0,311 / 21,0%), e o comentário em `app.py` (linha ~218) compara com o yolo11n_hd (0,317 / 21,4%). A spec usa o README.
 - **FPS ao vivo:** 15,8 FPS medido (plano) e 16 FPS no `benchmark_app`. A spec arredonda para 16 FPS, como o próprio README.
 - **“100% local”:** vale para o sistema principal. Existe também um deploy serverless de demonstração na Vercel (`api/index.py`, ONNX Runtime), que processa na nuvem o que for enviado a ele.
+
+---
+
+## 12. Notas da implementação (27/10/2026)
+
+As etapas 1 a 7 da §10 foram implementadas em `site/`. Onde a implementação se desviou desta spec, foi por um critério de aceite ou por uma limitação técnica medida, e o motivo também está comentado no código:
+
+| Tema | Spec | Implementado | Motivo |
+|---|---|---|---|
+| Envergadura do enquadramento livre (§6.3, item 4) | `Box3` em repouso, ≈ 0,293 m | pás girando: 2 × (eixo do motor + 0,085) ≈ 0,40 m | com 0,293 m o drone do hero ocupava ~58% da largura (aceite: ≈ 44%) e invadia o manifesto |
+| Preenchimento do painel (§6.4) | 0,42 × lado menor / R | 0,35 (`PANEL_FILL` em `three/drone.js`) | com os discos girando, o drone passava do painel no giro para a vista de cima (t ≈ 860) |
+| Zoom final do passo 3 (§4.4) | 1,3 | 1,56 | compensa o 0,35, para o drone dobrado terminar do mesmo tamanho |
+| Início de `spin` e `zoom` no passo 3 (§4.4) | 990 | 1005, junto com `foldR` | girar com os braços traseiros abertos levava as pás para fora do painel |
+| Blending do cone (§6.5) | aditivo | normal, cor em sRGB | o canvas é transparente e o fundo claro está no CSS: o aditivo virava um azul chapado e opaco |
+| Prazo de 12 s e “Ver sem 3D” (§7.3) | no loader | no `<script>` inline do `<head>` | assim funcionam mesmo se o bundle JS não carregar |
+| Pacote do diagrama (§5.7.1) | MotionPathPlugin | `path.getPointAtLength` | mesmo efeito, sem o plugin no bundle |
+| Altura do diagrama (§5.7.1) | ≈ 38vh | ≈ 41vh, sem `max-height` e com viewBox de 1200 × 300 | o `max-height` levava o texto abaixo de 12 px em 1366 × 768 |
+| Diagrama no celular | SVG | lista vertical em HTML abaixo de 768 px | em 390 px o SVG teria texto de ~5 px |
+| Nav no modo simples (§5.0) | sem fundo | degradê do `--bg` para transparente | no celular o texto rolava por baixo da nav e embaralhava a leitura |
+| Foco ao clicar num passo de “Capacidades” (§7.5) | vai para o título da seção | fica no botão | o passo já está dentro da seção, e manter o foco permite seguir para o próximo pelo teclado |
+| three.js | no JS inicial | chunk separado, baixado em paralelo com o GLB | JS inicial de 61 KB gzip (orçamento: 220 KB); com o three, eram 223 KB |
+
+Medições na Iris Xe do notebook, com o build de produção:
+
+- 60 FPS com DPR 1,25 no hero e no pior trecho (passo 1, com o cone);
+- o drone aparece em 1,25 s a 50 Mbps e em 3,5 s a 10 Mbps;
+- Lighthouse: acessibilidade 100 e boas práticas 100 (desktop e celular); performance 78 no desktop e 65 no celular, puxada por uma tarefa longa de preparo do WebGL (~0,5 s; no modo simples ela espera o navegador ficar ocioso).
+
+Capturas: com `npm run dev`, abra `?capture=hero|og|cap1|cap2|cap3` (só em desenvolvimento) e depois rode `docs/site/tools/captures.py` para gerar `public/poster-hero.webp`, `public/og-image.png` e `assets/images/cap-*.webp`.
+
+Ainda dependem do autor (§11): as imagens de Aplicações e do Painel, a autoria no rodapé, o projeto Vercel (já existe `site/vercel.json`) e a URL absoluta do `og:image` quando houver domínio.

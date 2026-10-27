@@ -121,7 +121,7 @@ class Drone {
     this.root = root;
   }
 
-  // Aplica o estado. `slot` é o retângulo de #cap-slot (só lido com anchor > 0).
+  // Aplica o estado. `slot` é o retângulo de #cap-slot em px do canvas (só usado com anchor > 0).
   // Retorna true se há animação por tempo (hélices, flutuação ou cone) e o quadro precisa ser desenhado.
   update(s, time, dt, view, slot) {
     this.anchorGroup.visible = s.visible;
@@ -134,9 +134,9 @@ class Drone {
     let py = s.py;
     let scale = (s.size * Math.min(W, H * 1.78)) / this.wingspan;
     if (s.anchor > 0 && slot) {
-      const pxP = (slot.left + slot.width / 2) / window.innerWidth - 0.5;
-      const pyP = 0.5 - (slot.top + slot.height / 2) / window.innerHeight;
-      const scaleP = (PANEL_FILL * Math.min(slot.width, slot.height) * H) / window.innerHeight / this.radius;
+      const pxP = (slot.left + slot.width / 2) / view.pxW - 0.5;
+      const pyP = 0.5 - (slot.top + slot.height / 2) / view.pxH;
+      const scaleP = (PANEL_FILL * Math.min(slot.width, slot.height) * H) / view.pxH / this.radius;
       px = MathUtils.lerp(px, pxP, s.anchor);
       py = MathUtils.lerp(py, pyP, s.anchor);
       scale = MathUtils.lerp(scale, scaleP, s.anchor);
