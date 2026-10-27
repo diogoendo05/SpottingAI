@@ -300,7 +300,7 @@
         </p>
         <svg
           class="flow"
-          viewBox="0 0 1200 380"
+          viewBox="0 0 1200 300"
           role="img"
           aria-labelledby="flow-title flow-desc"
           preserveAspectRatio="xMidYMid meet"
@@ -313,47 +313,47 @@
             ByteTrack), aplicar regras (histerese, permanência, bagagem) e gerar alerta e incidente (painel, celular e
             CSV).
           </desc>
-          <path class="flow__line" id="flow-path" d="M60 90H1140V195H60V300H1140" />
+          <path class="flow__line" id="flow-path" d="M60 60H1140V150H60V240H1140" />
           <g class="flow__edges">
-            <text x="240" y="78">rádio</text>
-            <text x="600" y="78">USB</text>
-            <text x="960" y="60">Wi‑Fi · TCP</text>
-            <text x="960" y="78" class="flow__muted">H.264 ~8 Mbps</text>
+            <text x="240" y="48" data-at="180">rádio</text>
+            <text x="600" y="48" data-at="540">USB</text>
+            <text x="960" y="30" data-at="900">Wi‑Fi · TCP</text>
+            <text x="960" y="48" class="flow__muted" data-at="900">H.264 ~8 Mbps</text>
           </g>
           <g class="flow__nodes">
-            <g class="flow__node" transform="translate(60 90)">
+            <g class="flow__node" data-at="0" transform="translate(60 60)">
               <circle r="5" /><text y="28">Air 2S</text><text y="46" class="flow__muted">OcuSync</text>
             </g>
-            <g class="flow__node" transform="translate(420 90)">
+            <g class="flow__node" data-at="360" transform="translate(420 60)">
               <circle r="5" /><text y="28">RC-N1</text><text y="46" class="flow__muted">USB</text>
             </g>
-            <g class="flow__node" transform="translate(780 90)">
+            <g class="flow__node" data-at="720" transform="translate(780 60)">
               <circle r="5" /><text y="28">Celular · app SpottingAI</text>
               <text y="46" class="flow__muted">Java · DJI Mobile SDK 4.18</text>
             </g>
-            <g class="flow__node" transform="translate(1140 90)">
+            <g class="flow__node" data-at="1080" transform="translate(1140 60)">
               <!-- Rótulo acima: a linha desce do PC para a linha 2. -->
               <circle r="5" /><text y="-36">PC</text><text y="-18" class="flow__muted">H.264 por TCP</text>
             </g>
-            <g class="flow__node" transform="translate(60 300)">
+            <g class="flow__node" data-at="2340" transform="translate(60 240)">
               <circle r="5" /><text y="28">Decodificar</text><text y="46" class="flow__muted">PyAV</text>
             </g>
-            <g class="flow__node" transform="translate(330 300)">
+            <g class="flow__node" data-at="2610" transform="translate(330 240)">
               <circle r="5" /><text y="28">Detectar</text><text y="46" class="flow__muted">YOLO26 · OpenVINO</text>
             </g>
-            <g class="flow__node" transform="translate(600 300)">
+            <g class="flow__node" data-at="2880" transform="translate(600 240)">
               <circle r="5" /><text y="28">Rastrear</text><text y="46" class="flow__muted">IDs estilo ByteTrack</text>
             </g>
-            <g class="flow__node" transform="translate(870 300)">
+            <g class="flow__node" data-at="3150" transform="translate(870 240)">
               <circle r="5" /><text y="28">Aplicar regras</text>
               <text y="46" class="flow__muted">histerese, permanência, bagagem</text>
             </g>
-            <g class="flow__node" transform="translate(1140 300)">
+            <g class="flow__node" data-at="3420" transform="translate(1140 240)">
               <circle r="5" /><text y="28">Alerta e incidente</text>
               <text y="46" class="flow__muted">painel, celular e CSV</text>
             </g>
           </g>
-          <circle class="flow__packet" r="2" cx="60" cy="90" />
+          <circle class="flow__packet" r="2" cx="60" cy="60" />
         </svg>
         <p class="ext__note">Também aceita webcam, câmeras RTSP/HTTP e RTMP direto do app DJI Fly.</p>
       </section>

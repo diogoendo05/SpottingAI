@@ -505,17 +505,18 @@
 }
 
 /* Como funciona */
+/* A largura manda no tamanho (sem max-height): encolher o SVG levava o texto abaixo de 12 px.
+   --flow-fs é ajustado por sections/comoFunciona.js quando o SVG fica menor que 1:1. */
 .flow {
   width: 100%;
   height: auto;
-  max-height: 38vh;
   margin-top: var(--s-7);
   overflow: visible;
 }
 
 .flow text {
   font-family: var(--font);
-  font-size: 13px;
+  font-size: var(--flow-fs, 13px);
   text-anchor: middle;
   fill: var(--ink);
 }
@@ -670,9 +671,6 @@
   }
   .tech {
     grid-template-columns: minmax(0, 1fr);
-  }
-  .flow {
-    max-height: none;
   }
 }
 

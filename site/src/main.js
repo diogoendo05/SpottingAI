@@ -11,6 +11,8 @@ import { mode, watchMode } from "./core/mode.js";
 import { initScroll } from "./core/scroll.js";
 import { onFrame, startTicker } from "./core/ticker.js";
 import { capacidadesFrame } from "./sections/capacidades.js";
+import { initComoFunciona } from "./sections/comoFunciona.js";
+import { initPainel } from "./sections/painel.js";
 import { createMaster } from "./timeline/master.js";
 import { consumeDirty, debugState, markDirty, state } from "./timeline/state.js";
 import { createLoader } from "./ui/loader.js";
@@ -30,7 +32,7 @@ if (debug) {
   onFrame(debug.update);
   debug.setState(state);
   // Console: spotting.state.foldF = 1 (marca o quadro como sujo).
-  window.spotting = { state: debugState };
+  window.spotting = { state: debugState, ScrollTrigger };
 }
 
 if (mode === "full") startFull();
@@ -38,6 +40,8 @@ if (mode === "full") startFull();
 async function startFull() {
   lenis.stop();
   createMaster();
+  initComoFunciona();
+  initPainel();
   const loader = createLoader();
 
   try {
